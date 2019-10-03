@@ -1,5 +1,8 @@
-﻿namespace DDD.Persistence
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DDD.Persistence
 {
+    [ExcludeFromCodeCoverage]
     public class Pagination
     {
         public uint Page { get; }
