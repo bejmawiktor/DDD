@@ -1,4 +1,8 @@
-using DDD.Model;
+<<<<<<< HEAD
+﻿using DDD.Model;
+=======
+﻿using DDD.Domain;
+>>>>>>> 47b1113436e22b14859b1eb13d07dc85896347e5
 using NUnit.Framework;
 using System.Collections.Generic;
 
