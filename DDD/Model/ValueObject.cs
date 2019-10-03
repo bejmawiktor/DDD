@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DDD.Model
 {
-    public abstract class ValueObject
+    public abstract class ValueObject : IEquatable<ValueObject>
     {
         public static bool operator ==(ValueObject lhs, ValueObject rhs)
         {
@@ -25,7 +26,7 @@ namespace DDD.Model
             return !(lhs == rhs);
         }
 
-        private bool Equals(ValueObject other)
+        public bool Equals(ValueObject other)
         {
             if(other == null || other.GetType() != this.GetType())
             {
