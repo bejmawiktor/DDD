@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace DDD.Model
 {
-    public abstract class Identifier<TIdentifier> : ValueObject
+    public abstract class Identifier<TIdentifier, TIdentifierChild> : ValueObject, IEquatable<TIdentifierChild>
         where TIdentifier : IEquatable<TIdentifier>
+        where TIdentifierChild : Identifier<TIdentifier, TIdentifierChild>
     {
         public TIdentifier Value { get; }
 
@@ -21,6 +22,11 @@ namespace DDD.Model
         protected override IEnumerable<object> GetEqualityMembers()
         {
             yield return this.Value;
+        }
+
+        public bool Equals(TIdentifierChild other)
+        {
+            return base.Equals(other);
         }
     }
 }
