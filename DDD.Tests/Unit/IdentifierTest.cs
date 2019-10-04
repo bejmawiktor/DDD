@@ -12,12 +12,28 @@ namespace DDD.Tests.Unit
             public TestId(string value) : base(value)
             {
             }
+
+            protected override void ValidateValue(string value)
+            {
+                if(value == string.Empty)
+                {
+                    throw new ArgumentException("Id could not be empty.");
+                }
+            }
         }
 
         public class TestId2 : Identifier<int, TestId2>
         {
             public TestId2(int value) : base(value)
             {
+            }
+
+            protected override void ValidateValue(int value)
+            {
+                if(value <= 0)
+                {
+                    throw new ArgumentException("Id must be greater than 0.");
+                }
             }
         }
 
@@ -27,6 +43,7 @@ namespace DDD.Tests.Unit
             TestId testId = new TestId("1");
 
             Assert.Throws<ArgumentNullException>(() => new TestId(null));
+            Assert.Throws<ArgumentException>(() => new TestId(""));
             Assert.That(testId.Value, Is.EqualTo("1"));
         }
 

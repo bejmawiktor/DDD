@@ -16,8 +16,12 @@ namespace DDD.Model
                 throw new ArgumentNullException(nameof(value));
             }
 
+            this.ValidateValue(value);
+
             this.Value = value;
         }
+
+        protected abstract void ValidateValue(TIdentifier value);
 
         protected override IEnumerable<object> GetEqualityMembers()
         {
