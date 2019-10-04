@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
@@ -10,15 +11,17 @@ namespace DDD.Model
         }
     }
 
-    public abstract class AggregateRoot<TIdentifier, TMembersValidator> : AggregateRoot<TIdentifier>
+    public abstract class AggregateRoot<TIdentifier, TValidatedMembersTuple, TValidator> : AggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
-        where TMembersValidator : IMembersValidator, new()
+        where TValidatedMembersTuple : ITuple
+        where TValidator : IValidator<TValidatedMembersTuple>, new()
     {
-        protected TMembersValidator Validator { get; }
+        protected TValidator Validator { get; }
 
-        public AggregateRoot(TIdentifier id) : base(id)
+        public AggregateRoot(TIdentifier id, TValidatedMembersTuple validatedMembers) : base(id)
         {
-            this.Validator = new TMembersValidator();
+            this.Validator = new TValidator();
+            this.Validator.Validate(validatedMembers);
         }
     }
 }

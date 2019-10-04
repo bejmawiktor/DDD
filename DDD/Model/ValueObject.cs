@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
@@ -83,14 +84,16 @@ namespace DDD.Model
         }
     }
 
-    public abstract class ValueObject<TMembersValidator> : ValueObject
-        where TMembersValidator : IMembersValidator, new()
+    public abstract class ValueObject<TValidatedMembersTuple, TValidator> : ValueObject
+        where TValidatedMembersTuple : ITuple
+        where TValidator : IValidator<TValidatedMembersTuple>, new()
     {
-        protected TMembersValidator Validator { get; }
+        protected TValidator Validator { get; }
 
-        protected ValueObject()
+        protected ValueObject(TValidatedMembersTuple validatedMembers)
         {
-            this.Validator = new TMembersValidator();
+            this.Validator = new TValidator();
+            this.Validator.Validate(validatedMembers);
         }
     }
 }

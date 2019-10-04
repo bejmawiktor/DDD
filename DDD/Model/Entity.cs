@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
@@ -56,15 +57,17 @@ namespace DDD.Model
         }
     }
 
-    public abstract class Entity<TIdentifier, TMembersValidator> : Entity<TIdentifier>
-         where TIdentifier : IEquatable<TIdentifier>
-         where TMembersValidator : IMembersValidator, new()
+    public abstract class Entity<TIdentifier, TValidatedMembersTuple, TValidator> : Entity<TIdentifier>
+        where TIdentifier : IEquatable<TIdentifier>
+        where TValidatedMembersTuple : ITuple
+        where TValidator : IValidator<TValidatedMembersTuple>, new()
     {
-        protected TMembersValidator Validator { get; }
+        protected TValidator Validator { get; }
 
-        protected Entity(TIdentifier id) : base(id)
+        protected Entity(TIdentifier id, TValidatedMembersTuple validatedMembers) : base(id)
         {
-            this.Validator = new TMembersValidator();
+            this.Validator = new TValidator();
+            this.Validator.Validate(validatedMembers);
         }
     }
 }
