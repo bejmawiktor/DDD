@@ -82,4 +82,15 @@ namespace DDD.Model
             }
         }
     }
+
+    public abstract class ValueObject<TMembersValidator> : ValueObject
+        where TMembersValidator : IMembersValidator, new()
+    {
+        protected TMembersValidator Validator { get; }
+
+        protected ValueObject()
+        {
+            this.Validator = new TMembersValidator();
+        }
+    }
 }
