@@ -2,6 +2,6 @@
 {
     public interface IMembersValidator
     {
-        void ValidateMember<TValueType>(string name, TValueType value);
+        void ValidateMember(string name, object value);
     }
 }
