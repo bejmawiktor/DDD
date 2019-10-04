@@ -55,4 +55,16 @@ namespace DDD.Model
             }
         }
     }
+
+    public abstract class Entity<TIdentifier, TMembersValidator> : Entity<TIdentifier>
+         where TIdentifier : IEquatable<TIdentifier>
+         where TMembersValidator : IMembersValidator, new()
+    {
+        protected TMembersValidator Validator { get; }
+
+        protected Entity(TIdentifier id) : base(id)
+        {
+            this.Validator = new TMembersValidator();
+        }
+    }
 }
