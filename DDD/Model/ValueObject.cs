@@ -29,7 +29,7 @@ namespace DDD.Model
 
         public bool Equals(ValueObject other)
         {
-            if(other == null || other.GetType() != this.GetType())
+            if(this.GetType() != other?.GetType())
             {
                 return false;
             }
