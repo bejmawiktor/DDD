@@ -8,7 +8,7 @@ namespace DDD.Tests.Unit
     [TestFixture]
     public class IdentifierTest
     {
-        public class TestId : Identifier<string, TestId>
+        public class TestId : Identifier<string>
         {
             public TestId(string value) : base(value)
             {
