@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
-    public abstract class Entity<TIdentifier>
+    public abstract class Entity<TIdentifier> : IEquatable<Entity<TIdentifier>>
          where TIdentifier : IEquatable<TIdentifier>
     {
         public TIdentifier Id { get; protected set; }
@@ -44,8 +44,7 @@ namespace DDD.Model
 
         public override bool Equals(object obj)
         {
-            return obj?.GetType() == this.GetType()
-                && this.Id.Equals(((Entity<TIdentifier>)obj).Id);
+            return this.Equals(obj as Entity<TIdentifier>);
         }
 
         public override int GetHashCode()
@@ -54,6 +53,12 @@ namespace DDD.Model
             {
                 return 2108858624 + this.GetType().GetHashCode() + this.Id.GetHashCode();
             }
+        }
+
+        public bool Equals(Entity<TIdentifier> other)
+        {
+            return other?.GetType() == this.GetType()
+                && this.Id.Equals(((Entity<TIdentifier>)other).Id);
         }
     }
 

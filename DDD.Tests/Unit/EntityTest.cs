@@ -22,7 +22,7 @@ namespace DDD.Tests.Unit
             }
         }
 
-        public static IEnumerable<object[]> EqualityByEqualsTestData
+        public static IEnumerable<object[]> EqualityByEqualsMethodTestData
         {
             get
             {
@@ -67,6 +67,37 @@ namespace DDD.Tests.Unit
                     new IntEntity(1),
                     null,
                     false
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("12"),
+                    false,
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    null,
+                    false,
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> EqualityByEqualsEntityMethodTestData
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("1"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new StringEntity("123"),
+                    new StringEntity("123"),
+                    true
                 };
                 yield return new object[]
                 {
@@ -179,8 +210,17 @@ namespace DDD.Tests.Unit
                 () => new StringEntity(null));
         }
 
-        [TestCaseSource(nameof(EqualityByEqualsTestData))]
-        public void TestEqualityUsingEqualsMethod(object lhsEntity, object rhsEntity, bool expectedEqualsResult)
+        [TestCaseSource(nameof(EqualityByEqualsMethodTestData))]
+        public void TestEqualityUsingEqualsObjectMethod(object lhsEntity, object rhsEntity, bool expectedEqualsResult)
+        {
+            Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
+        }
+
+        [TestCaseSource(nameof(EqualityByEqualsEntityMethodTestData))]
+        public void TestEqualityUsingEqualsEntityMethod(
+            StringEntity lhsEntity,
+            StringEntity rhsEntity,
+            bool expectedEqualsResult)
         {
             Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
         }
