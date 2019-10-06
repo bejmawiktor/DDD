@@ -66,7 +66,6 @@ namespace DDD.Model
             return this.Equals(obj as ValueObject);
         }
 
-        [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
             unchecked

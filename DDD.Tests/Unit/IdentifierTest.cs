@@ -1,6 +1,7 @@
 ﻿using DDD.Model;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit
 {
@@ -22,39 +23,38 @@ namespace DDD.Tests.Unit
             }
         }
 
-        public class TestId2 : Identifier<int, TestId2>
+        public static IEnumerable<object[]> EqualityByMethodTestData()
         {
-            public TestId2(int value) : base(value)
+            yield return new object[]
             {
-            }
-
-            protected override void ValidateValue(int value)
-            {
-                if(value <= 0)
-                {
-                    throw new ArgumentException("Id must be greater than 0.");
-                }
-            }
+                new TestId("1"),
+                new TestId("1"),
+                true
+            };
         }
 
         [Test]
-        public void TestIdentifierReferenceTypeValidation()
+        public void TestValueValidation()
+        {
+            Assert.Throws(
+                Is.InstanceOf<ArgumentNullException>()
+                    .And.Property(nameof(ArgumentNullException.ParamName))
+                    .EqualTo("value"),
+                () => new TestId(null));
+            Assert.Throws(
+                Is.InstanceOf<ArgumentException>()
+                    .And.Message
+                    .EqualTo("Id could not be empty."),
+                () => new TestId(""));
+            Assert.DoesNotThrow(() => new TestId("1"));
+        }
+
+        [Test]
+        public void TestValueSetting()
         {
             TestId testId = new TestId("1");
 
-            Assert.Throws<ArgumentNullException>(() => new TestId(null));
-            Assert.Throws<ArgumentException>(() => new TestId(""));
             Assert.That(testId.Value, Is.EqualTo("1"));
-        }
-
-        [Test]
-        public void TestEquality()
-        {
-            Assert.That(new TestId("1"), Is.EqualTo(new TestId("1")));
-            Assert.That(new TestId2(1), Is.EqualTo(new TestId2(1)));
-            Assert.That(new TestId2(1), Is.Not.EqualTo(new TestId("1")));
-            Assert.That(new TestId2(1), Is.Not.EqualTo(new TestId2(2)));
-            Assert.That(new TestId("1"), Is.Not.EqualTo(new TestId("2")));
         }
     }
 }

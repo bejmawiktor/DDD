@@ -2,175 +2,203 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDD.Tests.Unit
 {
     public class EntityTest
     {
-        private class StringEntity : Entity<string>
+        public class StringEntity : Entity<string>
         {
             public StringEntity(string id) : base(id)
             {
             }
         }
 
-        private class IntEntity : Entity<int>
+        public class IntEntity : Entity<int>
         {
             public IntEntity(int id) : base(id)
             {
             }
         }
 
-        public static IEnumerable<object[]> EqualityTestData
+        public static IEnumerable<object[]> EqualityByEqualsTestData
         {
             get
             {
                 yield return new object[]
                 {
                     new IntEntity(1),
-                    new IntEntity(1)
+                    new IntEntity(1),
+                    true
                 };
                 yield return new object[]
                 {
                     new IntEntity(123),
-                    new IntEntity(123)
+                    new IntEntity(123),
+                    true
                 };
                 yield return new object[]
                 {
                     new StringEntity("1"),
-                    new StringEntity("1")
+                    new StringEntity("1"),
+                    true
                 };
                 yield return new object[]
                 {
                     new StringEntity("123"),
-                    new StringEntity("123")
-                };
-            }
-        }
-
-        public static IEnumerable<object[]> InequalityTestData
-        {
-            get
-            {
-                yield return new object[]
-                {
-                    new IntEntity(1),
-                    new IntEntity(2)
+                    new StringEntity("123"),
+                    true
                 };
                 yield return new object[]
                 {
                     new IntEntity(1),
-                    new StringEntity("1")
+                    new IntEntity(2),
+                    false
                 };
                 yield return new object[]
                 {
                     new IntEntity(1),
-                    null
+                    new StringEntity("1"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new IntEntity(1),
+                    null,
+                    false
                 };
                 yield return new object[]
                 {
                     new StringEntity("1"),
                     new StringEntity("12"),
+                    false,
                 };
                 yield return new object[]
                 {
                     new StringEntity("1"),
                     null,
+                    false,
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> EqualityByOperatorsTestData
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("1"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new StringEntity("123"),
+                    new StringEntity("123"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("12"),
+                    false,
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    null,
+                    false,
+                };
+                yield return new object[]
+                {
+                    null,
+                    new StringEntity("1"),
+                    false,
+                };
+                yield return new object[]
+                {
+                    null,
+                    null,
+                    true,
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> GetHashCodeTestData
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("1"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new StringEntity("123"),
+                    new StringEntity("123"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("12"),
+                    false,
+                };
+                yield return new object[]
+                {
+                    new IntEntity(1),
+                    new IntEntity(1),
+                    true
+                };
+                yield return new object[]
+                {
+                    new IntEntity(1),
+                    new IntEntity(2),
+                    false
+                };
+                yield return new object[]
+                {
+                    new IntEntity(2),
+                    new IntEntity(2),
+                    true
                 };
             }
         }
 
         [Test]
-        public void TestEntityReferenceTypeValidation()
+        public void TestIdValidation()
         {
-            Assert.Throws<ArgumentNullException>(() => new StringEntity(null));
+            Assert.Throws(
+                Is.InstanceOf<ArgumentNullException>()
+                    .And.Property(nameof(ArgumentNullException.ParamName))
+                    .EqualTo("id"),
+                () => new StringEntity(null));
         }
 
-        [TestCaseSource(nameof(EqualityTestData))]
-        public void TestEqualityUsingEqualsMethod(object lhsEntity, object rhsEntity)
+        [TestCaseSource(nameof(EqualityByEqualsTestData))]
+        public void TestEqualityUsingEqualsMethod(object lhsEntity, object rhsEntity, bool expectedEqualsResult)
         {
-            Assert.That(lhsEntity.Equals(rhsEntity), Is.True);
+            Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
         }
 
-        [TestCaseSource(nameof(InequalityTestData))]
-        public void TestInequalityUsingEqualsMethod(object lhsEntity, object rhsEntity)
+        [TestCaseSource(nameof(EqualityByOperatorsTestData))]
+        public void TestEqualityUsingEqualsOperators(
+            StringEntity lhsEntity,
+            StringEntity rhsEntity,
+            bool expectedEqualsResult)
         {
-            Assert.That(lhsEntity.Equals(rhsEntity), Is.False);
+            Assert.That(lhsEntity == rhsEntity, Is.EqualTo(expectedEqualsResult));
+            Assert.That(lhsEntity != rhsEntity, Is.Not.EqualTo(expectedEqualsResult));
         }
 
-        [Test]
-        public void TestEqualityUsingEqualsOperator()
+        [TestCaseSource(nameof(GetHashCodeTestData))]
+        public void TestHashCodeGetting(object lhsEntity, object rhsEntity, bool expectedEqualsHashCodeResult)
         {
-            IntEntity lhsIntEntity = new IntEntity(1);
-            IntEntity rhsIntEntity = new IntEntity(1);
-            StringEntity lhsStringEntity = new StringEntity("1");
-            StringEntity rhsStringEntity = new StringEntity("1");
-
-            Assert.That(lhsIntEntity == rhsIntEntity, Is.True);
-            Assert.That((StringEntity)null == (StringEntity)null, Is.True);
-            Assert.That(lhsStringEntity == rhsStringEntity, Is.True);
-            Assert.That((IntEntity)null == (IntEntity)null, Is.True);
-        }
-
-        [Test]
-        public void TestInequalityUsingEqualsOperator()
-        {
-            IntEntity lhsIntEntity = new IntEntity(1);
-            IntEntity rhsIntEntity = new IntEntity(2);
-            StringEntity lhsStringEntity = new StringEntity("1");
-            StringEntity rhsStringEntity = new StringEntity("2");
-
-            Assert.That(lhsIntEntity == rhsIntEntity, Is.False);
-            Assert.That(null == rhsIntEntity, Is.False);
-            Assert.That(lhsIntEntity == null, Is.False);
-            Assert.That(lhsStringEntity == rhsStringEntity, Is.False);
-            Assert.That(lhsStringEntity == null, Is.False);
-            Assert.That(null == rhsStringEntity, Is.False);
-        }
-
-        [Test]
-        public void TestEqualityUsingNotEqualsOperator()
-        {
-            IntEntity lhsIntEntity = new IntEntity(1);
-            IntEntity rhsIntEntity = new IntEntity(1);
-            StringEntity lhsStringEntity = new StringEntity("1");
-            StringEntity rhsStringEntity = new StringEntity("1");
-
-            Assert.That(lhsIntEntity != rhsIntEntity, Is.False);
-            Assert.That((StringEntity)null != (StringEntity)null, Is.False);
-            Assert.That(lhsStringEntity != rhsStringEntity, Is.False);
-            Assert.That((IntEntity)null != (IntEntity)null, Is.False);
-        }
-
-        [Test]
-        public void TestInequalityUsingNotEqualsOperator()
-        {
-            IntEntity lhsIntEntity = new IntEntity(1);
-            IntEntity rhsIntEntity = new IntEntity(2);
-            StringEntity lhsStringEntity = new StringEntity("1");
-            StringEntity rhsStringEntity = new StringEntity("2");
-
-            Assert.That(lhsIntEntity != rhsIntEntity, Is.True);
-            Assert.That(null != rhsIntEntity, Is.True);
-            Assert.That(lhsIntEntity != null, Is.True);
-            Assert.That(lhsStringEntity != rhsStringEntity, Is.True);
-            Assert.That(lhsStringEntity != null, Is.True);
-            Assert.That(null != rhsStringEntity, Is.True);
-        }
-
-        [Test]
-        public void TestHashCodeGetting()
-        {
-            int intId = 20;
-            string stringId = "AA";
-            IntEntity intEntity = new IntEntity(intId);
-            StringEntity stringEntity = new StringEntity(stringId);
-
-            int intHashCode = intEntity.GetHashCode();
-            int stringHashCode = stringEntity.GetHashCode();
-
-            Assert.That(intHashCode, Is.EqualTo(intId.GetHashCode() + intEntity.GetType().GetHashCode() + 2108858624));
-            Assert.That(stringHashCode, Is.EqualTo(stringId.GetHashCode() + stringEntity.GetType().GetHashCode() + 2108858624));
+            Assert.That(lhsEntity.GetHashCode() == rhsEntity.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
         }
     }
 }

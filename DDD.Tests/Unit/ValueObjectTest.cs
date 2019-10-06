@@ -24,6 +24,24 @@ namespace DDD.Tests.Unit
             }
         }
 
+        public class TestValueObject1a : ValueObject
+        {
+            public int Field1 { get; }
+            public string Field2 { get; }
+
+            public TestValueObject1a(int field1, string field2)
+            {
+                this.Field1 = field1;
+                this.Field2 = field2;
+            }
+
+            protected override IEnumerable<object> GetEqualityMembers()
+            {
+                yield return this.Field1;
+                yield return this.Field2;
+            }
+        }
+
         public class TestValueObject2 : ValueObject
         {
             public int Field1 { get; }
@@ -71,190 +89,296 @@ namespace DDD.Tests.Unit
             }
         }
 
-        public static IEnumerable<object[]> EqualityTestData
+        public static IEnumerable<object[]> EqualityByEqualsTestData
         {
             get
             {
                 yield return new object[]
                 {
                     new TestValueObject1(1, "AA"),
-                    new TestValueObject1(1, "AA")
+                    new TestValueObject1(1, "AA"),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject1(2, "AAB"),
-                    new TestValueObject1(2, "AAB")
+                    new TestValueObject1(2, "AAB"),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject1(2, null),
-                    new TestValueObject1(2, null)
+                    new TestValueObject1(2, null),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject2(1, 3.1, "AAB"),
-                    new TestValueObject2(1, 3.1, "AAB")
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject2(2, 3, "AABC"),
-                    new TestValueObject2(2, 3, "AABC")
+                    new TestValueObject2(2, 3, "AABC"),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject2(1, 3.1, null),
-                    new TestValueObject2(1, 3.1, null)
+                    new TestValueObject2(1, 3.1, null),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject3(1, 3.1, null, true),
-                    new TestValueObject3(1, 3.1, null, true)
+                    new TestValueObject3(1, 3.1, null, true),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    new TestValueObject1(2, "AA"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    null,
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    new TestValueObject1(1, "AB"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    new TestValueObject1(2, null),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    new TestValueObject2(1, 0, "AA"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, "AA"),
+                    new TestValueObject2(2, 0, "AA"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, "AA"),
+                    new TestValueObject2(1, 0, "AB"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, "AA"),
+                    new TestValueObject2(2, 1, null),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, "AA"),
+                    new TestValueObject2(1, 0, null),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, null),
+                    new TestValueObject2(1, 0, "AA"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 0, "AA"),
+                    new TestValueObject1(1, "AA"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject3(1, 0, "AA", false),
+                    new TestValueObject3(1, 0, "AA", true),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject3(1, 0, "AA", true),
+                    new TestValueObject3(1, 0, "AA", false),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(1, "AA"),
+                    new TestValueObject1a(1, "AA"),
+                    false
                 };
             }
         }
 
-        public static IEnumerable<object[]> InequalityTestData
+        public static IEnumerable<object[]> EqualityByOperatorsTestData
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3.4, "AAC"),
+                    new TestValueObject2(2, 3.4, "AAC"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3.5, "AAC"),
+                    new TestValueObject2(2, 3.5, "AAC"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3.1, "AAB"),
+                    new TestValueObject2(2, 3.1, "AAB"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    new TestValueObject2(1, 3.2, "AAB"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(3, 3.5, "AAC"),
+                    new TestValueObject2(2, 3.4, "AAC"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(3, 3.4, "AAD"),
+                    new TestValueObject2(2, 3.5, "AAC"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3.1, "AAB"),
+                    null,
+                    false
+                };
+                yield return new object[]
+                {
+                    null,
+                    new TestValueObject2(2, 3.1, "AAB"),
+                    false
+                };
+                yield return new object[]
+                {
+                    null,
+                    null,
+                    true
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> GetHashCodeTestData
         {
             get
             {
                 yield return new object[]
                 {
                     new TestValueObject1(1, "AA"),
-                    new TestValueObject1(2, "AA")
+                    new TestValueObject1(1, "AA"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(2, "AAB"),
+                    new TestValueObject1(2, "AAB"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(2, null),
+                    new TestValueObject1(2, null),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    true
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3, "AABC"),
+                    new TestValueObject2(2, 3, "AABC"),
+                    true
                 };
                 yield return new object[]
                 {
                     new TestValueObject1(1, "AA"),
-                    null
+                    new TestValueObject1(1, "AC"),
+                    false
                 };
                 yield return new object[]
                 {
-                    new TestValueObject1(1, "AA"),
-                    new TestValueObject1(1, "AB")
+                    new TestValueObject1(3, "AAB"),
+                    new TestValueObject1(2, "AAB"),
+                    false
                 };
                 yield return new object[]
                 {
-                    new TestValueObject1(1, "AA"),
-                    new TestValueObject1(2, null)
+                    new TestValueObject1(2, null),
+                    new TestValueObject1(2, "AS"),
+                    false
                 };
                 yield return new object[]
                 {
-                    new TestValueObject1(1, "AA"),
-                    new TestValueObject2(1, 0, "AA")
+                    new TestValueObject2(1, 3.2, "AAB"),
+                    new TestValueObject2(1, 3.1, "AAB"),
+                    false
                 };
                 yield return new object[]
                 {
-                    new TestValueObject2(1, 0, "AA"),
-                    new TestValueObject2(2, 0, "AA")
-                };
-                yield return new object[]
-                {
-                    new TestValueObject2(1, 0, "AA"),
-                    new TestValueObject2(1, 0, "AB")
-                };
-                yield return new object[]
-                {
-                    new TestValueObject2(1, 0, "AA"),
-                    new TestValueObject2(2, 1, null)
-                };
-                yield return new object[]
-                {
-                    new TestValueObject2(1, 0, "AA"),
-                    new TestValueObject2(1, 0, null)
-                };
-                yield return new object[]
-                {
-                    new TestValueObject2(1, 0, null),
-                    new TestValueObject2(1, 0, "AA")
-                };
-                yield return new object[]
-                {
-                    new TestValueObject2(1, 0, "AA"),
-                    new TestValueObject1(1, "AA")
-                };
-                yield return new object[]
-                {
-                    new TestValueObject3(1, 0, "AA", false),
-                    new TestValueObject3(1, 0, "AA", true)
-                };
-                yield return new object[]
-                {
-                    new TestValueObject3(1, 0, "AA", true),
-                    new TestValueObject3(1, 0, "AA", false)
+                    new TestValueObject2(2, 3, "AABC"),
+                    new TestValueObject2(2, 33, "AAB"),
+                    false
                 };
             }
         }
 
-        [TestCaseSource(nameof(EqualityTestData))]
-        public void TestEqualityUsingEqualsMethod(ValueObject lhsValueObject, ValueObject rhsValueObject)
+        [TestCaseSource(nameof(EqualityByEqualsTestData))]
+        public void TestEqualityUsingEqualsMethod(
+            object lhsValueObject,
+            object rhsValueObject,
+            bool expectedEqualsResult)
         {
-            Assert.That(lhsValueObject.Equals(rhsValueObject), Is.True);
+            Assert.That(lhsValueObject.Equals(rhsValueObject), Is.EqualTo(expectedEqualsResult));
         }
 
-        [TestCaseSource(nameof(InequalityTestData))]
-        public void TestInequalityUsingEqualsMethod(ValueObject lhsValueObject, ValueObject rhsValueObject)
+        [TestCaseSource(nameof(EqualityByOperatorsTestData))]
+        public void TestEqualityUsingEqualsOperators(
+            TestValueObject2 lhsValueObject,
+            TestValueObject2 rhsValueObject,
+            bool expectedEqualsResult)
         {
-            Assert.That(lhsValueObject.Equals(rhsValueObject), Is.False);
+            Assert.That(lhsValueObject == rhsValueObject, Is.EqualTo(expectedEqualsResult));
+            Assert.That(lhsValueObject != rhsValueObject, Is.Not.EqualTo(expectedEqualsResult));
         }
 
-        [Test]
-        public void TestEqualityUsingEqualsOperator()
+        [TestCaseSource(nameof(GetHashCodeTestData))]
+        public void TestHashCodeGetting(object lhsEntity, object rhsEntity, bool expectedEqualsHashCodeResult)
         {
-            TestValueObject1 lhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject1 rhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject2 lhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-            TestValueObject2 rhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-
-            Assert.That(lhsTestValueObject1 == rhsTestValueObject1, Is.True);
-            Assert.That((TestValueObject1)null == (TestValueObject1)null, Is.True);
-            Assert.That(lhsTestValueObject2 == rhsTestValueObject2, Is.True);
-            Assert.That((TestValueObject2)null == (TestValueObject2)null, Is.True);
-        }
-
-        [Test]
-        public void TestInequalityUsingEqualsOperator()
-        {
-            TestValueObject1 lhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject1 rhsTestValueObject1 = new TestValueObject1(2, "AB");
-            TestValueObject2 lhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-            TestValueObject2 rhsTestValueObject2 = new TestValueObject2(2, 2, "AAB");
-
-            Assert.That(lhsTestValueObject1 == rhsTestValueObject1, Is.False);
-            Assert.That(null == rhsTestValueObject1, Is.False);
-            Assert.That(lhsTestValueObject1 == null, Is.False);
-            Assert.That(lhsTestValueObject2 == rhsTestValueObject2, Is.False);
-            Assert.That(lhsTestValueObject2 == null, Is.False);
-            Assert.That(null == rhsTestValueObject2, Is.False);
-        }
-
-        [Test]
-        public void TestEqualityUsingNotEqualsOperator()
-        {
-            TestValueObject1 lhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject1 rhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject2 lhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-            TestValueObject2 rhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-
-            Assert.That(lhsTestValueObject1 != rhsTestValueObject1, Is.False);
-            Assert.That((TestValueObject1)null != (TestValueObject1)null, Is.False);
-            Assert.That(lhsTestValueObject2 != rhsTestValueObject2, Is.False);
-            Assert.That((TestValueObject2)null != (TestValueObject2)null, Is.False);
-        }
-
-        [Test]
-        public void TestInequalityUsingNotEqualsOperator()
-        {
-            TestValueObject1 lhsTestValueObject1 = new TestValueObject1(1, "AA");
-            TestValueObject1 rhsTestValueObject1 = new TestValueObject1(2, "AB");
-            TestValueObject2 lhsTestValueObject2 = new TestValueObject2(1, 0, "AAB");
-            TestValueObject2 rhsTestValueObject2 = new TestValueObject2(2, 2, "AAB");
-
-            Assert.That(lhsTestValueObject1 != rhsTestValueObject1, Is.True);
-            Assert.That(null != rhsTestValueObject1, Is.True);
-            Assert.That(lhsTestValueObject1 != null, Is.True);
-            Assert.That(lhsTestValueObject2 != rhsTestValueObject2, Is.True);
-            Assert.That(lhsTestValueObject2 != null, Is.True);
-            Assert.That(null != rhsTestValueObject2, Is.True);
+            Assert.That(lhsEntity.GetHashCode() == rhsEntity.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
         }
     }
 }
