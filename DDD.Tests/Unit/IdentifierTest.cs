@@ -95,11 +95,11 @@ namespace DDD.Tests.Unit
 
         [TestCaseSource(nameof(EqualityByEqualsIdentifierMethodTestData))]
         public void TestEqualityByEqualsIdentifierMethod(
-            TestId lhsTestId,
-            TestId rhsTestId,
+            TestId lhsIdentifier,
+            TestId rhsIdentifier,
             bool expectedEqualityResult)
         {
-            Assert.That(lhsTestId.Equals(rhsTestId), Is.EqualTo(expectedEqualityResult));
+            Assert.That(lhsIdentifier.Equals(rhsIdentifier), Is.EqualTo(expectedEqualityResult));
         }
     }
 }
