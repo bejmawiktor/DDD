@@ -376,9 +376,9 @@ namespace DDD.Tests.Unit
         }
 
         [TestCaseSource(nameof(GetHashCodeTestData))]
-        public void TestHashCodeGetting(object lhsEntity, object rhsEntity, bool expectedEqualsHashCodeResult)
+        public void TestHashCodeGetting(object lhsValueObject, object rhsValueObject, bool expectedEqualsHashCodeResult)
         {
-            Assert.That(lhsEntity.GetHashCode() == rhsEntity.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
+            Assert.That(lhsValueObject.GetHashCode() == rhsValueObject.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
         }
     }
 }
