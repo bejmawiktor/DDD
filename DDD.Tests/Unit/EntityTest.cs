@@ -163,6 +163,18 @@ namespace DDD.Tests.Unit
             {
                 yield return new object[]
                 {
+                    new IntEntity(1),
+                    new IntEntity(1),
+                    true
+                };
+                yield return new object[]
+                {
+                    new IntEntity(123),
+                    new IntEntity(123),
+                    true
+                };
+                yield return new object[]
+                {
                     new StringEntity("1"),
                     new StringEntity("1"),
                     true
@@ -171,18 +183,6 @@ namespace DDD.Tests.Unit
                 {
                     new StringEntity("123"),
                     new StringEntity("123"),
-                    true
-                };
-                yield return new object[]
-                {
-                    new StringEntity("1"),
-                    new StringEntity("12"),
-                    false,
-                };
-                yield return new object[]
-                {
-                    new IntEntity(1),
-                    new IntEntity(1),
                     true
                 };
                 yield return new object[]
@@ -193,21 +193,47 @@ namespace DDD.Tests.Unit
                 };
                 yield return new object[]
                 {
-                    new IntEntity(2),
-                    new IntEntity(2),
-                    true
+                    new IntEntity(1),
+                    new StringEntity("1"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    new StringEntity("12"),
+                    false,
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    "1",
+                    false,
+                };
+                yield return new object[]
+                {
+                    new StringEntity("1"),
+                    2,
+                    false,
                 };
             }
         }
 
         [Test]
-        public void TestIdValidation()
+        public void TestValidation()
         {
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("id"),
                 () => new StringEntity(null));
+        }
+
+        [Test]
+        public void TestCreatingEntity()
+        {
+            StringEntity stringEntity = new StringEntity("1");
+
+            Assert.That(stringEntity.Id, Is.EqualTo("1"));
         }
 
         [TestCaseSource(nameof(EqualityByEqualsMethodTestData))]
@@ -236,7 +262,7 @@ namespace DDD.Tests.Unit
         }
 
         [TestCaseSource(nameof(GetHashCodeTestData))]
-        public void TestHashCodeGetting(object lhsEntity, object rhsEntity, bool expectedEqualsHashCodeResult)
+        public void TestGettingHashCode(object lhsEntity, object rhsEntity, bool expectedEqualsHashCodeResult)
         {
             Assert.That(lhsEntity.GetHashCode() == rhsEntity.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
         }

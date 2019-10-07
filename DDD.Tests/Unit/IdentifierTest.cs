@@ -70,7 +70,7 @@ namespace DDD.Tests.Unit
         }
 
         [Test]
-        public void TestValueValidation()
+        public void TestValidation()
         {
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
@@ -86,7 +86,7 @@ namespace DDD.Tests.Unit
         }
 
         [Test]
-        public void TestValueSetting()
+        public void TestCreatingIdentifier()
         {
             TestId testId = new TestId("1");
 

@@ -353,6 +353,30 @@ namespace DDD.Tests.Unit
                     new TestValueObject2(2, 33, "AAB"),
                     false
                 };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3, "AABC"),
+                    new TestValueObject1(2, "AAB"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(2, null),
+                    new TestValueObject2(2, 3, "AABC"),
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject1(2, null),
+                    "1",
+                    false
+                };
+                yield return new object[]
+                {
+                    new TestValueObject2(2, 3, "AABC"),
+                    2,
+                    false
+                };
             }
         }
 
@@ -376,9 +400,9 @@ namespace DDD.Tests.Unit
         }
 
         [TestCaseSource(nameof(GetHashCodeTestData))]
-        public void TestHashCodeGetting(object lhsValueObject, object rhsValueObject, bool expectedEqualsHashCodeResult)
+        public void TestGettingHashCode(object lhsValueObject, object rhsObject, bool expectedEqualsHashCodeResult)
         {
-            Assert.That(lhsValueObject.GetHashCode() == rhsValueObject.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
+            Assert.That(lhsValueObject.GetHashCode() == rhsObject.GetHashCode(), Is.EqualTo(expectedEqualsHashCodeResult));
         }
     }
 }
