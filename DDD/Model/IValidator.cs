@@ -1,10 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace DDD.Model
+﻿namespace DDD.Model
 {
-    public interface IValidator<TValidatedMembersTuple>
-        where TValidatedMembersTuple : ITuple
+    public interface IValidator<TValidatedObject>
     {
-        void Validate(TValidatedMembersTuple validatedMembers);
+        void Validate(TValidatedObject validatedObject);
     }
 }

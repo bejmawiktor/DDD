@@ -11,17 +11,22 @@ namespace DDD.Model
         }
     }
 
-    public abstract class Aggregate<TIdentifier, TValidatedMembersTuple, TValidator> : Aggregate<TIdentifier>
+    public abstract class Aggregate<TIdentifier, TValidatedObject, TValidator> : Aggregate<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
-        where TValidatedMembersTuple : ITuple
-        where TValidator : IValidator<TValidatedMembersTuple>, new()
+        where TValidator : IValidator<TValidatedObject>, new()
     {
         protected TValidator Validator { get; }
 
-        public Aggregate(TIdentifier id, TValidatedMembersTuple validatedMembers) : base(id)
+        public Aggregate(TIdentifier id, TValidatedObject validatedObject) : base(id)
         {
             this.Validator = new TValidator();
-            this.Validator.Validate(validatedMembers);
+
+            if(default(TValidatedObject) == null && validatedObject == null)
+            {
+                throw new ArgumentNullException(nameof(validatedObject));
+            }
+
+            this.Validator.Validate(validatedObject);
         }
     }
 }
