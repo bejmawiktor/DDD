@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
     public abstract class Aggregate<TIdentifier> : Entity<TIdentifier>
          where TIdentifier : IEquatable<TIdentifier>
     {
-        public Aggregate(TIdentifier id) : base(id)
+        protected Aggregate(TIdentifier id) : base(id)
         {
         }
     }
@@ -17,7 +16,7 @@ namespace DDD.Model
     {
         protected TValidator Validator { get; }
 
-        public Aggregate(TIdentifier id, TValidatedObject validatedObject) : base(id)
+        protected Aggregate(TIdentifier id, TValidatedObject validatedObject) : base(id)
         {
             this.Validator = new TValidator();
 

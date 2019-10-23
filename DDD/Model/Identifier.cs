@@ -9,7 +9,7 @@ namespace DDD.Model
     {
         public TIdentifier Value { get; }
 
-        public Identifier(TIdentifier value)
+        protected Identifier(TIdentifier value)
         {
             if(default(TIdentifier) == null && value == null)
             {

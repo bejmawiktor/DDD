@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
     public abstract class AggregateRoot<TIdentifier> : Aggregate<TIdentifier>
          where TIdentifier : IEquatable<TIdentifier>
     {
-        public AggregateRoot(TIdentifier id) : base(id)
+        protected AggregateRoot(TIdentifier id) : base(id)
         {
         }
     }
@@ -17,7 +16,7 @@ namespace DDD.Model
     {
         protected TValidator Validator { get; }
 
-        public AggregateRoot(TIdentifier id, TValidatedObject validatedObject) : base(id)
+        protected AggregateRoot(TIdentifier id, TValidatedObject validatedObject) : base(id)
         {
             this.Validator = new TValidator();
 

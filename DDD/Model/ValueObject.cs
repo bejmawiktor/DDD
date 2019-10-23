@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace DDD.Model
 {
@@ -48,8 +47,7 @@ namespace DDD.Model
                     return false;
                 }
 
-                if(membersValues.Current != null
-                    && !membersValues.Current.Equals(otherMembersValues.Current))
+                if(membersValues.Current?.Equals(otherMembersValues.Current) == false)
                 {
                     return false;
                 }
@@ -74,7 +72,7 @@ namespace DDD.Model
 
                 foreach(var memberValue in this.GetEqualityMembers())
                 {
-                    hash = hash * 1674319 + ((memberValue != null) ? memberValue.GetHashCode() : 0);
+                    hash = hash * 1674319 + (memberValue?.GetHashCode() ?? 0);
                 }
 
                 return hash;
