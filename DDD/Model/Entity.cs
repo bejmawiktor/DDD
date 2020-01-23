@@ -46,13 +46,7 @@ namespace DDD.Model
             return this.Equals(obj as Entity<TIdentifier>);
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return 2108858624 + this.GetType().GetHashCode() + this.Id.GetHashCode();
-            }
-        }
+        public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);
 
         public bool Equals(Entity<TIdentifier> other)
         {
