@@ -4,9 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace DDD.Utils
 {
-    public class TupleContainer<TTuple> where TTuple : ITuple
+    public class TupleContainer<TTuple> : ITuple where TTuple : ITuple
     {
         public TTuple Tuple { get; }
+
+        public int Length => this.Tuple.Length;
+        public object this[int index] => this.Tuple[index];
 
         public TupleContainer(TTuple tuple)
         {

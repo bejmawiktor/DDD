@@ -38,6 +38,9 @@ namespace DDD.Tests.Unit
                 = new TupleContainer<(string name, decimal value)>(("AA", 22m));
 
             Assert.That(tupleContainer.Tuple, Is.EqualTo(("AA", 22m)));
+            Assert.That(tupleContainer.Length, Is.EqualTo(2));
+            Assert.That(tupleContainer[0], Is.EqualTo("AA"));
+            Assert.That(tupleContainer[1], Is.EqualTo(22m));
         }
 
         [Test]
