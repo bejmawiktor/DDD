@@ -9,8 +9,8 @@ namespace DDD.Persistence
         where TEntity : Entity<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        Task<TEntity> Get(TIdentifier identifier);
+        Task<TEntity> GetAsync(TIdentifier identifier);
 
-        Task<IEnumerable<TEntity>> Get(Pagination pagination = null);
+        Task<IEnumerable<TEntity>> GetAsync(Pagination pagination = null);
     }
 }

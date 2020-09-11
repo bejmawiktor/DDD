@@ -8,10 +8,10 @@ namespace DDD.Persistence
         where TEntity : Entity<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        Task Add(TEntity entity);
+        Task AddAsync(TEntity entity);
 
-        Task Remove(TEntity entity);
+        Task RemoveAsync(TEntity entity);
 
-        Task Update(TEntity entity);
+        Task UpdateAsync(TEntity entity);
     }
 }
