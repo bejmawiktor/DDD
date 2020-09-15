@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace DDD.CQRS
 {
-    public class QueryDispatcher : IQueryDispatcher
+    public class QueryDispatcher : IQueryDispatcher, IAsyncQueryDispatcher
     {
         private IDependencyResolver DependencyResolver { get; }
 
@@ -28,6 +29,24 @@ namespace DDD.CQRS
             }
 
             return handler.Handle(query);
+        }
+
+        public Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
+            where TQuery : IQuery<TResult>
+        {
+            if(query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+
+            var handler = this.DependencyResolver.Resolve<IAsyncQueryHandler<TQuery, TResult>>();
+
+            if(handler == null)
+            {
+                throw new QueryHandlerNotFoundException();
+            }
+
+            return handler.HandleAsync(query);
         }
     }
 }
