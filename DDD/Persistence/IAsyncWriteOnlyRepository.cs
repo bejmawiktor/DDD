@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace DDD.Persistence
 {
-    public interface IAsyncWriteOnlyRepository<TEntity, TIdentifier>
-        where TEntity : Entity<TIdentifier>
+    public interface IAsyncWriteOnlyRepository<TAggregateRoot, TIdentifier>
+        where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        Task AddAsync(TEntity entity);
+        Task AddAsync(TAggregateRoot entity);
 
-        Task RemoveAsync(TEntity entity);
+        Task RemoveAsync(TAggregateRoot entity);
 
-        Task UpdateAsync(TEntity entity);
+        Task UpdateAsync(TAggregateRoot entity);
     }
 }

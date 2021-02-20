@@ -3,14 +3,14 @@ using System;
 
 namespace DDD.Persistence
 {
-    public interface IWriteOnlyRepository<TEntity, TIdentifier>
-        where TEntity : Entity<TIdentifier>
+    public interface IWriteOnlyRepository<TAggregateRoot, TIdentifier>
+        where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        void Add(TEntity entity);
+        void Add(TAggregateRoot entity);
 
-        void Remove(TEntity entity);
+        void Remove(TAggregateRoot entity);
 
-        void Update(TEntity entity);
+        void Update(TAggregateRoot entity);
     }
 }

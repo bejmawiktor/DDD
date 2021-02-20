@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace DDD.Persistence
 {
-    public interface IReadOnlyRepository<TEntity, TIdentifier>
-        where TEntity : Entity<TIdentifier>
+    public interface IReadOnlyRepository<TAggregateRoot, TIdentifier>
+        where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        TEntity Get(TIdentifier identifier);
+        TAggregateRoot Get(TIdentifier identifier);
 
-        IEnumerable<TEntity> Get(Pagination pagination = null);
+        IEnumerable<TAggregateRoot> Get(Pagination pagination = null);
     }
 }
