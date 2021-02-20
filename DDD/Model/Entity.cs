@@ -2,7 +2,7 @@
 
 namespace DDD.Model
 {
-    public abstract class Entity<TIdentifier> : IEquatable<Entity<TIdentifier>>
+    public abstract class Entity<TIdentifier> : IEntity<TIdentifier>, IEquatable<Entity<TIdentifier>>
          where TIdentifier : IEquatable<TIdentifier>
     {
         public TIdentifier Id { get; protected set; }
