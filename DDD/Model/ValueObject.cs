@@ -89,11 +89,6 @@ namespace DDD.Model
         {
             this.Validator = new TValidator();
 
-            if(default(TValidatedObject) == null && validatedObject == null)
-            {
-                throw new ArgumentNullException(nameof(validatedObject));
-            }
-
             this.Validator.Validate(validatedObject);
         }
     }

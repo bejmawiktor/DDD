@@ -17,4 +17,10 @@
     <ProjectReference Include="..\DDD\DDD.csproj" />
   </ItemGroup>
 
+  <PropertyGroup Label="FineCodeCoverage">
+    <IncludeTestAssembly>
+      False
+    </IncludeTestAssembly>
+  </PropertyGroup>
+
 </Project>
