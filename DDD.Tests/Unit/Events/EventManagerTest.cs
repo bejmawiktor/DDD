@@ -113,13 +113,9 @@ namespace DDD.Tests.Unit.Events
         [Test]
         public void TestNotify_WhenScopeWasCreated_ThenEventsAreAddedToScopeEvents()
         {
-            bool dispatched;
             var eventMock = new Mock<IEvent>();
             var @event = eventMock.Object;
             var eventDispatcherMock = new Mock<IEventDispatcher>();
-            eventDispatcherMock
-                .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
-                .Callback(() => dispatched = true);
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
             using(EventsScope eventsScope = EventManager.Instance.CreateScope())
