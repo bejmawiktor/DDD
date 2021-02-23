@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace DDD.Events
@@ -9,12 +8,12 @@ namespace DDD.Events
         private static readonly Lazy<EventManager> instance = new Lazy<EventManager>(
             () => new EventManager());
 
-        private static readonly AsyncLocal<EventsScope> LocalEventsScope = new AsyncLocal<EventsScope>();
+        private static readonly AsyncLocal<EventsScope> localEventsScope = new AsyncLocal<EventsScope>();
 
         public static EventsScope CurrentScope
         {
-            get => LocalEventsScope.Value;
-            internal set => LocalEventsScope.Value = value;
+            get => EventManager.localEventsScope.Value;
+            internal set => EventManager.localEventsScope.Value = value;
         }
 
         public static EventManager Instance => instance.Value;
