@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DDD.Model
 {
-    public abstract class ValueObject : IEquatable<ValueObject>
+    public abstract class ValueObject : IEquatable<ValueObject>, IDomainObject
     {
         public static bool operator ==(ValueObject lhs, ValueObject rhs)
         {

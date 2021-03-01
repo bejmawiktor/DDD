@@ -2,7 +2,7 @@
 
 namespace DDD.Model
 {
-    public interface IEntity<TIdentifier>
+    public interface IEntity<TIdentifier> : IDomainObject
         where TIdentifier : IEquatable<TIdentifier>
     {
         TIdentifier Id { get; }
