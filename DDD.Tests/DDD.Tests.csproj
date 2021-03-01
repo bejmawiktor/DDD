@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DDD.Application\DDD.Application.csproj" />
-    <ProjectReference Include="..\DDD\DDD.Domain.csproj" />
+    <ProjectReference Include="..\DDD.Domain\DDD.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup Label="FineCodeCoverage">
