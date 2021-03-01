@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public abstract class Entity<TIdentifier> : IEntity<TIdentifier>, IEquatable<Entity<TIdentifier>>
          where TIdentifier : IEquatable<TIdentifier>

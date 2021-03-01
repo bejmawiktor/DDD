@@ -1,8 +1,8 @@
-﻿using DDD.Model;
+﻿using DDD.Domain.Model;
 using System;
 using System.Collections.Generic;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IReadOnlyRepository<TAggregateRoot, TIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>

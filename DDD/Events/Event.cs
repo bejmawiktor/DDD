@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDD.Events
+namespace DDD.Domain.Events
 {
     public abstract class Event : IEvent
     {

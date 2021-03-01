@@ -1,4 +1,4 @@
-﻿namespace DDD.Model
+﻿namespace DDD.Domain.Model
 {
     public interface IValidator<TValidatedObject>
     {

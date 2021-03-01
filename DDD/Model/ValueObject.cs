@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public abstract class ValueObject : IEquatable<ValueObject>, IDomainObject
     {

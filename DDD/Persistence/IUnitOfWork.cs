@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IUnitOfWork : IDisposable
     {

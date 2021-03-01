@@ -1,4 +1,4 @@
-﻿namespace DDD.Persistence
+﻿namespace DDD.Domain.Persistence
 {
     public record Pagination
     {

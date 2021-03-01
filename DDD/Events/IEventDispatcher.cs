@@ -1,4 +1,4 @@
-﻿namespace DDD.Events
+﻿namespace DDD.Domain.Events
 {
     public interface IEventDispatcher
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeration>
         where TValue : IEquatable<TValue>

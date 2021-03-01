@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IAsyncUnitOfWork
     {

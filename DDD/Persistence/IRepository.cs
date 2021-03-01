@@ -1,7 +1,7 @@
-﻿using DDD.Model;
+﻿using DDD.Domain.Model;
 using System;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IRepository<TAggregateRoot, TIdentifier>
     : IWriteOnlyRepository<TAggregateRoot, TIdentifier>, IReadOnlyRepository<TAggregateRoot, TIdentifier>

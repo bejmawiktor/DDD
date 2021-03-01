@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public abstract class Identifier<TIdentifier, TDeriviedIdentifier> : ValueObject, IEquatable<TDeriviedIdentifier>
        where TIdentifier : IEquatable<TIdentifier>

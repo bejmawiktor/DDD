@@ -1,7 +1,7 @@
-﻿using DDD.Model;
+﻿using DDD.Domain.Model;
 using System;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IAsyncRepository<TAggregateRoot, TIdentifier>
     : IAsyncWriteOnlyRepository<TAggregateRoot, TIdentifier>, IAsyncReadOnlyRepository<TAggregateRoot, TIdentifier>

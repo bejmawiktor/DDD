@@ -1,9 +1,9 @@
-﻿using DDD.Model;
+﻿using DDD.Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DDD.Persistence
+namespace DDD.Domain.Persistence
 {
     public interface IAsyncReadOnlyRepository<TAggregateRoot, TIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>

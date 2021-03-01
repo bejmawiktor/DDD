@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public interface IEntity<TIdentifier> : IDomainObject
         where TIdentifier : IEquatable<TIdentifier>

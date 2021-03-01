@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace DDD.Utils
+namespace DDD.Domain.Utils
 {
     public class TupleContainer<TTuple> : ITuple where TTuple : ITuple
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace DDD.Events
+namespace DDD.Domain.Events
 {
     public sealed class EventManager
     {

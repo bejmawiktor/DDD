@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DDD.Events
+namespace DDD.Domain.Events
 {
     public class EventsScope : IDisposable
     {

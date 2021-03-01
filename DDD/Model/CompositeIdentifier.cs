@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace DDD.Model
+namespace DDD.Domain.Model
 {
     public abstract class CompositeIdentifier<TTupleKeys, TDeriviedCompositeIdentifier>
     : Identifier<TTupleKeys, TDeriviedCompositeIdentifier>
