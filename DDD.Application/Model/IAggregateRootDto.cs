@@ -3,7 +3,7 @@ using System;
 
 namespace DDD.Application.Model
 {
-    public abstract class AggregateRootDto<TAggregateRoot, TIdentifier> : DomainObjectDto<TAggregateRoot>
+    public interface IAggregateRootDto<TAggregateRoot, TIdentifier> : IDomainObjectDto<TAggregateRoot>
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {

@@ -2,7 +2,7 @@
 
 namespace DDD.Application.Model
 {
-    public abstract class DomainObjectDto<TDomainObject>
+    public interface IDomainObjectDto<TDomainObject>
         where TDomainObject : IDomainObject
     {
         protected internal abstract TDomainObject ToDomainObject();

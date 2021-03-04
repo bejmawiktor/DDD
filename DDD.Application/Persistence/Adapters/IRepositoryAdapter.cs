@@ -10,7 +10,7 @@ namespace DDD.Application.Persistence.Adapters
 {
     public interface IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>
     : IRepository<TAggregateRoot, TIdentifier>
-        where TDto : AggregateRootDto<TAggregateRoot, TIdentifier>
+        where TDto : IAggregateRootDto<TAggregateRoot, TIdentifier>
         where TDtoRepository : IDtoRepository<TDto, TDtoIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>

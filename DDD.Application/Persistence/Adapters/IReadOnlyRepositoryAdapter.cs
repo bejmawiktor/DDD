@@ -10,7 +10,7 @@ namespace DDD.Application.Persistence.Adapters
 {
     public interface IReadOnlyRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>
     : IReadOnlyRepository<TAggregateRoot, TIdentifier>
-        where TDto : AggregateRootDto<TAggregateRoot, TIdentifier>
+        where TDto : IAggregateRootDto<TAggregateRoot, TIdentifier>
         where TDtoRepository : IReadOnlyDtoRepository<TDto, TDtoIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>

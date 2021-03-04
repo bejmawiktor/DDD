@@ -9,7 +9,7 @@ namespace DDD.Application.Persistence.Adapters
 {
     public interface IAsyncWriteOnlyRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>
     : IAsyncWriteOnlyRepository<TAggregateRoot, TIdentifier>
-        where TDto : AggregateRootDto<TAggregateRoot, TIdentifier>
+        where TDto : IAggregateRootDto<TAggregateRoot, TIdentifier>
         where TDtoRepository : IAsyncWriteOnlyDtoRepository<TDto, TDtoIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>

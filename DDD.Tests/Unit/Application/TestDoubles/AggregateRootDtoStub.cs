@@ -2,7 +2,7 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles
 {
-    public class AggregateRootDtoStub : AggregateRootDto<AggregateRootStub, string>
+    public class AggregateRootDtoStub : IAggregateRootDto<AggregateRootStub, string>
     {
         public string Id { get; }
         public string Name { get; }
@@ -13,7 +13,7 @@ namespace DDD.Tests.Unit.Application.TestDoubles
             this.Name = name;
         }
 
-        protected override AggregateRootStub ToDomainObject()
+        AggregateRootStub IDomainObjectDto<AggregateRootStub>.ToDomainObject()
         {
             return new AggregateRootStub(this.Id, this.Name);
         }
