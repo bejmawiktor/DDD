@@ -24,16 +24,6 @@ namespace DDD.Domain.Events
         {
         }
 
-        public EventsScope CreateScope()
-        {
-            if(EventManager.CurrentScope != null)
-            {
-                throw new InvalidOperationException("Can't begin another scope when last one wasn't disposed.");
-            }
-
-            return EventManager.CurrentScope = new EventsScope();
-        }
-
         public void Notify<TEvent>(TEvent @event) where TEvent : IEvent
         {
             if(EventManager.CurrentScope == null)

@@ -7,10 +7,13 @@ namespace DDD.Domain.Events
     {
         private bool IsDisposed { get; set; }
         internal List<IEvent> Events { get; }
+        private EventsScope ParentScope { get; }
 
         internal EventsScope()
         {
             this.Events = new List<IEvent>();
+            this.ParentScope = EventManager.CurrentScope;
+            EventManager.CurrentScope = this;
         }
 
         internal void AddEvent<TEvent>(TEvent @event)
@@ -28,7 +31,19 @@ namespace DDD.Domain.Events
         {
             foreach(var @event in this.Events)
             {
-                EventManager.Instance.EventDispatcher.Dispatch(@event);
+                if(this.ParentScope == null)
+                {
+                    EventManager.Instance.EventDispatcher.Dispatch(@event);
+                }
+                else
+                {
+                    if(this.ParentScope.IsDisposed)
+                    {
+                        throw new InvalidOperationException("Parent events scope was disposed.");
+                    }
+
+                    this.ParentScope.AddEvent(@event);
+                }
             }
 
             this.Clear();
@@ -56,7 +71,7 @@ namespace DDD.Domain.Events
 
                 if(ReferenceEquals(this, EventManager.CurrentScope))
                 {
-                    EventManager.CurrentScope = null;
+                    EventManager.CurrentScope = this.ParentScope;
                 }
             }
 
