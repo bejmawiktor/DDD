@@ -7,7 +7,6 @@ namespace DDD.Domain.Events
     {
         private static readonly Lazy<EventManager> instance = new Lazy<EventManager>(
             () => new EventManager());
-
         private static readonly AsyncLocal<EventsScope> localEventsScope = new AsyncLocal<EventsScope>();
 
         public static EventsScope CurrentScope
