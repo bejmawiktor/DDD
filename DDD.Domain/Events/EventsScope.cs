@@ -10,7 +10,7 @@ namespace DDD.Domain.Events
         private EventsScope ParentScope { get; }
         private int NestedScopesCounter { get; set; }
 
-        internal EventsScope()
+        public EventsScope()
         {
             this.Events = new List<IEvent>();
             this.ParentScope = EventManager.CurrentScope;

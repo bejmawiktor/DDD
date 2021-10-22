@@ -76,7 +76,7 @@ namespace DDD.Tests.Unit.Application.Persistence
         }
 
         [Test]
-        public void TestRemove_WhenAggregateRootDtoGiven_ThenAggregateRootIsRemoved()
+        public void TestRemove_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
         {
             var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
             {
@@ -85,7 +85,7 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
-            repository.Remove(new AggregateRootStub("1"));
+            repository.Remove("1");
 
             Assert.That(dtoRepository.Dtos, Is.Empty);
         }

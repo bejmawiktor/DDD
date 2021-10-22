@@ -29,9 +29,9 @@ namespace DDD.Tests.Unit.Application.TestDoubles
             this.Dtos.Add(entity);
         }
 
-        public void Remove(AggregateRootDtoStub entity)
+        public void Remove(string identifier)
         {
-            this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == entity.Id));
+            this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == identifier));
         }
 
         public void Update(AggregateRootDtoStub entity)

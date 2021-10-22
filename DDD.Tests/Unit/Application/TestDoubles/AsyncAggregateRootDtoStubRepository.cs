@@ -30,9 +30,9 @@ namespace DDD.Tests.Unit.Application.TestDoubles
             return Task.Run(() => this.Dtos.Add(entity));
         }
 
-        public Task RemoveAsync(AggregateRootDtoStub entity)
+        public Task RemoveAsync(string identifier)
         {
-            return Task.Run(() => this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == entity.Id)));
+            return Task.Run(() => this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == identifier)));
         }
 
         public Task UpdateAsync(AggregateRootDtoStub entity)
