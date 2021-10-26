@@ -50,9 +50,9 @@ namespace DDD.Application.Persistence.Adapters
             return this.DtoRepository.AddAsync(this.Converter.ToDto(entity));
         }
 
-        Task IAsyncRepository<TAggregateRoot, TIdentifier>.RemoveAsync(TIdentifier identifier)
+        Task IAsyncRepository<TAggregateRoot, TIdentifier>.RemoveAsync(TAggregateRoot entity)
         {
-            return this.DtoRepository.RemoveAsync(this.Converter.ToDtoIdentifier(identifier));
+            return this.DtoRepository.RemoveAsync(this.Converter.ToDto(entity));
         }
 
         Task IAsyncRepository<TAggregateRoot, TIdentifier>.UpdateAsync(TAggregateRoot entity)

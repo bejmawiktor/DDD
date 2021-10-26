@@ -17,6 +17,6 @@ namespace DDD.Domain.Persistence
 
         Task UpdateAsync(TAggregateRoot entity);
 
-        Task RemoveAsync(TIdentifier identifier);
+        Task RemoveAsync(TAggregateRoot entity);
     }
 }

@@ -24,19 +24,19 @@ namespace DDD.Tests.Unit.Application.TestDoubles
             return this.Dtos;
         }
 
-        public void Add(AggregateRootDtoStub entity)
+        public void Add(AggregateRootDtoStub dto)
         {
-            this.Dtos.Add(entity);
+            this.Dtos.Add(dto);
         }
 
-        public void Remove(string identifier)
+        public void Remove(AggregateRootDtoStub dto)
         {
-            this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == identifier));
+            this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == dto.Id));
         }
 
-        public void Update(AggregateRootDtoStub entity)
+        public void Update(AggregateRootDtoStub dto)
         {
-            this.Dtos[this.Dtos.FindIndex(e => e.Id == entity.Id)] = entity;
+            this.Dtos[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto;
         }
     }
 }

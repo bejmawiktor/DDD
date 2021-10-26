@@ -49,9 +49,9 @@ namespace DDD.Application.Persistence.Adapters
             this.DtoRepository.Add(this.Converter.ToDto(entity));
         }
 
-        void IRepository<TAggregateRoot, TIdentifier>.Remove(TIdentifier identifier)
+        void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity)
         {
-            this.DtoRepository.Remove(this.Converter.ToDtoIdentifier(identifier));
+            this.DtoRepository.Remove(this.Converter.ToDto(entity));
         }
 
         void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity)

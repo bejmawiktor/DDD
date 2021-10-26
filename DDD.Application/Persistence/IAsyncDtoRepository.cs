@@ -10,10 +10,10 @@ namespace DDD.Application.Persistence
 
         Task<IEnumerable<TDto>> GetAsync(Pagination pagination = null);
 
-        Task AddAsync(TDto entity);
+        Task AddAsync(TDto dto);
 
-        Task RemoveAsync(TDtoIdentifier identifier);
+        Task RemoveAsync(TDto dto);
 
-        Task UpdateAsync(TDto entity);
+        Task UpdateAsync(TDto dto);
     }
 }

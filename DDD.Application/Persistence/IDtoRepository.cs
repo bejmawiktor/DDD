@@ -9,10 +9,10 @@ namespace DDD.Application.Persistence
 
         IEnumerable<TDto> Get(Pagination pagination = null);
 
-        void Add(TDto entity);
+        void Add(TDto dto);
 
-        void Remove(TDtoIdentifier identifier);
+        void Remove(TDto dto);
 
-        void Update(TDto entity);
+        void Update(TDto dto);
     }
 }

@@ -86,7 +86,7 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
-            await repository.RemoveAsync("1");
+            await repository.RemoveAsync(new AggregateRootStub("1"));
 
             Assert.That(dtoRepository.Dtos, Is.Empty);
         }

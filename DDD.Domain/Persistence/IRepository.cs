@@ -16,6 +16,6 @@ namespace DDD.Domain.Persistence
 
         void Update(TAggregateRoot entity);
 
-        void Remove(TIdentifier identifier);
+        void Remove(TAggregateRoot entity);
     }
 }
