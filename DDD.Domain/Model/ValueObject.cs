@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace DDD.Domain.Model
 {
-    public abstract class ValueObject : IEquatable<ValueObject>, IDomainObject
+    public abstract class ValueObject<TDeriviedValueObject> : IEquatable<TDeriviedValueObject>, IDomainObject
+        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
     {
-        public static bool operator ==(ValueObject lhs, ValueObject rhs)
+        public static bool operator ==(ValueObject<TDeriviedValueObject> lhs, ValueObject<TDeriviedValueObject> rhs)
         {
             if(lhs is null && rhs is null)
             {
@@ -20,12 +21,12 @@ namespace DDD.Domain.Model
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(ValueObject lhs, ValueObject rhs)
+        public static bool operator !=(ValueObject<TDeriviedValueObject> lhs, ValueObject<TDeriviedValueObject> rhs)
         {
             return !(lhs == rhs);
         }
 
-        public bool Equals(ValueObject other)
+        public bool Equals(TDeriviedValueObject other)
         {
             if(this.GetType() != other?.GetType())
             {
@@ -60,7 +61,7 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as ValueObject);
+            return this.Equals(obj as TDeriviedValueObject);
         }
 
         public override int GetHashCode()
@@ -80,8 +81,37 @@ namespace DDD.Domain.Model
         }
     }
 
-    public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject
+    public abstract class ValueObject<TValue, TDeriviedValueObject> : ValueObject<TDeriviedValueObject>
+        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
+    {
+        protected TValue Value { get; }
+
+        protected ValueObject(TValue value)
+        {
+            this.ValidateValueInternal(value);
+            this.ValidateValue(value);
+
+            this.Value = value;
+        }
+
+        internal virtual void ValidateValueInternal(TValue value)
+        {
+        }
+
+        protected abstract void ValidateValue(TValue value);
+
+        protected override IEnumerable<object> GetEqualityMembers()
+        {
+            yield return this.Value;
+        }
+
+        public override string ToString()
+            => this.Value.ToString();
+    }
+
+    public abstract class ValueObject<TValidatedObject, TValidator, TDeriviedValueObject> : ValueObject<TDeriviedValueObject>
         where TValidator : IValidator<TValidatedObject>, new()
+        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
     {
         protected TValidator Validator { get; }
 
