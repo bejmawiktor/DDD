@@ -20,7 +20,7 @@ namespace DDD.Application.Persistence.Adapters
 
         private TDtoAggregateRootConverter Converter => new TDtoAggregateRootConverter();
 
-        TAggregateRoot IReadOnlyRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
+        TAggregateRoot IRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
         {
             TDto aggregateRootDto = this.DtoRepository.Get(new TDtoAggregateRootConverter().ToDtoIdentifier(identifier));
 
@@ -32,7 +32,7 @@ namespace DDD.Application.Persistence.Adapters
             return aggregateRootDto.ToDomainObject();
         }
 
-        IEnumerable<TAggregateRoot> IReadOnlyRepository<TAggregateRoot, TIdentifier>.Get(Pagination pagination)
+        IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(Pagination pagination)
         {
             IEnumerable<TDto> aggregateRootDtos = this.DtoRepository.Get(pagination);
 
@@ -44,17 +44,17 @@ namespace DDD.Application.Persistence.Adapters
             return this.DtoRepository.Get(pagination).Select(r => r.ToDomainObject());
         }
 
-        void IWriteOnlyRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity)
+        void IRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity)
         {
             this.DtoRepository.Add(this.Converter.ToDto(entity));
         }
 
-        void IWriteOnlyRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity)
+        void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity)
         {
             this.DtoRepository.Remove(this.Converter.ToDto(entity));
         }
 
-        void IWriteOnlyRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity)
+        void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity)
         {
             this.DtoRepository.Update(this.Converter.ToDto(entity));
         }

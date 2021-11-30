@@ -77,7 +77,7 @@ namespace DDD.Tests.Unit.Application.Persistence
         }
 
         [Test]
-        public async Task TestRemoveAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsRemoved()
+        public async Task TestRemoveAsync_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
         {
             var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
             {

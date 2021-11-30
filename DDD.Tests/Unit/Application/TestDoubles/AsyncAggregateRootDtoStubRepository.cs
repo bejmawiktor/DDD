@@ -25,19 +25,19 @@ namespace DDD.Tests.Unit.Application.TestDoubles
             return Task.FromResult(this.Dtos.AsEnumerable());
         }
 
-        public Task AddAsync(AggregateRootDtoStub entity)
+        public Task AddAsync(AggregateRootDtoStub dto)
         {
-            return Task.Run(() => this.Dtos.Add(entity));
+            return Task.Run(() => this.Dtos.Add(dto));
         }
 
-        public Task RemoveAsync(AggregateRootDtoStub entity)
+        public Task RemoveAsync(AggregateRootDtoStub dto)
         {
-            return Task.Run(() => this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == entity.Id)));
+            return Task.Run(() => this.Dtos.RemoveAt(this.Dtos.FindIndex(e => e.Id == dto.Id)));
         }
 
-        public Task UpdateAsync(AggregateRootDtoStub entity)
+        public Task UpdateAsync(AggregateRootDtoStub dto)
         {
-            return Task.Run(() => this.Dtos[this.Dtos.FindIndex(e => e.Id == entity.Id)] = entity);
+            return Task.Run(() => this.Dtos[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto);
         }
     }
 }
