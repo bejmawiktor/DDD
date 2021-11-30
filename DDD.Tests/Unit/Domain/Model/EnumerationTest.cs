@@ -84,6 +84,18 @@ namespace  DDD.Tests.Unit.Domain.Model
                     SecondStringEnumerationFake.Null,
                     false
                 }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(12)");
+                yield return new TestCaseData(new object[]
+                {
+                    SecondStringEnumerationFake.Zero,
+                    SecondStringEnumerationFake.Zero,
+                    true
+                }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(13)");
+                yield return new TestCaseData(new object[]
+                {
+                    SecondStringEnumerationFake.Zero,
+                    SecondStringEnumerationFake.Three,
+                    false
+                }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(14)");
             }
         }
 
@@ -392,6 +404,18 @@ namespace  DDD.Tests.Unit.Domain.Model
             FirstStringEnumerationFake defaultValue = FirstStringEnumerationFake.Default;
 
             Assert.That((string)defaultValue, Is.EqualTo(nameof(FirstStringEnumerationFake.One)));
+        }
+
+        [Test]
+        public void TestToString_WhenConvertingNullValue_ThenEmptyStringIsReturned()
+        {
+            Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Empty);
+        }
+
+        [Test]
+        public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned()
+        {
+            Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
         }
     }
 }

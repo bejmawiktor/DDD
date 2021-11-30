@@ -31,6 +31,20 @@ namespace DDD.Tests.Unit.Domain.Events
         }
 
         [Test]
+        public void TestEventManager_WhenNoEventScopeCreatedAndEventDispatcherIsNotSet_ThenEventsArentDispatched()
+        {
+            bool dispatched = false;
+            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            eventDispatcherMock
+                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
+                .Callback(() => dispatched = true);
+
+            EventManager.Instance.Notify(new EventStub());
+
+            Assert.That(dispatched, Is.False);
+        }
+
+        [Test]
         public void TestNotify_WhenScopeWasCreated_ThenEventsArentDispatched()
         {
             bool dispatched = false;
@@ -48,6 +62,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             Assert.That(dispatched, Is.False);
         }
+
 
         [Test]
         public void TestNotify_WhenScopeWasCreated_ThenEventsAreAddedToScopeEvents()

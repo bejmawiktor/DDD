@@ -15,5 +15,11 @@ namespace  DDD.Tests.Unit.Domain.Model
                     .EqualTo("field1"),
                 () => new ValidatedValueObjectFake(null));
         }
+
+        [Test]
+        public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown()
+        {
+            Assert.DoesNotThrow(() => new ValidatedValueObjectFake(1));
+        }
     }
 }

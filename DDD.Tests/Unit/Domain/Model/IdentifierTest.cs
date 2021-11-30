@@ -21,37 +21,37 @@ namespace  DDD.Tests.Unit.Domain.Model
                 new StringIdFake("3"),
                 new StringIdFake("3"),
                 true
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(2)");
             yield return new TestCaseData(new object[]
             {
                 new StringIdFake("2"),
                 new StringIdFake("2"),
                 true
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(3)");
             yield return new TestCaseData(new object[]
             {
                 new StringIdFake("1"),
                 new StringIdFake("2"),
                 false
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(4)");
             yield return new TestCaseData(new object[]
             {
                 new StringIdFake("34"),
                 new StringIdFake("3"),
                 false
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(5)");
             yield return new TestCaseData(new object[]
             {
                 new StringIdFake("5"),
                 new StringIdFake("2"),
                 false
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(6)");
             yield return new TestCaseData(new object[]
             {
                 new StringIdFake("5"),
                 null,
                 false
-            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
+            }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(7)");
         }
 
         [Test]
@@ -80,6 +80,14 @@ namespace  DDD.Tests.Unit.Domain.Model
             StringIdFake id = new StringIdFake("1");
 
             Assert.That(id.Value, Is.EqualTo("1"));
+        }
+
+        [Test]
+        public void TestConstructing_WhenValidNotNullableValueGiven_ThenValueIsSet()
+        {
+            IntIdFake id = new IntIdFake(1);
+
+            Assert.That(id.Value, Is.EqualTo(1));
         }
 
         [TestCaseSource(nameof(EqualsTestData))]

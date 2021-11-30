@@ -16,5 +16,11 @@ namespace  DDD.Tests.Unit.Domain.Model
                     .EqualTo("field1"),
                 () => new ValidatedEntityFake("1", null));
         }
+
+        [Test]
+        public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown()
+        {
+            Assert.DoesNotThrow(() => new ValidatedEntityFake("1", 1));
+        }
     }
 }
