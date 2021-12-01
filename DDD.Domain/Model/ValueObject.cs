@@ -64,13 +64,13 @@ namespace DDD.Domain.Model
 
         protected ValueObject(TValue value)
         {
-            this.ValidateValueInternal(value);
+            this.PrevalidateValue(value);
             this.ValidateValue(value);
 
             this.Value = value;
         }
 
-        internal virtual void ValidateValueInternal(TValue value)
+        internal virtual void PrevalidateValue(TValue value)
         {
         }
 

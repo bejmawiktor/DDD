@@ -13,7 +13,7 @@ namespace DDD.Domain.Model
         {
         }
 
-        internal override sealed void ValidateValueInternal(TIdentifierValue value)
+        internal override sealed void PrevalidateValue(TIdentifierValue value)
         {
             if(default(TIdentifierValue) == null && value == null)
             {
