@@ -15,127 +15,127 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AA"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(1)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(1)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(2, "AAB"),
                     new FirstValueObjectFake(2, "AAB"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(2)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(2)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(2, null),
                     new FirstValueObjectFake(2, null),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(4)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(4)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(5)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(5)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(6)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(6)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 3.1, null),
                     new ThirdValueObjectFake(1, 3.1, null),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
                 yield return new TestCaseData(new object[]
                 {
                     new FourthValueObjectFake(1, 3.1, null, true),
                     new FourthValueObjectFake(1, 3.1, null, true),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(2, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     null,
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(10)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(10)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AB"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(11)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(11)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(2, null),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(12)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(12)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new ThirdValueObjectFake(1, 0, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(13)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(13)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(2, 0, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(14)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(14)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(1, 0, "AB"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(15)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(15)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(2, 1, null),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(16)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(16)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(1, 0, null),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(17)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(17)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, null),
                     new ThirdValueObjectFake(1, 0, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(18)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(18)");
                 yield return new TestCaseData(new object[]
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new FirstValueObjectFake(1, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(19)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(19)");
                 yield return new TestCaseData(new object[]
                 {
                     new FourthValueObjectFake(1, 0, "AA", false),
                     new FourthValueObjectFake(1, 0, "AA", true),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(20)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(20)");
                 yield return new TestCaseData(new object[]
                 {
                     new FourthValueObjectFake(1, 0, "AA", true),
                     new FourthValueObjectFake(1, 0, "AA", false),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(21)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(21)");
                 yield return new TestCaseData(new object[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new SecondValueObjectFake(1, "AA"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred)}(22)");
+                }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(22)");
             }
         }
 
@@ -365,7 +365,7 @@ namespace  DDD.Tests.Unit.Domain.Model
         }
 
         [TestCaseSource(nameof(EqualsTestData))]
-        public void TestEqualsWithObject_WhenValueObjectGiven_ThenMembersAreComapred(
+        public void TestEquals_WhenValueObjectGiven_ThenMembersAreComapred(
             object lhsValueObject,
             object rhsValueObject,
             bool expectedEqualsResult)

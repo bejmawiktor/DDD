@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDD.Domain.Model
 {
-    public abstract class ValueObject : IEquatable<ValueObject>, IDomainObject
+    public abstract class ValueObject : IDomainObject
     {
         public static bool operator ==(ValueObject lhs, ValueObject rhs)
         {
@@ -25,42 +26,19 @@ namespace DDD.Domain.Model
             return !(lhs == rhs);
         }
 
-        public bool Equals(ValueObject other)
-        {
-            if(this.GetType() != other?.GetType())
-            {
-                return false;
-            }
-
-            IEnumerator<object> membersValues = this.GetEqualityMembers().GetEnumerator();
-            IEnumerator<object> otherMembersValues = other.GetEqualityMembers().GetEnumerator();
-            bool moveNextResult = membersValues.MoveNext();
-            bool otherMoveNextResult = otherMembersValues.MoveNext();
-
-            for(; moveNextResult && otherMoveNextResult
-                ; moveNextResult = membersValues.MoveNext(),
-                    otherMoveNextResult = otherMembersValues.MoveNext())
-            {
-                if(membersValues.Current == null
-                    ^ otherMembersValues.Current == null)
-                {
-                    return false;
-                }
-
-                if(membersValues.Current?.Equals(otherMembersValues.Current) == false)
-                {
-                    return false;
-                }
-            }
-
-            return !moveNextResult && !otherMoveNextResult;
-        }
-
         protected abstract IEnumerable<object> GetEqualityMembers();
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as ValueObject);
+            if(this.GetType() != obj?.GetType())
+            {
+                return false;
+            }
+
+            var other = obj as ValueObject;
+
+            return this.GetEqualityMembers()
+                .SequenceEqual(other.GetEqualityMembers());
         }
 
         public override int GetHashCode()

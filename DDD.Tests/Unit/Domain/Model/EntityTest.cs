@@ -16,86 +16,61 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new IntIdEntityStub(1),
                     new IntIdEntityStub(1),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(1)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(1)");
                 yield return new TestCaseData(new object[]
                 {
                     new IntIdEntityStub(123),
                     new IntIdEntityStub(123),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(2)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(2)");
                 yield return new TestCaseData(new object[]
                 {
                     new StringEntityStub("1"),
                     new StringEntityStub("1"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(3)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(3)");
                 yield return new TestCaseData(new object[]
                 {
                     new StringEntityStub("123"),
                     new StringEntityStub("123"),
                     true
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(4)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(4)");
                 yield return new TestCaseData(new object[]
                 {
                     new IntIdEntityStub(1),
                     new IntIdEntityStub(2),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(5)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(5)");
                 yield return new TestCaseData(new object[]
                 {
                     new IntIdEntityStub(1),
                     new StringEntityStub("1"),
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(6)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(6)");
                 yield return new TestCaseData(new object[]
                 {
                     new IntIdEntityStub(1),
                     null,
                     false
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(7)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(7)");
                 yield return new TestCaseData(new object[]
                 {
                     new StringEntityStub("1"),
                     new StringEntityStub("12"),
                     false,
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(8)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(8)");
                 yield return new TestCaseData(new object[]
                 {
                     new StringEntityStub("1"),
                     null,
                     false,
-                }).SetName($"{nameof(TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared)}(9)");
-            }
-        }
-
-        public static IEnumerable<TestCaseData> EntityEqualsTestData
-        {
-            get
-            {
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(9)");
                 yield return new TestCaseData(new object[]
                 {
                     new StringEntityStub("1"),
-                    new StringEntityStub("1"),
-                    true
-                }).SetName($"{nameof(TestEqualsWithEntity_WhenEntityGiven_ThenIdsAreCompared)}(1)");
-                yield return new TestCaseData(new object[]
-                {
-                    new StringEntityStub("123"),
-                    new StringEntityStub("123"),
-                    true
-                }).SetName($"{nameof(TestEqualsWithEntity_WhenEntityGiven_ThenIdsAreCompared)}(2)");
-                yield return new TestCaseData(new object[]
-                {
-                    new StringEntityStub("1"),
-                    new StringEntityStub("12"),
+                    new OtherStringEntityStub("1"),
                     false,
-                }).SetName($"{nameof(TestEqualsWithEntity_WhenEntityGiven_ThenIdsAreCompared)}(3)");
-                yield return new TestCaseData(new object[]
-                {
-                    new StringEntityStub("1"),
-                    null,
-                    false,
-                }).SetName($"{nameof(TestEqualsWithEntity_WhenEntityGiven_ThenIdsAreCompared)}(4)");
+                }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(10)");
             }
         }
 
@@ -265,18 +240,9 @@ namespace  DDD.Tests.Unit.Domain.Model
         }
 
         [TestCaseSource(nameof(ObjectEqualsTestData))]
-        public void TestEqualsWithObject_WhenEntityGiven_ThenIdsAreCompared(
+        public void TestEquals_WhenEntityGiven_ThenIdsAreCompared(
             object lhsEntity,
             object rhsEntity,
-            bool expectedEqualsResult)
-        {
-            Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
-        }
-
-        [TestCaseSource(nameof(EntityEqualsTestData))]
-        public void TestEqualsWithEntity_WhenEntityGiven_ThenIdsAreCompared(
-            StringEntityStub lhsEntity,
-            StringEntityStub rhsEntity,
             bool expectedEqualsResult)
         {
             Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));

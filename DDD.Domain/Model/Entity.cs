@@ -2,7 +2,7 @@
 
 namespace DDD.Domain.Model
 {
-    public abstract class Entity<TIdentifier> : IEntity<TIdentifier>, IEquatable<Entity<TIdentifier>>
+    public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
          where TIdentifier : IEquatable<TIdentifier>
     {
         public TIdentifier Id { get; protected set; }
@@ -43,16 +43,13 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as Entity<TIdentifier>);
+            var other = obj as Entity<TIdentifier>;
+
+            return this.GetType().Equals(other?.GetType()) 
+                && this.Id.Equals(other.Id);
         }
 
         public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);
-
-        public bool Equals(Entity<TIdentifier> other)
-        {
-            return other?.GetType() == this.GetType()
-                && this.Id.Equals(((Entity<TIdentifier>)other).Id);
-        }
     }
 
     public abstract class Entity<TIdentifier, TValidatedObject, TValidator> : Entity<TIdentifier>
