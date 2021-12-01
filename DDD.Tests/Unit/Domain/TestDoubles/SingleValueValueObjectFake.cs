@@ -3,9 +3,9 @@ using System;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
-    public class OneValueValueObjectFake : ValueObject<string, OneValueValueObjectFake>
+    public class SingleValueValueObjectFake : ValueObject<string>
     {
-        public OneValueValueObjectFake(string value) : base(value)
+        public SingleValueValueObjectFake(string value) : base(value)
         {
         }
 

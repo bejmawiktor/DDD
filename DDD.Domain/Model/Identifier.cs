@@ -2,23 +2,28 @@
 
 namespace DDD.Domain.Model
 {
-    public abstract class Identifier<TIdentifier, TDeriviedIdentifier>
-    : ValueObject<TIdentifier, TDeriviedIdentifier>, IEquatable<TDeriviedIdentifier>
-       where TIdentifier : IEquatable<TIdentifier>
-       where TDeriviedIdentifier : Identifier<TIdentifier, TDeriviedIdentifier>
+    public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier>
+    : ValueObject<TIdentifierValue>, IEquatable<TDeriviedIdentifier>
+       where TIdentifierValue : IEquatable<TIdentifierValue>
+       where TDeriviedIdentifier : Identifier<TIdentifierValue, TDeriviedIdentifier>
     {
-        public new TIdentifier Value => base.Value;
+        public new TIdentifierValue Value => base.Value;
 
-        protected Identifier(TIdentifier value) : base(value)
+        protected Identifier(TIdentifierValue value) : base(value)
         {
         }
 
-        internal override sealed void ValidateValueInternal(TIdentifier value)
+        internal override sealed void ValidateValueInternal(TIdentifierValue value)
         {
-            if(default(TIdentifier) == null && value == null)
+            if(default(TIdentifierValue) == null && value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
+        }
+
+        public bool Equals(TDeriviedIdentifier other)
+        {
+            return base.Equals(other);
         }
     }
 }

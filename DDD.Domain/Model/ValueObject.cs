@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace DDD.Domain.Model
 {
-    public abstract class ValueObject<TDeriviedValueObject> : IEquatable<TDeriviedValueObject>, IDomainObject
-        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
+    public abstract class ValueObject : IEquatable<ValueObject>, IDomainObject
     {
-        public static bool operator ==(ValueObject<TDeriviedValueObject> lhs, ValueObject<TDeriviedValueObject> rhs)
+        public static bool operator ==(ValueObject lhs, ValueObject rhs)
         {
             if(lhs is null && rhs is null)
             {
@@ -21,12 +20,12 @@ namespace DDD.Domain.Model
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(ValueObject<TDeriviedValueObject> lhs, ValueObject<TDeriviedValueObject> rhs)
+        public static bool operator !=(ValueObject lhs, ValueObject rhs)
         {
             return !(lhs == rhs);
         }
 
-        public bool Equals(TDeriviedValueObject other)
+        public bool Equals(ValueObject other)
         {
             if(this.GetType() != other?.GetType())
             {
@@ -61,7 +60,7 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as TDeriviedValueObject);
+            return this.Equals(obj as ValueObject);
         }
 
         public override int GetHashCode()
@@ -81,8 +80,7 @@ namespace DDD.Domain.Model
         }
     }
 
-    public abstract class ValueObject<TValue, TDeriviedValueObject> : ValueObject<TDeriviedValueObject>
-        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
+    public abstract class ValueObject<TValue> : ValueObject
     {
         protected TValue Value { get; }
 
@@ -109,9 +107,8 @@ namespace DDD.Domain.Model
             => this.Value.ToString();
     }
 
-    public abstract class ValueObject<TValidatedObject, TValidator, TDeriviedValueObject> : ValueObject<TDeriviedValueObject>
+    public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject
         where TValidator : IValidator<TValidatedObject>, new()
-        where TDeriviedValueObject : ValueObject<TDeriviedValueObject>
     {
         protected TValidator Validator { get; }
 

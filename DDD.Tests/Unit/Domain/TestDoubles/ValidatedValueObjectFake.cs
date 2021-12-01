@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
-    public class ValidatedValueObjectFake : ValueObject<int?, ValidatorFake, ValidatedValueObjectFake>
+    public class ValidatedValueObjectFake : ValueObject<int?, ValidatorFake>
     {
         public int? Field1 { get; }
 
