@@ -40,11 +40,11 @@ namespace DDD.Domain.Events
             {
                 if(this.ParentScope == null)
                 {
-                    EventManager.Instance.EventDispatcher.Dispatch(@event);
+                    EventManager.Instance.EventDispatcher.Dispatch((dynamic)@event);
                 }
                 else
                 {
-                    this.ParentScope.AddEvent(@event);
+                    this.ParentScope.AddEvent((dynamic)@event);
                 }
             }
 

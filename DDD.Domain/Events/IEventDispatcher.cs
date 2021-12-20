@@ -4,7 +4,5 @@
     {
         void Dispatch<TEvent>(TEvent @event)
             where TEvent : IEvent;
-
-        void Dispatch(IEvent @event);
     }
 }

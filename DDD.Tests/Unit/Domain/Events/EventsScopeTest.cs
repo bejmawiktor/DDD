@@ -1,4 +1,5 @@
 ﻿using DDD.Domain.Events;
+using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -123,13 +124,12 @@ namespace DDD.Tests.Unit.Domain.Events
         public void TestPublish_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
         {
             bool dispatched = false;
-            var eventMock = new Mock<IEvent>();
             var eventDispatcherMock = new Mock<IEventDispatcher>();
             eventDispatcherMock
-                .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
+                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-            var @event = eventMock.Object;
+            var @event = new EventStub();
             EventsScope eventsScope = null;
 
             using(eventsScope = new EventsScope())
