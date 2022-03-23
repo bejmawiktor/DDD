@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace DDD.Domain.Persistence
+﻿namespace DDD.Domain.Persistence
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
-        void Commit();
-
-        void Rollback();
+        ITransactionScope BeginScope();
     }
 }
