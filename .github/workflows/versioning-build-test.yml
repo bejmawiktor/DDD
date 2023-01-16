@@ -1,0 +1,65 @@
+name: Build, test and push
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      previous-version: ${{ steps.get-version.outputs.previous-version }}
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0
+          
+      - name: Git version
+        id: get-version
+        uses: codacy/git-version@2.4.0
+        with:
+          release-branch: master
+          
+      - name: Tag commit
+        run: |
+          git tag ${{ steps.get-version.outputs.version }} ${{ github.sha }}
+          git push origin ${{ steps.get-version.outputs.version }}
+          
+  build:
+    runs-on: ubuntu-latest
+    needs: versioning
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+          
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+  
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+          
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal
