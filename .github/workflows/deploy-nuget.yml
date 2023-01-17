@@ -10,7 +10,7 @@ on:
 env:
   DOMAIN_PROJECT_PATH: 'DDD.Domain/DDD.Domain.csproj'
   APPLICATION_PROJECT_PATH: 'DDD.Application/DDD.Application.csproj'
-  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
 
 jobs:
@@ -57,4 +57,4 @@ jobs:
         run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Push packages
-        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
