@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Title>DDD Tactical Patterns</Title>
+    <Authors>Wiktor Bejma</Authors>
+    <Company />
+    <Description>DDD tactical patterns with some useful extras.</Description>
   </PropertyGroup>
 
 </Project>
