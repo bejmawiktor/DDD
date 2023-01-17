@@ -1,0 +1,57 @@
+name: Deploy nuget package
+
+on:
+  workflow_run:
+    workflows: ["Version build and test"]
+    branches: [master]
+    types: 
+      - completed
+  
+env:
+  DOMAIN_PROJECT_PATH: 'DDD.Domain/DDD.Domain.csproj'
+  APPLICATION_PROJECT_PATH: 'DDD.Application/DDD.Application.csproj'
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
+  NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
+
+jobs:
+  get-version:
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}
+      runs-on: ubuntu-latest
+      outputs:
+        version: ${{ steps.get-version.outputs.version }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+            
+        - name: Get version tag
+          id: get-version
+          run: |
+            git fetch --prune --tags
+            git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1
+            echo ::set-output name=version::$(git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1)
+  deploy:
+    name: 'Deploy on nuget'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET Core SDK 6.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+          
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Pack domain project
+        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      
+      - name: Pack application project
+        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
+      
+      - name: Push packages
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
