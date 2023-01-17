@@ -9,7 +9,9 @@ on:
   
 env:
   DOMAIN_PROJECT_PATH: 'DDD.Domain/DDD.Domain.csproj'
+  DOMAIN_PACKAGE_NAME: 'DDD.Domain'
   APPLICATION_PROJECT_PATH: 'DDD.Application/DDD.Application.csproj'
+  APPLICAtiON_PACKAGE_NAME: 'DDD.Application'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json'
 
@@ -51,10 +53,10 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Pack domain project
-        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
       
       - name: Pack application project
-        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
+        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Push packages
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
