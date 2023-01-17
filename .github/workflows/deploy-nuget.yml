@@ -56,7 +56,7 @@ jobs:
         run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
       
       - name: Pack application project
-        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
+        run: dotnet pack ${{ env.APPLICATION_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Push packages
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
