@@ -9,10 +9,7 @@ namespace DDD.Domain.Model
 
         protected Entity(TIdentifier id)
         {
-            if(default(TIdentifier) is null && id is null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+            ArgumentNullException.ThrowIfNull(id);
 
             this.Id = id;
         }

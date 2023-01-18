@@ -40,7 +40,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 Assert.Throws(
                     Is.InstanceOf<ArgumentNullException>()
                         .And.Property(nameof(ArgumentNullException.ParamName))
-                        .EqualTo("event"),
+                        .EqualTo("@event"),
                     () => eventScope.AddEvent((IEvent?)null!));
             }
         }

@@ -16,10 +16,7 @@ namespace DDD.Application.CQRS
         public void Dispatch<TCommand>(TCommand command)
             where TCommand : ICommand
         {
-            if(command == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
+            ArgumentNullException.ThrowIfNull(command);
 
             ICommandHandler<TCommand> handler = this.DependencyResolver.Resolve<ICommandHandler<TCommand>>();
 
@@ -34,10 +31,7 @@ namespace DDD.Application.CQRS
         public Task DispatchAsync<TCommand>(TCommand command)
             where TCommand : ICommand
         {
-            if(command == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
+            ArgumentNullException.ThrowIfNull(command);
 
             IAsyncCommandHandler<TCommand> handler = this.DependencyResolver.Resolve<IAsyncCommandHandler<TCommand>>();
 

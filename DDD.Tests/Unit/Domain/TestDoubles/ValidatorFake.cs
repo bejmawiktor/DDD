@@ -7,10 +7,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
     {
         public void Validate(int? validatedObject)
         {
-            if(validatedObject == null)
-            {
-                throw new ArgumentNullException("field1");
-            }
+            ArgumentNullException.ThrowIfNull(validatedObject, "field1");
         }
     }
 }

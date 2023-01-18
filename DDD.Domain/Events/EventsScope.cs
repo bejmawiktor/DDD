@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace DDD.Domain.Events
@@ -26,10 +27,7 @@ namespace DDD.Domain.Events
         internal void AddEvent<TEvent>(TEvent @event)
             where TEvent : IEvent
         {
-            if(@event == null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
+            ArgumentNullException.ThrowIfNull(@event);
 
             this.Events.Add(@event);
         }

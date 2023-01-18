@@ -16,10 +16,7 @@ namespace DDD.Application.CQRS
         public TResult Dispatch<TQuery, TResult>(TQuery query)
             where TQuery : IQuery<TResult>
         {
-            if(query == null)
-            {
-                throw new ArgumentNullException(nameof(query));
-            }
+            ArgumentNullException.ThrowIfNull(query);
 
             IQueryHandler<TQuery, TResult> handler = this.DependencyResolver.Resolve<IQueryHandler<TQuery, TResult>>();
 
@@ -34,10 +31,7 @@ namespace DDD.Application.CQRS
         public Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query)
             where TQuery : IQuery<TResult>
         {
-            if(query == null)
-            {
-                throw new ArgumentNullException(nameof(query));
-            }
+            ArgumentNullException.ThrowIfNull(query);
 
             IAsyncQueryHandler<TQuery, TResult> handler = this.DependencyResolver.Resolve<IAsyncQueryHandler<TQuery, TResult>>();
 

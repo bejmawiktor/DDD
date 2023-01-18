@@ -14,12 +14,7 @@ namespace DDD.Domain.Model
         }
 
         internal override sealed void PrevalidateValue(TIdentifierValue value)
-        {
-            if(default(TIdentifierValue) is null && value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-        }
+            => ArgumentNullException.ThrowIfNull(value);
 
         public bool Equals(TDeriviedIdentifier? other)
         {

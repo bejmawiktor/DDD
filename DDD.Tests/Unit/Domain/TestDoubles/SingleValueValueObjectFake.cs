@@ -11,10 +11,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
 
         protected override void ValidateValue(string value)
         {
-            if(value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(value);
         }
     }
 }
