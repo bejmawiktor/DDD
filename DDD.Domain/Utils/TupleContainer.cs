@@ -4,19 +4,19 @@ using System.Runtime.CompilerServices;
 
 namespace DDD.Domain.Utils
 {
-    public class TupleContainer<TTuple> : ITuple where TTuple : ITuple
+    public class TupleContainer<TTuple> : ITuple where TTuple : notnull, ITuple
     {
         public TTuple Tuple { get; }
 
         public int Length => this.Tuple.Length;
-        public object this[int index] => this.Tuple[index];
+        public object? this[int index] => this.Tuple[index];
 
         public TupleContainer(TTuple tuple)
         {
             this.Tuple = tuple ?? throw new ArgumentNullException(nameof(tuple));
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is TupleContainer<TTuple> container &&
                    EqualityComparer<TTuple>.Default.Equals(this.Tuple, container.Tuple);

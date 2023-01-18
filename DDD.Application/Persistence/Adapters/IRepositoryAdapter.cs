@@ -20,9 +20,9 @@ namespace DDD.Application.Persistence.Adapters
 
         private TDtoAggregateRootConverter Converter => new TDtoAggregateRootConverter();
 
-        TAggregateRoot IRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
+        TAggregateRoot? IRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
         {
-            TDto aggregateRootDto = this.DtoRepository.Get(new TDtoAggregateRootConverter().ToDtoIdentifier(identifier));
+            TDto? aggregateRootDto = this.DtoRepository.Get(new TDtoAggregateRootConverter().ToDtoIdentifier(identifier));
 
             if(ReferenceEquals(aggregateRootDto, null))
             {
@@ -32,13 +32,13 @@ namespace DDD.Application.Persistence.Adapters
             return aggregateRootDto.ToDomainObject();
         }
 
-        IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(Pagination pagination)
+        IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(Pagination? pagination)
         {
             IEnumerable<TDto> aggregateRootDtos = this.DtoRepository.Get(pagination);
 
             if(aggregateRootDtos == null)
             {
-                return null;
+                return Enumerable.Empty<TAggregateRoot>();
             }
 
             return this.DtoRepository.Get(pagination).Select(r => r.ToDomainObject());

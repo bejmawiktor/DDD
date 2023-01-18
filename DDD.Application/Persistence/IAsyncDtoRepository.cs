@@ -6,9 +6,9 @@ namespace DDD.Application.Persistence
 {
     public interface IAsyncDtoRepository<TDto, TDtoIdentifier>
     {
-        Task<TDto> GetAsync(TDtoIdentifier identifier);
+        Task<TDto?> GetAsync(TDtoIdentifier identifier);
 
-        Task<IEnumerable<TDto>> GetAsync(Pagination pagination = null);
+        Task<IEnumerable<TDto>> GetAsync(Pagination? pagination = null);
 
         Task AddAsync(TDto dto);
 

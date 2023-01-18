@@ -3,13 +3,13 @@
 namespace DDD.Domain.Model
 {
     public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
-         where TIdentifier : IEquatable<TIdentifier>
+         where TIdentifier : notnull, IEquatable<TIdentifier>
     {
         public TIdentifier Id { get; protected set; }
 
         protected Entity(TIdentifier id)
         {
-            if(default(TIdentifier) == null && id == null)
+            if(default(TIdentifier) is null && id is null)
             {
                 throw new ArgumentNullException(nameof(id));
             }
@@ -41,12 +41,12 @@ namespace DDD.Domain.Model
             return !(lhs == rhs);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var other = obj as Entity<TIdentifier>;
 
-            return this.GetType().Equals(other?.GetType()) 
-                && this.Id.Equals(other.Id);
+            return this.GetType().Equals(other?.GetType())
+                && this.Id.Equals(other!.Id);
         }
 
         public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);

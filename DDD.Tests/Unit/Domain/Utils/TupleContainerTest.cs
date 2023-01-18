@@ -28,7 +28,7 @@ namespace DDD.Tests.Unit.Domain.Utils
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("tuple"),
-                () => { TupleContainer<Tuple<string>> tuple = new TupleContainer<Tuple<string>>(null); });
+                () => { TupleContainer<Tuple<string>> tuple = new TupleContainer<Tuple<string>>(null!); });
         }
 
         [Test]
@@ -82,8 +82,8 @@ namespace DDD.Tests.Unit.Domain.Utils
                 Assert.That(this.firstMultiTupleContainer1, Is.Not.EqualTo(this.decimalTupleContainer1));
                 Assert.That(this.secondMultiTupleContainer2, Is.Not.EqualTo(this.firstMultiTupleContainer2));
                 Assert.That(this.stringTupleContainer1, Is.Not.EqualTo(null));
-                Assert.That(null, Is.Not.EqualTo(this.stringTupleContainer2));
-                Assert.That((StringTupleContainer)null, Is.EqualTo((StringTupleContainer)null));
+                Assert.That(null!, Is.Not.EqualTo(this.stringTupleContainer2));
+                Assert.That((StringTupleContainer?)null, Is.EqualTo((StringTupleContainer?)null));
             });
         }
 
@@ -105,9 +105,9 @@ namespace DDD.Tests.Unit.Domain.Utils
                 Assert.That(this.decimalTupleContainer1 == this.decimalTupleContainer2, Is.False);
                 Assert.That(this.decimalTupleContainer1 == this.decimalTupleContainer2, Is.False);
                 Assert.That(this.firstMultiTupleContainer1 == this.firstMultiTupleContainer2, Is.False);
-                Assert.That(this.stringTupleContainer1 == null, Is.False);
-                Assert.That(null == this.stringTupleContainer2, Is.False);
-                Assert.That((StringTupleContainer)null == (StringTupleContainer)null, Is.True);
+                Assert.That(this.stringTupleContainer1 == null!, Is.False);
+                Assert.That(null! == this.stringTupleContainer2, Is.False);
+                Assert.That((StringTupleContainer?)null! == (StringTupleContainer?)null!, Is.True);
             });
         }
 
@@ -129,9 +129,9 @@ namespace DDD.Tests.Unit.Domain.Utils
                 Assert.That(this.decimalTupleContainer1 != this.decimalTupleContainer2, Is.True);
                 Assert.That(this.decimalTupleContainer1 != this.decimalTupleContainer2, Is.True);
                 Assert.That(this.firstMultiTupleContainer1 != this.firstMultiTupleContainer2, Is.True);
-                Assert.That(this.stringTupleContainer1 != null, Is.True);
-                Assert.That(null != this.stringTupleContainer2, Is.True);
-                Assert.That((StringTupleContainer)null != (StringTupleContainer)null, Is.False);
+                Assert.That(this.stringTupleContainer1 != null!, Is.True);
+                Assert.That(null! != this.stringTupleContainer2, Is.True);
+                Assert.That((StringTupleContainer?)null! != (StringTupleContainer?)null!, Is.False);
             });
         }
 

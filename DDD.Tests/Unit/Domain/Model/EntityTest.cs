@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     public class EntityTest
     {
@@ -47,7 +47,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new StringEntityStub("1"),
                     false
                 }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(6)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new IntIdEntityStub(1),
                     null,
@@ -59,7 +59,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new StringEntityStub("12"),
                     false,
                 }).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(8)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new StringEntityStub("1"),
                     null,
@@ -96,19 +96,19 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new StringEntityStub("12"),
                     false,
                 }).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new StringEntityStub("1"),
                     null,
                     false,
                 }).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     new StringEntityStub("1"),
                     false,
                 }).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     null,
@@ -139,19 +139,19 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new StringEntityStub("12"),
                     true,
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new StringEntityStub("1"),
                     null,
                     true,
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     new StringEntityStub("1"),
                     true,
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     null,
@@ -228,7 +228,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("id"),
-                () => new StringEntityStub(null));
+                () => new StringEntityStub(null!));
         }
 
         [Test]

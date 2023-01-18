@@ -6,12 +6,12 @@ using System.Reflection;
 namespace DDD.Domain.Model
 {
     public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeration>
-        where TValue : IEquatable<TValue>
+        where TValue : IEquatable<TValue>?
         where TEnumeration : Enumeration<TValue, TEnumeration>, new()
     {
         public static TEnumeration Default => new TEnumeration();
 
-        protected TValue Value { get; }
+        protected TValue? Value { get; }
         protected abstract TValue DefaultValue { get; }
 
         protected Enumeration()
@@ -19,20 +19,20 @@ namespace DDD.Domain.Model
             this.Value = this.DefaultValue;
         }
 
-        protected Enumeration(TValue value)
+        protected Enumeration(TValue? value)
         {
             this.Value = value;
         }
 
-        public static TEnumeration CollateNull(TEnumeration enumeration)
+        public static TEnumeration CollateNull(TEnumeration? enumeration)
             => enumeration ?? Enumeration<TValue, TEnumeration>.Default;
 
-        public static IEnumerable<TEnumeration> GetValues()
+        public static IEnumerable<TEnumeration?> GetValues()
         {
             return typeof(TEnumeration)
                 .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
                 .Where(v => v.FieldType == typeof(TEnumeration))
-                .Select(v => (TEnumeration)v?.GetValue(null));
+                .Select(v => (TEnumeration?)v.GetValue(null));
         }
 
         public static IEnumerable<string> GetNames()
@@ -45,7 +45,7 @@ namespace DDD.Domain.Model
 
         public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Value);
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if(other?.GetType() != this.GetType())
             {
@@ -55,19 +55,19 @@ namespace DDD.Domain.Model
             return this.Equals(other as TEnumeration);
         }
 
-        public bool Equals(TEnumeration other)
+        public bool Equals(TEnumeration? other)
         {
-            if(this.Value == null ^ (other == null || other.Value == null))
+            if(this.Value is null ^ (other is null || other.Value is null))
             {
                 return false;
             }
 
-            if(this.Value == null && (other == null || other.Value == null))
+            if(this.Value is null && (other is null || other.Value is null))
             {
                 return true;
             }
 
-            return this.Value.Equals(other.Value);
+            return this.Value!.Equals(other!.Value);
         }
 
         public static bool operator ==(
@@ -94,38 +94,38 @@ namespace DDD.Domain.Model
             return !(lhs == rhs);
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
-            if(default(TValue) == null && this.Value == null)
+            if(default(TValue) is null && this.Value is null)
             {
                 return string.Empty;
             }
 
-            return this.Value.ToString();
+            return this.Value?.ToString();
         }
 
         public static implicit operator Enumeration<TValue, TEnumeration>(TValue value)
-            => GetValues().FirstOrDefault(v => v != null && AreValuesEqual(v.Value, value))
+            => GetValues().FirstOrDefault(v => v is not null && AreValuesEqual(v.Value, value))
                 ?? throw new ArgumentException($"Wrong {typeof(TEnumeration).Name} value.");
 
-        private static bool AreValuesEqual(TValue lhsValue, TValue rhsValue)
+        private static bool AreValuesEqual(TValue? lhsValue, TValue? rhsValue)
         {
-            if(lhsValue == null ^ rhsValue == null)
+            if(lhsValue is null ^ rhsValue is null)
             {
                 return false;
             }
 
-            if(lhsValue == null && rhsValue == null)
+            if(lhsValue is null && rhsValue is null)
             {
                 return true;
             }
 
-            return lhsValue.Equals(rhsValue);
+            return lhsValue!.Equals(rhsValue);
         }
 
-        public static implicit operator TValue(Enumeration<TValue, TEnumeration> value)
+        public static implicit operator TValue?(Enumeration<TValue, TEnumeration>? value)
         {
-            if(value == null)
+            if(value is null)
             {
                 return default;
             }

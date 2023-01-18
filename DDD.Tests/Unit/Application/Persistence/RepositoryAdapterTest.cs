@@ -18,7 +18,7 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
-            AggregateRootStub aggregateRootStub = repository.Get("1");
+            AggregateRootStub? aggregateRootStub = repository.Get("1");
 
             Assert.That(aggregateRootStub, Is.EqualTo(new AggregateRootStub("1")));
         }
@@ -48,20 +48,20 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
-            AggregateRootStub aggregateRootStub = repository.Get("2");
+            AggregateRootStub? aggregateRootStub = repository.Get("2");
 
             Assert.That(aggregateRootStub, Is.Null);
         }
 
         [Test]
-        public void TestGet_WhenNullIsReturnedFromDtoRepository_ThenNullIsReturned()
+        public void TestGet_WhenNullIsReturnedFromDtoRepository_ThenEmptyEnumerableIsReturned()
         {
             var dtoRepository = new AggregateRootDtoStubRepository(null);
             IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
             IEnumerable<AggregateRootStub> aggregateRoots = repository.Get(new Pagination(1, 100));
 
-            Assert.That(aggregateRoots, Is.Null);
+            Assert.That(aggregateRoots, Is.Empty);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace DDD.Tests.Unit.Application.Persistence
 
             repository.Add(new AggregateRootStub("1"));
 
-            Assert.That(dtoRepository.Dtos[0].Id, Is.EqualTo(new AggregateRootDtoStub("1").Id));
+            Assert.That(dtoRepository.Dtos![0].Id, Is.EqualTo(new AggregateRootDtoStub("1").Id));
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace DDD.Tests.Unit.Application.Persistence
 
             repository.Update(new AggregateRootStub("1", "MyName"));
 
-            Assert.That(dtoRepository.Dtos[0].Name, Is.EqualTo("MyName"));
+            Assert.That(dtoRepository.Dtos![0].Name, Is.EqualTo("MyName"));
         }
     }
 }

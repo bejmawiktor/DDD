@@ -14,7 +14,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
             this.Field2 = field2;
         }
 
-        protected override IEnumerable<object> GetEqualityMembers()
+        protected override IEnumerable<object?> GetEqualityMembers()
         {
             yield return this.Field1;
             yield return this.Field2;

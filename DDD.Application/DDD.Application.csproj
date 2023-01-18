@@ -8,6 +8,7 @@
     <Title>DDD Application Layer</Title>
     <Copyright>Wiktor Bejma</Copyright>
     <Description>DDD application layer library to use in hexagonal architecture.</Description>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

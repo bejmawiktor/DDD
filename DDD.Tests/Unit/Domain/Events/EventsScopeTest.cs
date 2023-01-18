@@ -41,7 +41,7 @@ namespace DDD.Tests.Unit.Domain.Events
                     Is.InstanceOf<ArgumentNullException>()
                         .And.Property(nameof(ArgumentNullException.ParamName))
                         .EqualTo("event"),
-                    () => eventScope.AddEvent((IEvent)null));
+                    () => eventScope.AddEvent((IEvent?)null!));
             }
         }
 
@@ -50,7 +50,7 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             var eventMock = new Mock<IEvent>();
             var @event = eventMock.Object;
-            EventsScope eventsScope = null;
+            EventsScope? eventsScope = null;
 
             using(eventsScope = new EventsScope())
             {
@@ -130,7 +130,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 .Callback(() => dispatched = true);
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
             var @event = new EventStub();
-            EventsScope eventsScope = null;
+            EventsScope? eventsScope = null;
 
             using(eventsScope = new EventsScope())
             {
@@ -149,7 +149,7 @@ namespace DDD.Tests.Unit.Domain.Events
             var eventDispatcherMock = new Mock<IEventDispatcher>();
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
             var @event = eventMock.Object;
-            EventsScope eventsScope = null;
+            EventsScope? eventsScope = null;
 
             using(eventsScope = new EventsScope())
             {
@@ -166,7 +166,7 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             var eventMock = new Mock<IEvent>();
             var @event = eventMock.Object;
-            EventsScope eventsScope = null;
+            EventsScope? eventsScope = null;
 
             using(eventsScope = new EventsScope())
             {
@@ -222,7 +222,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 .Setup(e => e.Dispatch(It.IsAny<IEvent>()));
             var @event = eventMock.Object;
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-            EventsScope parentEventScope = null;
+            EventsScope? parentEventScope = null;
 
             try
             {
@@ -240,7 +240,7 @@ namespace DDD.Tests.Unit.Domain.Events
             {
             }
 
-            Assert.That(parentEventScope.Events, Is.Empty);
+            Assert.That(parentEventScope?.Events, Is.Empty);
         }
     }
 }

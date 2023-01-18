@@ -6,6 +6,7 @@
     <Authors>Wiktor Bejma</Authors>
     <Company />
     <Description>DDD tactical patterns with some useful extras.</Description>
+		<Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>

@@ -2,13 +2,13 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
-    public class FirstStringEnumerationFake : Enumeration<string, FirstStringEnumerationFake>
+    public class FirstStringEnumerationFake : Enumeration<string?, FirstStringEnumerationFake>
     {
-        public readonly static FirstStringEnumerationFake Null;
-        public readonly static FirstStringEnumerationFake Zero = new FirstStringEnumerationFake(null);
-        public readonly static FirstStringEnumerationFake One = new FirstStringEnumerationFake(nameof(One));
-        public readonly static FirstStringEnumerationFake Two = new FirstStringEnumerationFake(nameof(Two));
-        public readonly static FirstStringEnumerationFake Three = new FirstStringEnumerationFake(nameof(Three));
+        public static readonly FirstStringEnumerationFake? Null;
+        public static readonly FirstStringEnumerationFake Zero = new FirstStringEnumerationFake(null);
+        public static readonly FirstStringEnumerationFake One = new FirstStringEnumerationFake(nameof(One));
+        public static readonly FirstStringEnumerationFake Two = new FirstStringEnumerationFake(nameof(Two));
+        public static readonly FirstStringEnumerationFake Three = new FirstStringEnumerationFake(nameof(Three));
 
         protected override string DefaultValue => nameof(One);
 
@@ -16,7 +16,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
         {
         }
 
-        protected FirstStringEnumerationFake(string value) : base(value)
+        protected FirstStringEnumerationFake(string? value) : base(value)
         {
         }
     }

@@ -8,9 +8,9 @@ namespace DDD.Domain.Persistence
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        TAggregateRoot Get(TIdentifier identifier);
+        TAggregateRoot? Get(TIdentifier identifier);
 
-        IEnumerable<TAggregateRoot> Get(Pagination pagination = null);
+        IEnumerable<TAggregateRoot> Get(Pagination? pagination = null);
 
         void Add(TAggregateRoot entity);
 

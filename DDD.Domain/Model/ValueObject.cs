@@ -26,9 +26,9 @@ namespace DDD.Domain.Model
             return !(lhs == rhs);
         }
 
-        protected abstract IEnumerable<object> GetEqualityMembers();
+        protected abstract IEnumerable<object?> GetEqualityMembers();
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if(this.GetType() != obj?.GetType())
             {
@@ -38,7 +38,7 @@ namespace DDD.Domain.Model
             var other = obj as ValueObject;
 
             return this.GetEqualityMembers()
-                .SequenceEqual(other.GetEqualityMembers());
+                .SequenceEqual(other!.GetEqualityMembers());
         }
 
         public override int GetHashCode()
@@ -60,7 +60,7 @@ namespace DDD.Domain.Model
 
     public abstract class ValueObject<TValue> : ValueObject
     {
-        protected TValue Value { get; }
+        protected TValue? Value { get; }
 
         protected ValueObject(TValue value)
         {
@@ -76,13 +76,13 @@ namespace DDD.Domain.Model
 
         protected abstract void ValidateValue(TValue value);
 
-        protected override IEnumerable<object> GetEqualityMembers()
+        protected override IEnumerable<object?> GetEqualityMembers()
         {
             yield return this.Value;
         }
 
         public override string ToString()
-            => this.Value.ToString();
+            => this.Value?.ToString() ?? string.Empty;
     }
 
     public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject

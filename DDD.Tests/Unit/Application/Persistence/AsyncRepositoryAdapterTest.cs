@@ -19,7 +19,7 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
-            AggregateRootStub aggregateRootStub = await repository.GetAsync("1");
+            AggregateRootStub? aggregateRootStub = await repository.GetAsync("1");
 
             Assert.That(aggregateRootStub, Is.EqualTo(new AggregateRootStub("1")));
         }
@@ -49,20 +49,20 @@ namespace DDD.Tests.Unit.Application.Persistence
             var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
-            AggregateRootStub aggregateRootStub = await repository.GetAsync("2");
+            AggregateRootStub? aggregateRootStub = await repository.GetAsync("2");
 
             Assert.That(aggregateRootStub, Is.Null);
         }
 
         [Test]
-        public async Task TestGetAsync_WhenNullIsReturnedFromDtoRepository_ThenNullIsReturned()
+        public async Task TestGetAsync_WhenNullIsReturnedFromDtoRepository_ThenEmptyEnumerableIsReturned()
         {
             var dtoRepository = new AsyncAggregateRootDtoStubRepository(null);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             IEnumerable<AggregateRootStub> aggregateRoots = await repository.GetAsync(new Pagination(1, 100));
 
-            Assert.That(aggregateRoots, Is.Null);
+            Assert.That(aggregateRoots, Is.Empty);
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace DDD.Tests.Unit.Application.Persistence
 
             await repository.AddAsync(new AggregateRootStub("1"));
 
-            Assert.That(dtoRepository.Dtos[0].Id, Is.EqualTo(new AggregateRootDtoStub("1").Id));
+            Assert.That(dtoRepository.Dtos![0].Id, Is.EqualTo(new AggregateRootDtoStub("1").Id));
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace DDD.Tests.Unit.Application.Persistence
 
             await repository.UpdateAsync(new AggregateRootStub("1", "MyName"));
 
-            Assert.That(dtoRepository.Dtos[0].Name, Is.EqualTo("MyName"));
+            Assert.That(dtoRepository.Dtos![0].Name, Is.EqualTo("MyName"));
         }
     }
 }

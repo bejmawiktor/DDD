@@ -46,7 +46,7 @@ namespace DDD.Tests.Unit.Domain.Model
                 new SingleValueValueObjectFake("2"),
                 false
             }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(6)");
-            yield return new TestCaseData(new object[]
+            yield return new TestCaseData(new object?[]
             {
                 new SingleValueValueObjectFake("5"),
                 null,
@@ -61,7 +61,7 @@ namespace DDD.Tests.Unit.Domain.Model
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("value"),
-                () => new SingleValueValueObjectFake(null));
+                () => new SingleValueValueObjectFake(null!));
         }
 
         [TestCaseSource(nameof(EqualsTestData))]
@@ -76,6 +76,22 @@ namespace DDD.Tests.Unit.Domain.Model
         }
 
         [Test]
+        public void TestEquals_WhenNullValueValueObjectsGiven_ThenReturnFalse()
+        {
+            Assert.That(
+                new NullableSignleValueValueObjectFake(null),
+                Is.EqualTo(new NullableSignleValueValueObjectFake(null)));
+        }
+
+        [Test]
+        public void TestEquals_WhenOneNullValueValueObjectGiven_ThenReturnFalse()
+        {
+            Assert.That(
+                new NullableSignleValueValueObjectFake("asd"),
+                Is.Not.EqualTo(new NullableSignleValueValueObjectFake(null)));
+        }
+
+        [Test]
         public void ToString_WhenConverting_ThenValueIsReturned()
         {
             var singleValueValueObjectFake = new SingleValueValueObjectFake("MyValue");
@@ -83,6 +99,16 @@ namespace DDD.Tests.Unit.Domain.Model
             string stringValue = singleValueValueObjectFake.ToString();
 
             Assert.That(stringValue, Is.EqualTo("MyValue"));
+        }
+
+        [Test]
+        public void ToString_WhenConvertingWithNullValue_ThenEmptyStringIsReturned()
+        {
+            var nullableSignleValueValueObjectFake = new NullableSignleValueValueObjectFake(null);
+
+            string stringValue = nullableSignleValueValueObjectFake.ToString();
+
+            Assert.That(stringValue, Is.EqualTo(string.Empty));
         }
     }
 }

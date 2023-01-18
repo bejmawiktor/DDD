@@ -7,9 +7,10 @@ namespace DDD.Domain.Events
     {
         private static readonly Lazy<EventManager> instance = new Lazy<EventManager>(
             () => new EventManager());
-        private static readonly AsyncLocal<EventsScope> localEventsScope = new AsyncLocal<EventsScope>();
 
-        public static EventsScope CurrentScope
+        private static readonly AsyncLocal<EventsScope?> localEventsScope = new AsyncLocal<EventsScope?>();
+
+        public static EventsScope? CurrentScope
         {
             get => EventManager.localEventsScope.Value;
             internal set => EventManager.localEventsScope.Value = value;
@@ -17,7 +18,7 @@ namespace DDD.Domain.Events
 
         public static EventManager Instance => instance.Value;
 
-        public IEventDispatcher EventDispatcher { get; set; }
+        public IEventDispatcher? EventDispatcher { get; set; }
 
         private EventManager()
         {

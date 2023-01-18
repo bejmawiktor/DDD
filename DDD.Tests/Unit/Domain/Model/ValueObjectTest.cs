@@ -2,7 +2,7 @@ using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     public class ValueObjectTest
     {
@@ -58,7 +58,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new FirstValueObjectFake(2, "AA"),
                     false
                 }).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new FirstValueObjectFake(1, "AA"),
                     null,
@@ -185,19 +185,19 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
                     false
                 }).SetName($"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     null,
                     false
                 }).SetName($"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     false
                 }).SetName($"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     null,
@@ -252,19 +252,19 @@ namespace  DDD.Tests.Unit.Domain.Model
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
                     true
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     null,
                     true
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     true
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     null,
                     null,

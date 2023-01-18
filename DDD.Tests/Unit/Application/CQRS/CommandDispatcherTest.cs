@@ -17,21 +17,21 @@ namespace DDD.Tests.Unit.Application.CQRS
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("dependencyResolver"),
-                () => new CommandDispatcher(null));
+                () => new CommandDispatcher(null!));
         }
 
         [Test]
         public void TestDispatch_WhenNullCommandGiven_ThenArgumentNullExceptionIsThrown()
         {
             Mock<IDependencyResolver> dependencyResolverMock = new Mock<IDependencyResolver>();
-            dependencyResolverMock.Setup(d => d.Resolve<ICommandHandler<CommandStub>>()).Returns(() => null);
+            dependencyResolverMock.Setup(d => d.Resolve<ICommandHandler<CommandStub>>()).Returns(() => null!);
             CommandDispatcher commandDispatcher = new CommandDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("command"),
-                () => commandDispatcher.Dispatch<CommandStub>(null));
+                () => commandDispatcher.Dispatch<CommandStub>(null!));
             Assert.Throws(
                 Is.InstanceOf<CommandHandlerNotFoundException>(),
                 () => commandDispatcher.Dispatch(new CommandStub()));
@@ -41,7 +41,7 @@ namespace DDD.Tests.Unit.Application.CQRS
         public void TestDispatch_WhenNotResolvableCommandGiven_ThenCommandHandlerNotFoundExceptionIsThrown()
         {
             Mock<IDependencyResolver> dependencyResolverMock = new Mock<IDependencyResolver>();
-            dependencyResolverMock.Setup(d => d.Resolve<ICommandHandler<CommandStub>>()).Returns(() => null);
+            dependencyResolverMock.Setup(d => d.Resolve<ICommandHandler<CommandStub>>()).Returns(() => null!);
             CommandDispatcher commandDispatcher = new CommandDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
@@ -67,21 +67,21 @@ namespace DDD.Tests.Unit.Application.CQRS
         public void TestDispatchAsync_WhenNullCommandGiven_ThenArgumentNullExceptionIsThrown()
         {
             Mock<IDependencyResolver> dependencyResolverMock = new Mock<IDependencyResolver>();
-            dependencyResolverMock.Setup(d => d.Resolve<IAsyncCommandHandler<CommandStub>>()).Returns(() => null);
+            dependencyResolverMock.Setup(d => d.Resolve<IAsyncCommandHandler<CommandStub>>()).Returns(() => null!);
             CommandDispatcher commandDispatcher = new CommandDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("command"),
-                () => commandDispatcher.DispatchAsync<CommandStub>(null).Wait());
+                () => commandDispatcher.DispatchAsync<CommandStub>(null!).Wait());
         }
 
         [Test]
         public void TestDispatchAsync_WhenNotResolvableCommandGiven_ThenCommandHandlerNotFoundExceptionIsThrown()
         {
             Mock<IDependencyResolver> dependencyResolverMock = new Mock<IDependencyResolver>();
-            dependencyResolverMock.Setup(d => d.Resolve<IAsyncCommandHandler<CommandStub>>()).Returns(() => null);
+            dependencyResolverMock.Setup(d => d.Resolve<IAsyncCommandHandler<CommandStub>>()).Returns(() => null!);
             CommandDispatcher commandDispatcher = new CommandDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(

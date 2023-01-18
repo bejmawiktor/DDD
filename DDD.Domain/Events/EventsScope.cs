@@ -7,7 +7,7 @@ namespace DDD.Domain.Events
     {
         private bool IsDisposed { get; set; }
         internal List<IEvent> Events { get; }
-        private EventsScope ParentScope { get; }
+        private EventsScope? ParentScope { get; }
         private int NestedScopesCounter { get; set; }
 
         public EventsScope()
@@ -40,7 +40,7 @@ namespace DDD.Domain.Events
             {
                 if(this.ParentScope == null)
                 {
-                    EventManager.Instance.EventDispatcher.Dispatch((dynamic)@event);
+                    EventManager.Instance.EventDispatcher?.Dispatch((dynamic)@event);
                 }
                 else
                 {

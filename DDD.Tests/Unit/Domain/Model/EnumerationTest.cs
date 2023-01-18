@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     [TestFixture]
     public class EnumerationTest
@@ -36,13 +36,13 @@ namespace  DDD.Tests.Unit.Domain.Model
                     FirstStringEnumerationFake.Zero,
                     true
                 }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(4)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.Zero,
                     null,
                     false
                 }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(5)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.One,
                     null,
@@ -78,7 +78,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                     SecondStringEnumerationFake.Three,
                     false
                 }).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(11)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Null,
@@ -127,13 +127,13 @@ namespace  DDD.Tests.Unit.Domain.Model
                     FirstStringEnumerationFake.Zero,
                     true
                 }).SetName($"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.Zero,
                     null,
                     false
                 }).SetName($"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(5)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.One,
                     null,
@@ -188,13 +188,13 @@ namespace  DDD.Tests.Unit.Domain.Model
                     FirstStringEnumerationFake.Zero,
                     false
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.Zero,
                     null,
                     true
                 }).SetName($"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(5)");
-                yield return new TestCaseData(new object[]
+                yield return new TestCaseData(new object?[]
                 {
                     FirstStringEnumerationFake.One,
                     null,
@@ -306,7 +306,7 @@ namespace  DDD.Tests.Unit.Domain.Model
         [Test]
         public void TestGetValues_WhenGettingValues_ThenValuesAreReturned()
         {
-            IEnumerable<FirstStringEnumerationFake> expectedValues = new FirstStringEnumerationFake[]
+            IEnumerable<FirstStringEnumerationFake?> expectedValues = new FirstStringEnumerationFake?[]
             {
                 FirstStringEnumerationFake.One,
                 FirstStringEnumerationFake.Two,
@@ -374,7 +374,7 @@ namespace  DDD.Tests.Unit.Domain.Model
         public void TestCastingFromValueToEnumeration_WhenRecognizedValueGiven_ThenEnumerationIsReturned()
         {
             FirstStringEnumerationFake twoValue = (FirstStringEnumerationFake)nameof(FirstStringEnumerationFake.Two);
-            FirstStringEnumerationFake nullValue = (FirstStringEnumerationFake)((string)null);
+            FirstStringEnumerationFake nullValue = (FirstStringEnumerationFake)((string?)null);
 
             Assert.Multiple(() =>
             {
@@ -386,9 +386,9 @@ namespace  DDD.Tests.Unit.Domain.Model
         [Test]
         public void TestCastingFromEnumerationToValue_WhenEnumerationGiven_ThenValueIsReturned()
         {
-            string twoValue = FirstStringEnumerationFake.Two;
-            string zeroValue = FirstStringEnumerationFake.Zero;
-            string nullValue = FirstStringEnumerationFake.Null;
+            string? twoValue = FirstStringEnumerationFake.Two;
+            string? zeroValue = FirstStringEnumerationFake.Zero;
+            string? nullValue = FirstStringEnumerationFake.Null;
 
             Assert.Multiple(() =>
             {
@@ -403,7 +403,7 @@ namespace  DDD.Tests.Unit.Domain.Model
         {
             FirstStringEnumerationFake defaultValue = FirstStringEnumerationFake.Default;
 
-            Assert.That((string)defaultValue, Is.EqualTo(nameof(FirstStringEnumerationFake.One)));
+            Assert.That((string?)defaultValue, Is.EqualTo(nameof(FirstStringEnumerationFake.One)));
         }
 
         [Test]

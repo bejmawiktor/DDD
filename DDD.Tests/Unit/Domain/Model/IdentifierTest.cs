@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     [TestFixture]
     public class IdentifierTest
@@ -46,7 +46,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                 new StringIdFake("2"),
                 false
             }).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(6)");
-            yield return new TestCaseData(new object[]
+            yield return new TestCaseData(new object?[]
             {
                 new StringIdFake("5"),
                 null,
@@ -61,7 +61,7 @@ namespace  DDD.Tests.Unit.Domain.Model
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("value"),
-                () => new StringIdFake(null));
+                () => new StringIdFake(null!));
         }
 
         [Test]

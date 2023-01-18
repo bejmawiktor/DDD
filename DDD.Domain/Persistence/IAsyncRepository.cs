@@ -9,9 +9,9 @@ namespace DDD.Domain.Persistence
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
     {
-        Task<TAggregateRoot> GetAsync(TIdentifier identifier);
+        Task<TAggregateRoot?> GetAsync(TIdentifier identifier);
 
-        Task<IEnumerable<TAggregateRoot>> GetAsync(Pagination pagination = null);
+        Task<IEnumerable<TAggregateRoot>> GetAsync(Pagination? pagination = null);
 
         Task AddAsync(TAggregateRoot entity);
 

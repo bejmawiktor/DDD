@@ -21,14 +21,14 @@ namespace DDD.Application.Persistence.Adapters
 
         private TAggregateRootDtoConverter Converter => new TAggregateRootDtoConverter();
 
-        Task<TAggregateRoot> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(TIdentifier identifier)
+        Task<TAggregateRoot?> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(TIdentifier identifier)
         {
             return this.DtoRepository
                 .GetAsync(this.Converter.ToDtoIdentifier(identifier))
                 .ContinueWith(a => this.ConvertDto(a.Result));
         }
 
-        private TAggregateRoot ConvertDto(TDto aggregateRootDto)
+        private TAggregateRoot? ConvertDto(TDto? aggregateRootDto)
         {
             if(ReferenceEquals(aggregateRootDto, null))
             {
@@ -38,11 +38,11 @@ namespace DDD.Application.Persistence.Adapters
             return aggregateRootDto.ToDomainObject();
         }
 
-        Task<IEnumerable<TAggregateRoot>> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(Pagination pagination)
+        Task<IEnumerable<TAggregateRoot>> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(Pagination? pagination)
         {
             return this.DtoRepository
                 .GetAsync(pagination)
-                .ContinueWith(r => r.Result?.Select(r => r.ToDomainObject()));
+                .ContinueWith(r => r.Result?.Select(r => r.ToDomainObject()) ?? Enumerable.Empty<TAggregateRoot>());
         }
 
         Task IAsyncRepository<TAggregateRoot, TIdentifier>.AddAsync(TAggregateRoot entity)
