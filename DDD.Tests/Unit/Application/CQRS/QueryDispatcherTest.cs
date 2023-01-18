@@ -17,7 +17,7 @@ namespace DDD.Tests.Unit.Application.CQRS
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("dependencyResolver"),
-                () => new QueryDispatcher(null));
+                () => new QueryDispatcher(null!));
         }
 
         [Test]
@@ -26,14 +26,14 @@ namespace DDD.Tests.Unit.Application.CQRS
             var dependencyResolverMock = new Mock<IDependencyResolver>();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
-                .Returns(() => null);
+                .Returns(() => null!);
             var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("query"),
-                () => queryDispatcher.Dispatch<QueryStub, string>(null));
+                () => queryDispatcher.Dispatch<QueryStub, string>(null!));
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace DDD.Tests.Unit.Application.CQRS
             var dependencyResolverMock = new Mock<IDependencyResolver>();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
-                .Returns(() => null);
+                .Returns(() => null!);
             var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
@@ -74,14 +74,14 @@ namespace DDD.Tests.Unit.Application.CQRS
             var dependencyResolverMock = new Mock<IDependencyResolver>();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
-                .Returns(() => null);
+                .Returns(() => null!);
             var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("query"),
-                () => queryDispatcher.DispatchAsync<QueryStub, string>(null).Wait());
+                () => queryDispatcher.DispatchAsync<QueryStub, string>(null!).Wait());
             Assert.Throws(
                 Is.InstanceOf<QueryHandlerNotFoundException>(),
                 () => queryDispatcher.DispatchAsync<QueryStub, string>(new QueryStub()).Wait());
@@ -93,7 +93,7 @@ namespace DDD.Tests.Unit.Application.CQRS
             var dependencyResolverMock = new Mock<IDependencyResolver>();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
-                .Returns(() => null);
+                .Returns(() => null!);
             var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
 
             Assert.Throws(
