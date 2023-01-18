@@ -43,7 +43,7 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object? obj)
         {
-            var other = obj as Entity<TIdentifier>;
+            Entity<TIdentifier>? other = obj as Entity<TIdentifier>;
 
             return this.GetType().Equals(other?.GetType())
                 && this.Id.Equals(other!.Id);

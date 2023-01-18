@@ -35,7 +35,7 @@ namespace DDD.Domain.Model
                 return false;
             }
 
-            var other = obj as ValueObject;
+            ValueObject? other = obj as ValueObject;
 
             return this.GetEqualityMembers()
                 .SequenceEqual(other!.GetEqualityMembers());
@@ -48,7 +48,7 @@ namespace DDD.Domain.Model
                 int hash = 2893249;
                 hash = hash * 1674319 + this.GetType().GetHashCode();
 
-                foreach(var memberValue in this.GetEqualityMembers())
+                foreach(object? memberValue in this.GetEqualityMembers())
                 {
                     hash = hash * 1674319 + (memberValue?.GetHashCode() ?? 0);
                 }

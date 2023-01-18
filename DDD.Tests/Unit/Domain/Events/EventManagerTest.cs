@@ -19,7 +19,7 @@ namespace DDD.Tests.Unit.Domain.Events
         public void TestEventManager_WhenNoEventScopeCreated_ThenEventsAreDispatchedImmediately()
         {
             bool dispatched = false;
-            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);
@@ -34,7 +34,7 @@ namespace DDD.Tests.Unit.Domain.Events
         public void TestEventManager_WhenNoEventScopeCreatedAndEventDispatcherIsNotSet_ThenEventsArentDispatched()
         {
             bool dispatched = false;
-            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);
@@ -48,8 +48,8 @@ namespace DDD.Tests.Unit.Domain.Events
         public void TestNotify_WhenScopeWasCreated_ThenEventsArentDispatched()
         {
             bool dispatched = false;
-            var eventMock = new Mock<IEvent>();
-            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
                 .Callback(() => dispatched = true);
@@ -63,13 +63,12 @@ namespace DDD.Tests.Unit.Domain.Events
             Assert.That(dispatched, Is.False);
         }
 
-
         [Test]
         public void TestNotify_WhenScopeWasCreated_ThenEventsAreAddedToScopeEvents()
         {
-            var eventMock = new Mock<IEvent>();
-            var @event = eventMock.Object;
-            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            Mock<IEvent> eventMock = new();
+            IEvent @event = eventMock.Object;
+            Mock<IEventDispatcher> eventDispatcherMock = new();
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
             using(EventsScope eventsScope = new EventsScope())
@@ -84,7 +83,7 @@ namespace DDD.Tests.Unit.Domain.Events
         public void TestNotify_WhenScopeWasntCreated_ThenEventsAreDispatched()
         {
             bool dispatched = false;
-            var eventDispatcherMock = new Mock<IEventDispatcher>();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);

@@ -12,11 +12,11 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestGetAsync_WhenIdentifierGiven_ThenAggregateRootIsReturned()
         {
-            var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
+            List<AggregateRootDtoStub> aggregateRootDtosStubs = new()
             {
                 new AggregateRootDtoStub("1")
             };
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             AggregateRootStub? aggregateRootStub = await repository.GetAsync("1");
@@ -27,11 +27,11 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestGetAsync_WhenPaginationGiven_ThenAggregateRootsAreReturned()
         {
-            var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
+            List<AggregateRootDtoStub> aggregateRootDtosStubs = new()
             {
                 new AggregateRootDtoStub("1")
             };
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             IEnumerable<AggregateRootStub> aggregateRoots = await repository.GetAsync(new Pagination(1, 100));
@@ -42,11 +42,11 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestGetAsync_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
         {
-            var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
+            List<AggregateRootDtoStub> aggregateRootDtosStubs = new()
             {
                 new AggregateRootDtoStub("1")
             };
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             AggregateRootStub? aggregateRootStub = await repository.GetAsync("2");
@@ -57,7 +57,7 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestGetAsync_WhenNullIsReturnedFromDtoRepository_ThenEmptyEnumerableIsReturned()
         {
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(null);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(null);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             IEnumerable<AggregateRootStub> aggregateRoots = await repository.GetAsync(new Pagination(1, 100));
@@ -68,7 +68,7 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestAddAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsSet()
         {
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(new List<AggregateRootDtoStub>());
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(new List<AggregateRootDtoStub>());
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             await repository.AddAsync(new AggregateRootStub("1"));
@@ -79,11 +79,11 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestRemoveAsync_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
         {
-            var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
+            List<AggregateRootDtoStub> aggregateRootDtosStubs = new()
             {
                 new AggregateRootDtoStub("1")
             };
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             await repository.RemoveAsync(new AggregateRootStub("1"));
@@ -94,11 +94,11 @@ namespace DDD.Tests.Unit.Application.Persistence
         [Test]
         public async Task TestUpdateAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsUpdated()
         {
-            var aggregateRootDtosStubs = new List<AggregateRootDtoStub>()
+            List<AggregateRootDtoStub> aggregateRootDtosStubs = new()
             {
                 new AggregateRootDtoStub("1")
             };
-            var dtoRepository = new AsyncAggregateRootDtoStubRepository(aggregateRootDtosStubs);
+            AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
             IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
             await repository.UpdateAsync(new AggregateRootStub("1", "MyName"));

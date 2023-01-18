@@ -21,7 +21,7 @@ namespace DDD.Application.CQRS
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var handler = this.DependencyResolver.Resolve<ICommandHandler<TCommand>>();
+            ICommandHandler<TCommand> handler = this.DependencyResolver.Resolve<ICommandHandler<TCommand>>();
 
             if(handler == null)
             {
@@ -39,7 +39,7 @@ namespace DDD.Application.CQRS
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var handler = this.DependencyResolver.Resolve<IAsyncCommandHandler<TCommand>>();
+            IAsyncCommandHandler<TCommand> handler = this.DependencyResolver.Resolve<IAsyncCommandHandler<TCommand>>();
 
             if(handler == null)
             {

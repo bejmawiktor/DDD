@@ -9,7 +9,7 @@ namespace DDD.Tests.Unit.Domain.Persistence
         [Test]
         public void TestConstructing_WhenPageGiven_ThenPageIsSet()
         {
-            var pagination = new Pagination(10, 1000);
+            Pagination pagination = new(10, 1000);
 
             Assert.That(pagination.Page, Is.EqualTo(10));
         }
@@ -17,7 +17,7 @@ namespace DDD.Tests.Unit.Domain.Persistence
         [Test]
         public void TestConstructing_WhenItemsPerPageGiven_ThenItemsPerPageIsSet()
         {
-            var pagination = new Pagination(10, 1000);
+            Pagination pagination = new(10, 1000);
 
             Assert.That(pagination.ItemsPerPage, Is.EqualTo(1000));
         }

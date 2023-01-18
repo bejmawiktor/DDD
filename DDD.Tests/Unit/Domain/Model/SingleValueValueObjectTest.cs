@@ -94,7 +94,7 @@ namespace DDD.Tests.Unit.Domain.Model
         [Test]
         public void ToString_WhenConverting_ThenValueIsReturned()
         {
-            var singleValueValueObjectFake = new SingleValueValueObjectFake("MyValue");
+            SingleValueValueObjectFake singleValueValueObjectFake = new("MyValue");
 
             string? stringValue = singleValueValueObjectFake.ToString();
 
@@ -104,7 +104,7 @@ namespace DDD.Tests.Unit.Domain.Model
         [Test]
         public void ToString_WhenConvertingWithNullValue_ThenNullIsReturned()
         {
-            var nullableSignleValueValueObjectFake = new NullableSignleValueValueObjectFake(null);
+            NullableSignleValueValueObjectFake nullableSignleValueValueObjectFake = new(null);
 
             string? stringValue = nullableSignleValueValueObjectFake.ToString();
 

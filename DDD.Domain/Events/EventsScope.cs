@@ -36,7 +36,7 @@ namespace DDD.Domain.Events
 
         public void Publish()
         {
-            foreach(var @event in this.Events)
+            foreach(IEvent @event in this.Events)
             {
                 if(this.ParentScope == null)
                 {

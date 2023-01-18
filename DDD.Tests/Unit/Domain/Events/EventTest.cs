@@ -11,7 +11,7 @@ namespace DDD.Tests.Unit.Domain.Events
         [Test]
         public void TestConstructing_WhenConstructing_ThenGuidIsSet()
         {
-            var @event = new Mock<Event>().Object;
+            Event @event = new Mock<Event>().Object;
 
             Assert.Multiple(() =>
             {
@@ -23,7 +23,7 @@ namespace DDD.Tests.Unit.Domain.Events
         [Test]
         public void TestConstructing_WhenConstructing_ThenCreatedAtIsSet()
         {
-            var @event = new Mock<Event>().Object;
+            Event @event = new Mock<Event>().Object;
 
             Assert.That(@event.CreatedAt, Is.GreaterThan(DateTime.MinValue));
         }
@@ -31,8 +31,8 @@ namespace DDD.Tests.Unit.Domain.Events
         [Test]
         public void TestConstructing_WhenConstructingMultipleEvents_ThenIdHasDiffrentValues()
         {
-            var firstEvent = new Mock<Event>().Object;
-            var secondEvent = new Mock<Event>().Object;
+            Event firstEvent = new Mock<Event>().Object;
+            Event secondEvent = new Mock<Event>().Object;
 
             Assert.That(firstEvent.Id, Is.Not.EqualTo(secondEvent));
         }

@@ -23,11 +23,11 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public void TestDispatch_WhenNullQueryGiven_ThenArgumentNullExceptionIsThrown()
         {
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
                 .Returns(() => null!);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
@@ -39,11 +39,11 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public void TestDispatch_WhenNotResolvableQueryGiven_ThenQueryHandlerNotFoundExceptionIsThrown()
         {
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
                 .Returns(() => null!);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<QueryHandlerNotFoundException>(),
@@ -53,15 +53,15 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public void TestDispatch_WhenQueryHandlerResolved_ThenQueryIsHandled()
         {
-            var queryHandlerMock = new Mock<IQueryHandler<QueryStub, string>>();
+            Mock<IQueryHandler<QueryStub, string>> queryHandlerMock = new();
             queryHandlerMock
                 .Setup(q => q.Handle(It.IsAny<QueryStub>()))
                 .Returns("QueryResult");
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
                 .Returns(queryHandlerMock.Object);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             string result = queryDispatcher.Dispatch<QueryStub, string>(new QueryStub());
 
@@ -71,11 +71,11 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public void TestDispatchAsync_WhenNullQueryGiven_ThenArgumentNullExceptionIsThrown()
         {
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
                 .Returns(() => null!);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<ArgumentNullException>()
@@ -90,11 +90,11 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public void TestDispatchAsync_WhenNotResolvableQueryGiven_ThenQueryHandlerNotFoundExceptionIsThrown()
         {
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IQueryHandler<QueryStub, string>>())
                 .Returns(() => null!);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             Assert.Throws(
                 Is.InstanceOf<QueryHandlerNotFoundException>(),
@@ -104,14 +104,14 @@ namespace DDD.Tests.Unit.Application.CQRS
         [Test]
         public async Task TestDispatchAsync_WhenQueryHandlerResolved_ThenQueryIsHandled()
         {
-            var queryHandlerMock = new Mock<IAsyncQueryHandler<QueryStub, string>>();
+            Mock<IAsyncQueryHandler<QueryStub, string>> queryHandlerMock = new();
             queryHandlerMock.Setup(q => q.HandleAsync(It.IsAny<QueryStub>()))
                 .ReturnsAsync("QueryResult");
-            var dependencyResolverMock = new Mock<IDependencyResolver>();
+            Mock<IDependencyResolver> dependencyResolverMock = new();
             dependencyResolverMock
                 .Setup(d => d.Resolve<IAsyncQueryHandler<QueryStub, string>>())
                 .Returns(queryHandlerMock.Object);
-            var queryDispatcher = new QueryDispatcher(dependencyResolverMock.Object);
+            QueryDispatcher queryDispatcher = new(dependencyResolverMock.Object);
 
             string result = await queryDispatcher.DispatchAsync<QueryStub, string>(new QueryStub());
 

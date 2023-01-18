@@ -34,7 +34,7 @@ namespace DDD.Tests.Unit.Domain.Utils
         [Test]
         public void TestConstructing_WhenTupleGiven_ThenTupleIsSet()
         {
-            var tupleContainer = new TupleContainer<(string name, decimal value)>(("AA", 22m));
+            TupleContainer<(string name, decimal value)> tupleContainer = new(("AA", 22m));
 
             Assert.That(tupleContainer.Tuple, Is.EqualTo(("AA", 22m)));
         }
@@ -42,7 +42,7 @@ namespace DDD.Tests.Unit.Domain.Utils
         [Test]
         public void TestLength_WhenTupleGiven_ThenLengthIsSameAsTuple()
         {
-            var tupleContainer = new TupleContainer<(string name, decimal value)>(("AA", 22m));
+            TupleContainer<(string name, decimal value)> tupleContainer = new(("AA", 22m));
 
             Assert.That(tupleContainer.Length, Is.EqualTo(2));
         }
@@ -50,7 +50,7 @@ namespace DDD.Tests.Unit.Domain.Utils
         [Test]
         public void TestIndexerOperator_WhenIndexGiven_ThenTupleElementIsReturned()
         {
-            var tupleContainer = new TupleContainer<(string name, decimal value)>(("AA", 22m));
+            TupleContainer<(string name, decimal value)> tupleContainer = new(("AA", 22m));
 
             Assert.Multiple(() =>
             {

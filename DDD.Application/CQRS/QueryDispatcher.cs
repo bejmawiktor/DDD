@@ -21,7 +21,7 @@ namespace DDD.Application.CQRS
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var handler = this.DependencyResolver.Resolve<IQueryHandler<TQuery, TResult>>();
+            IQueryHandler<TQuery, TResult> handler = this.DependencyResolver.Resolve<IQueryHandler<TQuery, TResult>>();
 
             if(handler == null)
             {
@@ -39,7 +39,7 @@ namespace DDD.Application.CQRS
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var handler = this.DependencyResolver.Resolve<IAsyncQueryHandler<TQuery, TResult>>();
+            IAsyncQueryHandler<TQuery, TResult> handler = this.DependencyResolver.Resolve<IAsyncQueryHandler<TQuery, TResult>>();
 
             if(handler == null)
             {
