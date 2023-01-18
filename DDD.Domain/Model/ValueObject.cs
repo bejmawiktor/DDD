@@ -81,8 +81,8 @@ namespace DDD.Domain.Model
             yield return this.Value;
         }
 
-        public override string ToString()
-            => this.Value?.ToString() ?? string.Empty;
+        public override string? ToString()
+            => this.Value?.ToString();
     }
 
     public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject

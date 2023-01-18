@@ -76,7 +76,7 @@ namespace DDD.Tests.Unit.Domain.Model
         }
 
         [Test]
-        public void TestEquals_WhenNullValueValueObjectsGiven_ThenReturnFalse()
+        public void TestEquals_WhenNullValueValueObjectsGiven_ThenReturnTrue()
         {
             Assert.That(
                 new NullableSignleValueValueObjectFake(null),
@@ -96,19 +96,19 @@ namespace DDD.Tests.Unit.Domain.Model
         {
             var singleValueValueObjectFake = new SingleValueValueObjectFake("MyValue");
 
-            string stringValue = singleValueValueObjectFake.ToString();
+            string? stringValue = singleValueValueObjectFake.ToString();
 
             Assert.That(stringValue, Is.EqualTo("MyValue"));
         }
 
         [Test]
-        public void ToString_WhenConvertingWithNullValue_ThenEmptyStringIsReturned()
+        public void ToString_WhenConvertingWithNullValue_ThenNullIsReturned()
         {
             var nullableSignleValueValueObjectFake = new NullableSignleValueValueObjectFake(null);
 
-            string stringValue = nullableSignleValueValueObjectFake.ToString();
+            string? stringValue = nullableSignleValueValueObjectFake.ToString();
 
-            Assert.That(stringValue, Is.EqualTo(string.Empty));
+            Assert.That(stringValue, Is.Null);
         }
     }
 }

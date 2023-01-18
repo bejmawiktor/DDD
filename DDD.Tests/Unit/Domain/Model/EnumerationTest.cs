@@ -407,9 +407,9 @@ namespace DDD.Tests.Unit.Domain.Model
         }
 
         [Test]
-        public void TestToString_WhenConvertingNullValue_ThenEmptyStringIsReturned()
+        public void TestToString_WhenConvertingNullValue_ThenNullIsReturned()
         {
-            Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Empty);
+            Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
         }
 
         [Test]

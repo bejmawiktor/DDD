@@ -95,14 +95,7 @@ namespace DDD.Domain.Model
         }
 
         public override string? ToString()
-        {
-            if(default(TValue) is null && this.Value is null)
-            {
-                return string.Empty;
-            }
-
-            return this.Value?.ToString();
-        }
+            => this.Value?.ToString();
 
         public static implicit operator Enumeration<TValue, TEnumeration>(TValue value)
             => GetValues().FirstOrDefault(v => v is not null && AreValuesEqual(v.Value, value))
