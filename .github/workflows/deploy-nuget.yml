@@ -31,7 +31,7 @@ jobs:
           run: |
             git fetch --prune --tags
             git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1
-            echo ::set-output name=version::$(git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1)
+            echo "version=$(git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1)" >> $GITHUB_OUTPUT
             
   deploy:
     name: 'Deploy on nuget'
