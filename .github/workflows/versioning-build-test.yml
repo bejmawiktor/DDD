@@ -6,6 +6,7 @@ on:
 
 jobs:
   versioning:
+    name: 'Versioning'
     runs-on: ubuntu-latest
     outputs:
       previous-version: ${{ steps.get-version.outputs.previous-version }}
@@ -30,6 +31,7 @@ jobs:
           git push origin ${{ steps.get-version.outputs.version }}
           
   build:
+    name: 'Build'
     runs-on: ubuntu-latest
     needs: versioning
     steps:
@@ -48,6 +50,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
   
   test:
+    name: 'Test'
     runs-on: ubuntu-latest
     needs: build
     steps:

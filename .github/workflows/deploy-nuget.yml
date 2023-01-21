@@ -17,24 +17,24 @@ env:
 
 jobs:
   get-version:
-      if: ${{ github.event.workflow_run.conclusion == 'success' }}
-      name: 'Get version'
-      runs-on: ubuntu-latest
-      outputs:
-        version: ${{ steps.get-version.outputs.previous-version }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-          with: 
-            ref: ${{ github.head_ref }}   # checkout the correct branch name
-            fetch-depth: 0
+    name: 'Get version'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.previous-version }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with: 
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0
 
-        - name: Git version
-          id: get-version
-          uses: codacy/git-version@2.4.0
-          with:
-             release-branch: main
-             prefix: v
+    - name: Git version
+      id: get-version
+      uses: codacy/git-version@2.4.0
+      with:
+        release-branch: main
+        prefix: v
 
   deploy:
     name: 'Deploy on nuget'
