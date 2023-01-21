@@ -2,8 +2,8 @@ name: Deploy nuget package
 
 on:
   workflow_run:
-    workflows: ["Version build and test"]
-    branches: [main]
+    workflows: [ "Version build and test" ]
+    branches: [ main ]
     types: 
       - completed
   
@@ -34,6 +34,7 @@ jobs:
           uses: codacy/git-version@2.4.0
           with:
              release-branch: main
+             prefix: v
 
   deploy:
     name: 'Deploy on nuget'
@@ -43,6 +44,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
+      - name: Remove v from version
+        uses: bhowell2/github-substring-action@v1.0.0
+        id: remove-v-from-version
+        with:
+          value: ${{ needs.get-version.outputs.version }}
+          index_of_str: "v"
+
       - name: Setup .NET Core SDK 6.x
         uses: actions/setup-dotnet@v3
         with:
@@ -55,10 +63,10 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Pack domain project
-        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack ${{ env.DOMAIN_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
       
       - name: Pack application project
-        run: dotnet pack ${{ env.APPLICATION_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ needs.get-version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
+        run: dotnet pack ${{ env.APPLICATION_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Push packages
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}

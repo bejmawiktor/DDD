@@ -22,7 +22,8 @@ jobs:
         uses: codacy/git-version@2.4.0
         with:
           release-branch: main
-          
+          prefix: v
+
       - name: Tag commit
         run: |
           git tag v${{ steps.get-version.outputs.version }} ${{ github.sha }}
