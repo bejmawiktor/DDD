@@ -26,8 +26,8 @@ jobs:
 
       - name: Tag commit
         run: |
-          git tag v${{ steps.get-version.outputs.version }} ${{ github.sha }}
-          git push origin v${{ steps.get-version.outputs.version }}
+          git tag ${{ steps.get-version.outputs.version }} ${{ github.sha }}
+          git push origin ${{ steps.get-version.outputs.version }}
           
   build:
     runs-on: ubuntu-latest
