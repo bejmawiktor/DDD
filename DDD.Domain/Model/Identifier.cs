@@ -1,24 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DDD.Domain.Model
 {
     public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier>
-    : ValueObject<TIdentifierValue>, IEquatable<TDeriviedIdentifier>
+    : ValueObject, IEquatable<TDeriviedIdentifier>
        where TIdentifierValue : notnull, IEquatable<TIdentifierValue>
        where TDeriviedIdentifier : Identifier<TIdentifierValue, TDeriviedIdentifier>
     {
-        public new TIdentifierValue Value => base.Value!;
+        public TIdentifierValue Value { get; }
 
-        protected Identifier(TIdentifierValue value) : base(value)
+        protected Identifier(TIdentifierValue value) : base()
         {
-        }
+            ArgumentNullException.ThrowIfNull(value);
+            this.ValidateValue(value);
 
-        internal override sealed void PrevalidateValue(TIdentifierValue value)
-            => ArgumentNullException.ThrowIfNull(value);
+            this.Value = value;
+        }
 
         public bool Equals(TDeriviedIdentifier? other)
         {
             return base.Equals(other);
         }
+
+        protected abstract void ValidateValue(TIdentifierValue value);
+
+        protected override sealed IEnumerable<object?> GetEqualityMembers()
+        {
+            yield return this.Value;
+        }
+
+        public override string? ToString()
+            => this.Value.ToString();
     }
 }
