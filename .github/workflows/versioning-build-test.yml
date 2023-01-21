@@ -2,7 +2,7 @@ name: Version build and test
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ main ]
 
 jobs:
   versioning:
@@ -21,12 +21,12 @@ jobs:
         id: get-version
         uses: codacy/git-version@2.4.0
         with:
-          release-branch: master
+          release-branch: main
           
       - name: Tag commit
         run: |
-          git tag ${{ steps.get-version.outputs.version }} ${{ github.sha }}
-          git push origin ${{ steps.get-version.outputs.version }}
+          git tag v${{ steps.get-version.outputs.version }} ${{ github.sha }}
+          git push origin v${{ steps.get-version.outputs.version }}
           
   build:
     runs-on: ubuntu-latest

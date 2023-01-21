@@ -3,7 +3,7 @@ name: Deploy nuget package
 on:
   workflow_run:
     workflows: ["Version build and test"]
-    branches: [master]
+    branches: [main]
     types: 
       - completed
   
@@ -21,18 +21,20 @@ jobs:
       name: 'Get version'
       runs-on: ubuntu-latest
       outputs:
-        version: ${{ steps.get-version.outputs.version }}
+        version: ${{ steps.get-version.outputs.previous-version }}
       steps:
         - name: Checkout
           uses: actions/checkout@v3
-            
-        - name: Get version tag
+          with: 
+            ref: ${{ github.head_ref }}   # checkout the correct branch name
+            fetch-depth: 0
+
+        - name: Git version
           id: get-version
-          run: |
-            git fetch --prune --tags
-            git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1
-            echo "version=$(git tag --contains ${{ github.sha }} | grep '^\([0-9]\+\.\?\)\+$' | sort -nr | head -1)" >> $GITHUB_OUTPUT
-            
+          uses: codacy/git-version@2.4.0
+          with:
+             release-branch: main
+
   deploy:
     name: 'Deploy on nuget'
     runs-on: 'ubuntu-latest'
