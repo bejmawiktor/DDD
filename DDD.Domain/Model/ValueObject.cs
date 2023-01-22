@@ -60,7 +60,7 @@ namespace DDD.Domain.Model
 
     public abstract class ValueObject<TValue> : ValueObject
     {
-        protected TValue? Value { get; }
+        protected TValue Value { get; }
 
         protected ValueObject(TValue value)
         {
