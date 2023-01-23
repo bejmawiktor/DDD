@@ -1,13 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain", "DDD.Domain\DDD.Domain.csproj", "{928CAFDD-F264-43A2-82E9-E60B397D6FED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain", "src\DDD.Domain\DDD.Domain.csproj", "{928CAFDD-F264-43A2-82E9-E60B397D6FED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Tests", "DDD.Tests\DDD.Tests.csproj", "{552D1C68-6FDC-476E-80C7-DFD26CC30B3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Tests", "test\DDD.Tests\DDD.Tests.csproj", "{552D1C68-6FDC-476E-80C7-DFD26CC30B3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Application", "DDD.Application\DDD.Application.csproj", "{AB647616-7D57-4A64-BFE4-4873BAD0188B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Application", "src\DDD.Application\DDD.Application.csproj", "{AB647616-7D57-4A64-BFE4-4873BAD0188B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CF4655FF-4C70-4FE9-9A20-F77C1F94D459}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6EBB0BFD-A124-465C-BDF8-6B124620BF44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{791A0A0C-AF68-4106-8E12-408B962E6828}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy-nuget.yml = .github\workflows\deploy-nuget.yml
+		.github\workflows\versioning-build-test.yml = .github\workflows\versioning-build-test.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8E7F0AC5-8329-4B67-9D31-304640EEC311}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +42,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{928CAFDD-F264-43A2-82E9-E60B397D6FED} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
+		{552D1C68-6FDC-476E-80C7-DFD26CC30B3E} = {8E7F0AC5-8329-4B67-9D31-304640EEC311}
+		{AB647616-7D57-4A64-BFE4-4873BAD0188B} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
+		{791A0A0C-AF68-4106-8E12-408B962E6828} = {6EBB0BFD-A124-465C-BDF8-6B124620BF44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54DB9BFD-2243-400D-A850-7C656EB075B0}
