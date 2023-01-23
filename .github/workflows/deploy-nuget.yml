@@ -8,9 +8,9 @@ on:
       - completed
   
 env:
-  DOMAIN_PROJECT_PATH: 'DDD.Domain/DDD.Domain.csproj'
+  DOMAIN_PROJECT_PATH: 'src/DDD.Domain/DDD.Domain.csproj'
   DOMAIN_PACKAGE_NAME: 'DDD.Domain'
-  APPLICATION_PROJECT_PATH: 'DDD.Application/DDD.Application.csproj'
+  APPLICATION_PROJECT_PATH: 'src/DDD.Application/DDD.Application.csproj'
   APPLICAtiON_PACKAGE_NAME: 'DDD.Application'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json'
