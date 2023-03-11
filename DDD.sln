@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain", "src\DDD.Domain\DDD.Domain.csproj", "{928CAFDD-F264-43A2-82E9-E60B397D6FED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Tests", "test\DDD.Tests\DDD.Tests.csproj", "{552D1C68-6FDC-476E-80C7-DFD26CC30B3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Tests", "tests\DDD.Tests\DDD.Tests.csproj", "{552D1C68-6FDC-476E-80C7-DFD26CC30B3E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Application", "src\DDD.Application\DDD.Application.csproj", "{AB647616-7D57-4A64-BFE4-4873BAD0188B}"
 EndProject
@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\versioning-build-test.yml = .github\workflows\versioning-build-test.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8E7F0AC5-8329-4B67-9D31-304640EEC311}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8E7F0AC5-8329-4B67-9D31-304640EEC311}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
