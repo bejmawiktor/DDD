@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8E7F0AC5-8329-4B67-9D31-304640EEC311}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Events.MediatR", "src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj", "{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{AB647616-7D57-4A64-BFE4-4873BAD0188B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB647616-7D57-4A64-BFE4-4873BAD0188B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB647616-7D57-4A64-BFE4-4873BAD0188B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{552D1C68-6FDC-476E-80C7-DFD26CC30B3E} = {8E7F0AC5-8329-4B67-9D31-304640EEC311}
 		{AB647616-7D57-4A64-BFE4-4873BAD0188B} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
 		{791A0A0C-AF68-4106-8E12-408B962E6828} = {6EBB0BFD-A124-465C-BDF8-6B124620BF44}
+		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54DB9BFD-2243-400D-A850-7C656EB075B0}
