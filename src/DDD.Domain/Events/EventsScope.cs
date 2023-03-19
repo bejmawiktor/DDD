@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DDD.Domain.Events
 {
@@ -47,6 +47,27 @@ namespace DDD.Domain.Events
             }
 
             this.Clear();
+        }
+
+        public Task PublishAsync()
+        {
+            List<Task> tasks = new();
+
+            foreach(IEvent @event in this.Events)
+            {
+                if(this.ParentScope is null)
+                {
+                    tasks.Add(EventManager.Instance.EventDispatcher?.DispatchAsync((dynamic)@event) ?? Task.CompletedTask);
+                }
+                else
+                {
+                    this.ParentScope.AddEvent((dynamic)@event);
+                }
+            }
+
+            this.Clear();
+
+            return Task.WhenAll(tasks);
         }
 
         public void Clear()

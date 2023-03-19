@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DDD.Domain.Events
 {
@@ -34,6 +35,18 @@ namespace DDD.Domain.Events
             {
                 EventManager.CurrentScope.AddEvent(@event);
             }
+        }
+
+        public Task NotifyAsync<TEvent>(TEvent @event) where TEvent : IEvent
+        {
+            if(EventManager.CurrentScope == null)
+            {
+                return this.EventDispatcher?.DispatchAsync(@event) ?? Task.CompletedTask;
+            }
+
+            EventManager.CurrentScope.AddEvent(@event);
+
+            return Task.CompletedTask;
         }
     }
 }

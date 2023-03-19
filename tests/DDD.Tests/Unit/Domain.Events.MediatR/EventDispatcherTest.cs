@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR
 {
@@ -38,6 +39,21 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR
             EventManager.Instance.EventDispatcher = eventDispatcher;
 
             EventManager.Instance.Notify(eventStub);
+
+            Assert.That(eventStub.WasHandled, Is.True);
+        }
+
+        [Test]
+        public async Task TestDispatchAsync_WhenEventIsPublished_ThenEventIsHandled()
+        {
+            EventStub eventStub = new();
+            var servicesProvider = new ServiceCollection()
+                .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly))
+                .BuildServiceProvider();
+            EventDispatcher eventDispatcher = new EventDispatcher(servicesProvider.GetRequiredService<IMediator>());
+            EventManager.Instance.EventDispatcher = eventDispatcher;
+
+            await EventManager.Instance.NotifyAsync(eventStub);
 
             Assert.That(eventStub.WasHandled, Is.True);
         }

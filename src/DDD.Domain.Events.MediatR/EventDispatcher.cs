@@ -16,5 +16,11 @@ namespace DDD.Domain.Events.MediatR
         {
             this.Mediator.Publish(new Notification<TEvent>(@event)).GetAwaiter().GetResult();
         }
+
+        public Task DispatchAsync<TEvent>(TEvent @event)
+            where TEvent : IEvent
+        {
+            return this.Mediator.Publish(new Notification<TEvent>(@event));
+        }
     }
 }

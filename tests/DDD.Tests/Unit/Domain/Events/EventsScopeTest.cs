@@ -3,6 +3,7 @@ using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events
 {
@@ -162,11 +163,112 @@ namespace DDD.Tests.Unit.Domain.Events
         }
 
         [Test]
+        public async Task TestPublishAsumc_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock
+                .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+
+            using(EventsScope parentEventScope = new())
+            {
+                using(EventsScope childEventScope = new())
+                {
+                    childEventScope.AddEvent(@event);
+
+                    await childEventScope.PublishAsync();
+                }
+
+                Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
+            }
+        }
+
+        [Test]
+        public async Task TestPublishAsync_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock
+                .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+
+            using(EventsScope parentEventScope = new())
+            {
+                using(EventsScope childEventScope = new())
+                {
+                    childEventScope.AddEvent(@event);
+
+                    using(EventsScope nestedChildEventScope = new())
+                    {
+                        nestedChildEventScope.AddEvent(@event);
+
+                        await nestedChildEventScope.PublishAsync();
+                    }
+
+                    await childEventScope.PublishAsync();
+                }
+
+                using(EventsScope childEventScope = new())
+                {
+                    childEventScope.AddEvent(@event);
+
+                    await childEventScope.PublishAsync();
+                }
+
+                Assert.That(parentEventScope.Events.Count, Is.EqualTo(3));
+            }
+        }
+
+        [Test]
+        public async Task TestPublishAsync_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
+        {
+            bool dispatched = false;
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock
+                .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
+                .Callback(() => dispatched = true);
+            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            EventStub @event = new();
+            EventsScope? eventsScope = null;
+
+            using(eventsScope = new EventsScope())
+            {
+                eventsScope.AddEvent(@event);
+
+                await eventsScope.PublishAsync();
+            }
+
+            Assert.That(dispatched, Is.True);
+        }
+
+        [Test]
+        public async Task TestPublishAsync_WhenPublishing_ThenEventsAreCleared()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            IEvent @event = eventMock.Object;
+            EventsScope? eventsScope;
+
+            using(eventsScope = new EventsScope())
+            {
+                eventsScope.AddEvent(@event);
+
+                await eventsScope.PublishAsync();
+            }
+
+            Assert.That(eventsScope.Events, Is.Empty);
+        }
+
+        [Test]
         public void TestClear_WhenClearing_ThenEventsAreEmpty()
         {
             Mock<IEvent> eventMock = new();
             IEvent @event = eventMock.Object;
-            EventsScope? eventsScope = null;
+            EventsScope? eventsScope;
 
             using(eventsScope = new EventsScope())
             {
