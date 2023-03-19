@@ -36,7 +36,7 @@ namespace DDD.Application.Persistence.Adapters
         {
             IEnumerable<TDto> aggregateRootDtos = this.DtoRepository.Get(pagination);
 
-            if(aggregateRootDtos == null)
+            if(aggregateRootDtos is null)
             {
                 return Enumerable.Empty<TAggregateRoot>();
             }

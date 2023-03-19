@@ -16,7 +16,7 @@ namespace DDD.Domain.Events
             this.Events = new List<IEvent>();
             this.ParentScope = EventManager.CurrentScope;
 
-            if(this.ParentScope != null)
+            if(this.ParentScope is not null)
             {
                 this.ParentScope.NestedScopesCounter++;
             }
@@ -36,7 +36,7 @@ namespace DDD.Domain.Events
         {
             foreach(IEvent @event in this.Events)
             {
-                if(this.ParentScope == null)
+                if(this.ParentScope is null)
                 {
                     EventManager.Instance.EventDispatcher?.Dispatch((dynamic)@event);
                 }
@@ -64,7 +64,7 @@ namespace DDD.Domain.Events
         {
             if(!this.IsDisposed)
             {
-                if(this.ParentScope != null)
+                if(this.ParentScope is not null)
                 {
                     this.ParentScope.NestedScopesCounter--;
                 }

@@ -26,7 +26,7 @@ namespace DDD.Domain.Events
 
         public void Notify<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            if(EventManager.CurrentScope == null)
+            if(EventManager.CurrentScope is null)
             {
                 this.EventDispatcher?.Dispatch(@event);
             }
