@@ -33,18 +33,18 @@ namespace DDD.Domain.Events
             }
             else
             {
-                EventManager.CurrentScope.AddEvent(@event);
+                EventManager.CurrentScope.Add(@event);
             }
         }
 
         public Task NotifyAsync<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            if(EventManager.CurrentScope == null)
+            if(EventManager.CurrentScope is null)
             {
                 return this.EventDispatcher?.DispatchAsync(@event) ?? Task.CompletedTask;
             }
 
-            EventManager.CurrentScope.AddEvent(@event);
+            EventManager.CurrentScope.Add(@event);
 
             return Task.CompletedTask;
         }

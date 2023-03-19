@@ -24,7 +24,7 @@ namespace DDD.Domain.Events
             EventManager.CurrentScope = this;
         }
 
-        internal void AddEvent<TEvent>(TEvent @event)
+        internal void Add<TEvent>(TEvent @event)
             where TEvent : IEvent
         {
             ArgumentNullException.ThrowIfNull(@event);
@@ -34,16 +34,16 @@ namespace DDD.Domain.Events
 
         public void Publish()
         {
-            foreach(IEvent @event in this.Events)
+            if(this.ParentScope is null)
             {
-                if(this.ParentScope is null)
+                foreach(IEvent @event in this.Events)
                 {
                     EventManager.Instance.EventDispatcher?.Dispatch((dynamic)@event);
                 }
-                else
-                {
-                    this.ParentScope.AddEvent((dynamic)@event);
-                }
+            }
+            else
+            {
+                this.ParentScope.AddRange(this.Events);
             }
 
             this.Clear();
@@ -53,21 +53,32 @@ namespace DDD.Domain.Events
         {
             List<Task> tasks = new();
 
-            foreach(IEvent @event in this.Events)
+            if(this.ParentScope is null)
             {
-                if(this.ParentScope is null)
+                foreach(IEvent @event in this.Events)
                 {
-                    tasks.Add(EventManager.Instance.EventDispatcher?.DispatchAsync((dynamic)@event) ?? Task.CompletedTask);
+                    if(EventManager.Instance.EventDispatcher is not null)
+                    {
+                        tasks.Add(EventManager.Instance.EventDispatcher?.DispatchAsync((dynamic)@event));
+                    }
                 }
-                else
-                {
-                    this.ParentScope.AddEvent((dynamic)@event);
-                }
+            }
+            else
+            {
+                this.ParentScope.AddRange(this.Events);
             }
 
             this.Clear();
 
             return Task.WhenAll(tasks);
+        }
+
+        private void AddRange(IEnumerable<IEvent> events)
+        {
+            foreach(IEvent @event in events)
+            {
+                this.Add(@event);
+            }
         }
 
         public void Clear()

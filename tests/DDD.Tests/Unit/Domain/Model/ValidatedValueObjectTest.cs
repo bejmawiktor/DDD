@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     public class ValidatedValueObjectTest
     {

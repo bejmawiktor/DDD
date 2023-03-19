@@ -1,5 +1,4 @@
 ﻿using DDD.Domain.Model;
-using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {

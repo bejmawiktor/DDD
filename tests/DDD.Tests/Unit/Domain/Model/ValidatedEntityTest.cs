@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace  DDD.Tests.Unit.Domain.Model
+namespace DDD.Tests.Unit.Domain.Model
 {
     [TestFixture]
     public class ValidatedEntityTest

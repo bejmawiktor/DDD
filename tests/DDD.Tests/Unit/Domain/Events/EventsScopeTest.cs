@@ -42,7 +42,7 @@ namespace DDD.Tests.Unit.Domain.Events
                     Is.InstanceOf<ArgumentNullException>()
                         .And.Property(nameof(ArgumentNullException.ParamName))
                         .EqualTo("@event"),
-                    () => eventScope.AddEvent((IEvent?)null!));
+                    () => eventScope.Add((IEvent?)null!));
             }
         }
 
@@ -55,7 +55,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 Assert.That(eventsScope.Events.Contains(@event));
             }
@@ -75,7 +75,7 @@ namespace DDD.Tests.Unit.Domain.Events
             {
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     childEventScope.Publish();
                 }
@@ -98,11 +98,11 @@ namespace DDD.Tests.Unit.Domain.Events
             {
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     using(EventsScope nestedChildEventScope = new())
                     {
-                        nestedChildEventScope.AddEvent(@event);
+                        nestedChildEventScope.Add(@event);
 
                         nestedChildEventScope.Publish();
                     }
@@ -112,7 +112,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     childEventScope.Publish();
                 }
@@ -135,7 +135,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new EventsScope())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 eventsScope.Publish();
             }
@@ -154,7 +154,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new EventsScope())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 eventsScope.Publish();
             }
@@ -176,7 +176,7 @@ namespace DDD.Tests.Unit.Domain.Events
             {
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     await childEventScope.PublishAsync();
                 }
@@ -199,11 +199,11 @@ namespace DDD.Tests.Unit.Domain.Events
             {
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     using(EventsScope nestedChildEventScope = new())
                     {
-                        nestedChildEventScope.AddEvent(@event);
+                        nestedChildEventScope.Add(@event);
 
                         await nestedChildEventScope.PublishAsync();
                     }
@@ -213,7 +213,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
                 using(EventsScope childEventScope = new())
                 {
-                    childEventScope.AddEvent(@event);
+                    childEventScope.Add(@event);
 
                     await childEventScope.PublishAsync();
                 }
@@ -236,7 +236,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new EventsScope())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 await eventsScope.PublishAsync();
             }
@@ -255,7 +255,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new EventsScope())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 await eventsScope.PublishAsync();
             }
@@ -272,7 +272,7 @@ namespace DDD.Tests.Unit.Domain.Events
 
             using(eventsScope = new EventsScope())
             {
-                eventsScope.AddEvent(@event);
+                eventsScope.Add(@event);
 
                 eventsScope.Clear();
             }
@@ -304,7 +304,7 @@ namespace DDD.Tests.Unit.Domain.Events
             {
                 using(EventsScope nestedChildEventScope = new())
                 {
-                    nestedChildEventScope.AddEvent(@event);
+                    nestedChildEventScope.Add(@event);
 
                     Assert.Throws(
                         Is.InstanceOf<InvalidOperationException>()
@@ -332,7 +332,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 {
                     using(EventsScope nestedChildEventScope = new())
                     {
-                        nestedChildEventScope.AddEvent(@event);
+                        nestedChildEventScope.Add(@event);
 
                         parentEventScope.Dispose();
                     }
