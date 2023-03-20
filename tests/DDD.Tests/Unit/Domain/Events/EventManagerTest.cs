@@ -2,6 +2,7 @@
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
+using System;
 using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events
@@ -29,20 +30,6 @@ namespace DDD.Tests.Unit.Domain.Events
             EventManager.Instance.Notify(new EventStub());
 
             Assert.That(dispatched, Is.True);
-        }
-
-        [Test]
-        public void TestEventManager_WhenNoEventScopeCreatedAndEventDispatcherIsNotSet_ThenEventsArentDispatched()
-        {
-            bool dispatched = false;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
-            eventDispatcherMock
-                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
-                .Callback(() => dispatched = true);
-
-            EventManager.Instance.Notify(new EventStub());
-
-            Assert.That(dispatched, Is.False);
         }
 
         [Test]
@@ -96,6 +83,16 @@ namespace DDD.Tests.Unit.Domain.Events
         }
 
         [Test]
+        public void TestNotify_WhenScopeWasntCreatedAndEventDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
+        {
+            Assert.Throws(
+                Is.InstanceOf<InvalidOperationException>()
+                    .And.Message
+                    .EqualTo("Event dispatcher is uninitialized."),
+                    () => EventManager.Instance.Notify(new EventStub()));
+        }
+
+        [Test]
         public async Task TestNotifyAsync_WhenScopeWasCreated_ThenEventsArentDispatched()
         {
             bool dispatched = false;
@@ -143,6 +140,16 @@ namespace DDD.Tests.Unit.Domain.Events
             await EventManager.Instance.NotifyAsync(new EventStub());
 
             Assert.That(dispatched, Is.True);
+        }
+
+        [Test]
+        public void TestNotifyAsync_WhenScopeWasntCreatedAndEventDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
+        {
+            Assert.ThrowsAsync(
+                Is.InstanceOf<InvalidOperationException>()
+                    .And.Message
+                    .EqualTo("Event dispatcher is uninitialized."),
+                    async () => await EventManager.Instance.NotifyAsync(new EventStub()));
         }
     }
 }

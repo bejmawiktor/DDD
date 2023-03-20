@@ -29,7 +29,12 @@ namespace DDD.Domain.Events
         {
             if(EventManager.CurrentScope is null)
             {
-                this.EventDispatcher?.Dispatch(@event);
+                if(this.EventDispatcher is null)
+                {
+                    throw new InvalidOperationException("Event dispatcher is uninitialized.");
+                }
+
+                this.EventDispatcher.Dispatch(@event);
             }
             else
             {
@@ -41,7 +46,12 @@ namespace DDD.Domain.Events
         {
             if(EventManager.CurrentScope is null)
             {
-                return this.EventDispatcher?.DispatchAsync(@event) ?? Task.CompletedTask;
+                if(this.EventDispatcher is null)
+                {
+                    throw new InvalidOperationException("Event dispatcher is uninitialized.");
+                }
+
+                return this.EventDispatcher.DispatchAsync(@event);
             }
 
             EventManager.CurrentScope.Add(@event);

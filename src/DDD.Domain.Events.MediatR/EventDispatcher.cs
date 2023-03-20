@@ -2,7 +2,7 @@
 
 namespace DDD.Domain.Events.MediatR
 {
-    public class EventDispatcher : IEventDispatcher
+    internal class EventDispatcher : IEventDispatcher
     {
         private IMediator Mediator { get; }
 

@@ -38,7 +38,12 @@ namespace DDD.Domain.Events
             {
                 foreach(IEvent @event in this.Events)
                 {
-                    EventManager.Instance.EventDispatcher?.Dispatch((dynamic)@event);
+                    if(EventManager.Instance.EventDispatcher is null)
+                    {
+                        throw new InvalidOperationException("Event dispatcher is uninitialized.");
+                    }
+
+                    EventManager.Instance.EventDispatcher.Dispatch((dynamic)@event);
                 }
             }
             else
@@ -57,10 +62,12 @@ namespace DDD.Domain.Events
             {
                 foreach(IEvent @event in this.Events)
                 {
-                    if(EventManager.Instance.EventDispatcher is not null)
+                    if(EventManager.Instance.EventDispatcher is null)
                     {
-                        tasks.Add(EventManager.Instance.EventDispatcher?.DispatchAsync((dynamic)@event));
+                        throw new InvalidOperationException("Event dispatcher is uninitialized.");
                     }
+
+                    tasks.Add(EventManager.Instance.EventDispatcher.DispatchAsync((dynamic)@event));
                 }
             }
             else

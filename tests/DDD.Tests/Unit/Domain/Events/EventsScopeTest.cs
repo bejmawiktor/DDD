@@ -85,6 +85,24 @@ namespace DDD.Tests.Unit.Domain.Events
         }
 
         [Test]
+        public void TestPublish_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
+        {
+            Mock<IEvent> eventMock = new();
+            IEvent @event = eventMock.Object;
+
+            using(EventsScope eventScope = new())
+            {
+                eventScope.Add(@event);
+
+                Assert.Throws(
+                    Is.InstanceOf<InvalidOperationException>()
+                        .And.Message
+                        .EqualTo("Event dispatcher is uninitialized."),
+                    () => eventScope.Publish());
+            }
+        }
+
+        [Test]
         public void TestPublish_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
         {
             Mock<IEvent> eventMock = new();
@@ -163,7 +181,7 @@ namespace DDD.Tests.Unit.Domain.Events
         }
 
         [Test]
-        public async Task TestPublishAsumc_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
+        public async Task TestPublishAsync_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
         {
             Mock<IEvent> eventMock = new();
             Mock<IEventDispatcher> eventDispatcherMock = new();
@@ -182,6 +200,24 @@ namespace DDD.Tests.Unit.Domain.Events
                 }
 
                 Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
+            }
+        }
+
+        [Test]
+        public void TestPublishAsync_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
+        {
+            Mock<IEvent> eventMock = new();
+            IEvent @event = eventMock.Object;
+
+            using(EventsScope eventScope = new())
+            {
+                eventScope.Add(@event);
+
+                Assert.ThrowsAsync(
+                    Is.InstanceOf<InvalidOperationException>()
+                        .And.Message
+                        .EqualTo("Event dispatcher is uninitialized."),
+                    async () => await eventScope.PublishAsync());
             }
         }
 
