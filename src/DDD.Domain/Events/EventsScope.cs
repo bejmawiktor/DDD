@@ -75,10 +75,7 @@ namespace DDD.Domain.Events
 
         private void AddRange(IEnumerable<IEvent> events)
         {
-            foreach(IEvent @event in events)
-            {
-                this.Add(@event);
-            }
+            this.Events.AddRange(events);
         }
 
         public void Clear()
