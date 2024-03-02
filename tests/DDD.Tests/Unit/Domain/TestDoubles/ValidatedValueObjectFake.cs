@@ -1,5 +1,5 @@
-﻿using DDD.Domain.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DDD.Domain.Model;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
@@ -8,7 +8,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
         public int? Field1 { get; }
 
         public ValidatedValueObjectFake(int? field1)
-        : base(field1)
+            : base(field1)
         {
             this.Field1 = field1;
         }

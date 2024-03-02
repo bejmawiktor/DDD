@@ -2,7 +2,6 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles
 {
-    public interface IAsyncAggregateRootStubRepository : IAsyncRepository<AggregateRootStub, string>
-    {
-    }
+    public interface IAsyncAggregateRootStubRepository
+        : IAsyncRepository<AggregateRootStub, string> { }
 }

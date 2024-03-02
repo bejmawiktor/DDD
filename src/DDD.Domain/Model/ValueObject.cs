@@ -8,12 +8,12 @@ namespace DDD.Domain.Model
     {
         public static bool operator ==(ValueObject lhs, ValueObject rhs)
         {
-            if(lhs is null && rhs is null)
+            if (lhs is null && rhs is null)
             {
                 return true;
             }
 
-            if(lhs is null || rhs is null)
+            if (lhs is null || rhs is null)
             {
                 return false;
             }
@@ -30,15 +30,14 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object? obj)
         {
-            if(this.GetType() != obj?.GetType())
+            if (this.GetType() != obj?.GetType())
             {
                 return false;
             }
 
             ValueObject? other = obj as ValueObject;
 
-            return this.GetEqualityMembers()
-                .SequenceEqual(other!.GetEqualityMembers());
+            return this.GetEqualityMembers().SequenceEqual(other!.GetEqualityMembers());
         }
 
         public override int GetHashCode()
@@ -48,7 +47,7 @@ namespace DDD.Domain.Model
                 int hash = 2893249;
                 hash = hash * 1674319 + this.GetType().GetHashCode();
 
-                foreach(object? memberValue in this.GetEqualityMembers())
+                foreach (object? memberValue in this.GetEqualityMembers())
                 {
                     hash = hash * 1674319 + (memberValue?.GetHashCode() ?? 0);
                 }
@@ -76,8 +75,7 @@ namespace DDD.Domain.Model
             yield return this.Value;
         }
 
-        public override string? ToString()
-            => this.Value?.ToString();
+        public override string? ToString() => this.Value?.ToString();
     }
 
     public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject

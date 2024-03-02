@@ -1,30 +1,44 @@
-﻿using DDD.Application.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using DDD.Application.Model;
 using DDD.Application.Model.Converters;
 using DDD.Domain.Model;
 using DDD.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DDD.Application.Persistence.Adapters
 {
-    public interface IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>
-    : IRepository<TAggregateRoot, TIdentifier>
+    public interface IRepositoryAdapter<
+        TDto,
+        TDtoIdentifier,
+        TDtoRepository,
+        TDtoAggregateRootConverter,
+        TAggregateRoot,
+        TIdentifier
+    > : IRepository<TAggregateRoot, TIdentifier>
         where TDto : IAggregateRootDto<TAggregateRoot, TIdentifier>
         where TDtoRepository : IDtoRepository<TDto, TDtoIdentifier>
         where TAggregateRoot : IAggregateRoot<TIdentifier>
         where TIdentifier : IEquatable<TIdentifier>
-        where TDtoAggregateRootConverter : IAggregateRootDtoConverter<TAggregateRoot, TIdentifier, TDto, TDtoIdentifier>, new()
+        where TDtoAggregateRootConverter : IAggregateRootDtoConverter<
+                TAggregateRoot,
+                TIdentifier,
+                TDto,
+                TDtoIdentifier
+            >,
+            new()
     {
         protected abstract TDtoRepository DtoRepository { get; }
 
-        private TDtoAggregateRootConverter Converter => new TDtoAggregateRootConverter();
+        private static TDtoAggregateRootConverter Converter => new();
 
         TAggregateRoot? IRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
         {
-            TDto? aggregateRootDto = this.DtoRepository.Get(new TDtoAggregateRootConverter().ToDtoIdentifier(identifier));
+            TDto? aggregateRootDto = this.DtoRepository.Get(
+                new TDtoAggregateRootConverter().ToDtoIdentifier(identifier)
+            );
 
-            if(ReferenceEquals(aggregateRootDto, null))
+            if (aggregateRootDto is null)
             {
                 return default;
             }
@@ -32,11 +46,13 @@ namespace DDD.Application.Persistence.Adapters
             return aggregateRootDto.ToDomainObject();
         }
 
-        IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(Pagination? pagination)
+        IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(
+            Pagination? pagination
+        )
         {
             IEnumerable<TDto> aggregateRootDtos = this.DtoRepository.Get(pagination);
 
-            if(aggregateRootDtos is null)
+            if (aggregateRootDtos is null)
             {
                 return Enumerable.Empty<TAggregateRoot>();
             }
@@ -46,17 +62,17 @@ namespace DDD.Application.Persistence.Adapters
 
         void IRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity)
         {
-            this.DtoRepository.Add(this.Converter.ToDto(entity));
+            this.DtoRepository.Add(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
         }
 
         void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity)
         {
-            this.DtoRepository.Remove(this.Converter.ToDto(entity));
+            this.DtoRepository.Remove(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
         }
 
         void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity)
         {
-            this.DtoRepository.Update(this.Converter.ToDto(entity));
+            this.DtoRepository.Update(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
         }
     }
 }

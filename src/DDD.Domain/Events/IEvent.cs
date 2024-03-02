@@ -1,6 +1,4 @@
 ﻿namespace DDD.Domain.Events
 {
-    public interface IEvent
-    {
-    }
+    public interface IEvent { }
 }

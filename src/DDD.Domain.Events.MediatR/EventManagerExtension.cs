@@ -6,7 +6,10 @@ namespace BShelf.Core
 {
     public static class EventManagerExtension
     {
-        public static void UseMediatREventDispatcher(this EventManager eventManger, IMediator mediator)
+        public static void UseMediatREventDispatcher(
+            this EventManager eventManger,
+            IMediator mediator
+        )
         {
             eventManger.EventDispatcher = new EventDispatcher(mediator);
         }

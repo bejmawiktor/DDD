@@ -1,5 +1,5 @@
-﻿using DDD.Domain.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DDD.Domain.Model;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
@@ -22,7 +22,7 @@ namespace DDD.Tests.Unit.Domain.TestDoubles
         {
             yield return this.Field1;
             yield return this.Field2;
-            if(this.Field4)
+            if (this.Field4)
             {
                 yield return this.Field3;
             }

@@ -7,7 +7,7 @@ namespace DDD.Domain.Events
         public Guid Id { get; }
         public DateTime CreatedAt { get; }
 
-        public Event()
+        protected Event()
         {
             this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.Now;

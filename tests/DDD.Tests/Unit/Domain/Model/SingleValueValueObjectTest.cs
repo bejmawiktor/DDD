@@ -1,7 +1,7 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DDD.Tests.Unit.Domain.TestDoubles;
+using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Model
 {
@@ -10,48 +10,57 @@ namespace DDD.Tests.Unit.Domain.Model
     {
         public static IEnumerable<TestCaseData> EqualsTestData()
         {
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("1"),
-                new SingleValueValueObjectFake("1"),
-                true
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(1)");
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("3"),
-                new SingleValueValueObjectFake("3"),
-                true
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(2)");
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("2"),
-                new SingleValueValueObjectFake("2"),
-                true
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(3)");
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("1"),
-                new SingleValueValueObjectFake("2"),
-                false
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(4)");
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("34"),
-                new SingleValueValueObjectFake("3"),
-                false
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(5)");
-            yield return new TestCaseData(new object[]
-            {
-                new SingleValueValueObjectFake("5"),
-                new SingleValueValueObjectFake("2"),
-                false
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(6)");
-            yield return new TestCaseData(new object?[]
-            {
-                new SingleValueValueObjectFake("5"),
-                null,
-                false
-            }).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(7)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("1"),
+                    new SingleValueValueObjectFake("1"),
+                    true
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(1)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("3"),
+                    new SingleValueValueObjectFake("3"),
+                    true
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(2)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("2"),
+                    new SingleValueValueObjectFake("2"),
+                    true
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(3)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("1"),
+                    new SingleValueValueObjectFake("2"),
+                    false
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(4)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("34"),
+                    new SingleValueValueObjectFake("3"),
+                    false
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(5)");
+            yield return new TestCaseData(
+                new object[]
+                {
+                    new SingleValueValueObjectFake("5"),
+                    new SingleValueValueObjectFake("2"),
+                    false
+                }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(6)");
+            yield return new TestCaseData(
+                new object?[] { new SingleValueValueObjectFake("5"), null, false }
+            ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(7)");
         }
 
         [Test]
@@ -61,18 +70,21 @@ namespace DDD.Tests.Unit.Domain.Model
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("value"),
-                () => new SingleValueValueObjectFake(null!));
+                () => new SingleValueValueObjectFake(null!)
+            );
         }
 
         [TestCaseSource(nameof(EqualsTestData))]
         public void TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared(
             SingleValueValueObjectFake lhsSingleValueValueObjectFake,
             SingleValueValueObjectFake rhsSingleValueValueObjectFake,
-            bool expectedEqualityResult)
+            bool expectedEqualityResult
+        )
         {
             Assert.That(
                 lhsSingleValueValueObjectFake.Equals(rhsSingleValueValueObjectFake),
-                Is.EqualTo(expectedEqualityResult));
+                Is.EqualTo(expectedEqualityResult)
+            );
         }
 
         [Test]
@@ -80,7 +92,8 @@ namespace DDD.Tests.Unit.Domain.Model
         {
             Assert.That(
                 new NullableSignleValueValueObjectFake(null),
-                Is.EqualTo(new NullableSignleValueValueObjectFake(null)));
+                Is.EqualTo(new NullableSignleValueValueObjectFake(null))
+            );
         }
 
         [Test]
@@ -88,7 +101,8 @@ namespace DDD.Tests.Unit.Domain.Model
         {
             Assert.That(
                 new NullableSignleValueValueObjectFake("asd"),
-                Is.Not.EqualTo(new NullableSignleValueValueObjectFake(null)));
+                Is.Not.EqualTo(new NullableSignleValueValueObjectFake(null))
+            );
         }
 
         [Test]

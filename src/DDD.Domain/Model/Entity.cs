@@ -3,7 +3,7 @@
 namespace DDD.Domain.Model
 {
     public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
-         where TIdentifier : notnull, IEquatable<TIdentifier>
+        where TIdentifier : notnull, IEquatable<TIdentifier>
     {
         private TIdentifier id;
 
@@ -18,16 +18,14 @@ namespace DDD.Domain.Model
             this.Id = id;
         }
 
-        public static bool operator ==(
-            Entity<TIdentifier> lhs,
-            Entity<TIdentifier> rhs)
+        public static bool operator ==(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs)
         {
-            if(lhs is null && rhs is null)
+            if (lhs is null && rhs is null)
             {
                 return true;
             }
 
-            if(lhs is null || rhs is null)
+            if (lhs is null || rhs is null)
             {
                 return false;
             }
@@ -35,9 +33,7 @@ namespace DDD.Domain.Model
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(
-            Entity<TIdentifier> lhs,
-            Entity<TIdentifier> rhs)
+        public static bool operator !=(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs)
         {
             return !(lhs == rhs);
         }
@@ -46,8 +42,7 @@ namespace DDD.Domain.Model
         {
             Entity<TIdentifier>? other = obj as Entity<TIdentifier>;
 
-            return this.GetType().Equals(other?.GetType())
-                && this.Id.Equals(other!.Id);
+            return this.GetType().Equals(other?.GetType()) && this.Id.Equals(other!.Id);
         }
 
         public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);
@@ -59,7 +54,8 @@ namespace DDD.Domain.Model
     {
         protected TValidator Validator { get; }
 
-        protected Entity(TIdentifier id, TValidatedObject validatedObject) : base(id)
+        protected Entity(TIdentifier id, TValidatedObject validatedObject)
+            : base(id)
         {
             this.Validator = new TValidator();
 

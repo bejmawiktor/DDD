@@ -1,6 +1,6 @@
-﻿using DDD.Domain.Persistence;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDD.Domain.Persistence;
 
 namespace DDD.Application.Persistence
 {

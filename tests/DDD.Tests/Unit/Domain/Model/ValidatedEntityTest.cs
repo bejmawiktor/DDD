@@ -1,6 +1,6 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using System;
+using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
-using System;
 
 namespace DDD.Tests.Unit.Domain.Model
 {
@@ -14,7 +14,8 @@ namespace DDD.Tests.Unit.Domain.Model
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("field1"),
-                () => new ValidatedEntityFake("1", null));
+                () => new ValidatedEntityFake("1", null)
+            );
         }
 
         [Test]

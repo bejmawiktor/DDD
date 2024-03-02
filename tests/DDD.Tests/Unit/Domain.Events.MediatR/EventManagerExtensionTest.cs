@@ -1,9 +1,9 @@
-﻿using BShelf.Core;
+﻿using System;
+using BShelf.Core;
 using DDD.Domain.Events;
 using MediatR;
 using Moq;
 using NUnit.Framework;
-using System;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR
 {
@@ -34,7 +34,8 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR
                 Is.InstanceOf<ArgumentNullException>()
                     .And.Property(nameof(ArgumentNullException.ParamName))
                     .EqualTo("mediator"),
-                () => EventManager.Instance.UseMediatREventDispatcher(null!));
+                () => EventManager.Instance.UseMediatREventDispatcher(null!)
+            );
         }
     }
 }

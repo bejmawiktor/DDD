@@ -2,7 +2,8 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles
 {
-    public class AggregateRootDtoStubConverter : IAggregateRootDtoConverter<AggregateRootStub, string, AggregateRootDtoStub, string>
+    public class AggregateRootDtoStubConverter
+        : IAggregateRootDtoConverter<AggregateRootStub, string, AggregateRootDtoStub, string>
     {
         public AggregateRootDtoStub ToDto(AggregateRootStub aggregateRoot)
         {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DDD.Domain.Events
 {
-    public class EventsScope : IDisposable
+    public sealed class EventsScope : IDisposable
     {
         private bool IsDisposed { get; set; }
         internal List<IEvent> Events { get; }
@@ -16,7 +16,7 @@ namespace DDD.Domain.Events
             this.Events = new List<IEvent>();
             this.ParentScope = EventManager.CurrentScope;
 
-            if(this.ParentScope is not null)
+            if (this.ParentScope is not null)
             {
                 this.ParentScope.NestedScopesCounter++;
             }
@@ -34,11 +34,11 @@ namespace DDD.Domain.Events
 
         public void Publish()
         {
-            if(this.ParentScope is null)
+            if (this.ParentScope is null)
             {
-                foreach(IEvent @event in this.Events)
+                foreach (IEvent @event in this.Events)
                 {
-                    if(EventManager.Instance.EventDispatcher is null)
+                    if (EventManager.Instance.EventDispatcher is null)
                     {
                         throw new InvalidOperationException("Event dispatcher is uninitialized.");
                     }
@@ -58,11 +58,11 @@ namespace DDD.Domain.Events
         {
             List<Task> tasks = new();
 
-            if(this.ParentScope is null)
+            if (this.ParentScope is null)
             {
-                foreach(IEvent @event in this.Events)
+                foreach (IEvent @event in this.Events)
                 {
-                    if(EventManager.Instance.EventDispatcher is null)
+                    if (EventManager.Instance.EventDispatcher is null)
                     {
                         throw new InvalidOperationException("Event dispatcher is uninitialized.");
                     }
@@ -96,27 +96,27 @@ namespace DDD.Domain.Events
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            if(!this.IsDisposed)
+            if (!this.IsDisposed)
             {
-                if(this.ParentScope is not null)
+                if (this.ParentScope is not null)
                 {
                     this.ParentScope.NestedScopesCounter--;
                 }
 
-                if(this.NestedScopesCounter > 0)
+                if (this.NestedScopesCounter > 0)
                 {
                     this.Clear();
                     throw new InvalidOperationException("EventsScope nested incorrectly.");
                 }
 
-                if(disposing)
+                if (disposing)
                 {
                     this.Clear();
                 }
 
-                if(ReferenceEquals(this, EventManager.CurrentScope))
+                if (ReferenceEquals(this, EventManager.CurrentScope))
                 {
                     EventManager.CurrentScope = this.ParentScope;
                 }

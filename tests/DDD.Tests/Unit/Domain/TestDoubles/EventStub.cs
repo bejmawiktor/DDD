@@ -2,7 +2,5 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles
 {
-    public class EventStub : IEvent
-    {
-    }
+    public class EventStub : IEvent { }
 }

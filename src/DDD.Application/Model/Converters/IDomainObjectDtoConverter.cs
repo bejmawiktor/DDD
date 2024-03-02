@@ -2,7 +2,7 @@
 
 namespace DDD.Application.Model.Converters
 {
-    public interface IDomainObjectDtoConverter<TDomainObject, TDto>
+    public interface IDomainObjectDtoConverter<in TDomainObject, TDto>
         where TDomainObject : IDomainObject
         where TDto : IDomainObjectDto<TDomainObject>
     {

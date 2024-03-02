@@ -9,7 +9,8 @@ namespace DDD.Domain.Events.MediatR
 
         Task INotificationHandler<Notification<TEvent>>.Handle(
             Notification<TEvent> notification,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
             return this.Handle(notification.Event, cancellationToken);
         }

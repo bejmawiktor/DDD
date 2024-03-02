@@ -9,7 +9,7 @@ namespace DDD.Domain.Model
         where TValue : IEquatable<TValue>?
         where TEnumeration : Enumeration<TValue, TEnumeration>, new()
     {
-        public static TEnumeration Default => new TEnumeration();
+        public static TEnumeration Default => new();
 
         protected TValue? Value { get; }
         protected abstract TValue DefaultValue { get; }
@@ -24,8 +24,8 @@ namespace DDD.Domain.Model
             this.Value = value;
         }
 
-        public static TEnumeration CollateNull(TEnumeration? enumeration)
-            => enumeration ?? Enumeration<TValue, TEnumeration>.Default;
+        public static TEnumeration CollateNull(TEnumeration? enumeration) =>
+            enumeration ?? Enumeration<TValue, TEnumeration>.Default;
 
         public static IEnumerable<TEnumeration?> GetValues()
         {
@@ -47,7 +47,7 @@ namespace DDD.Domain.Model
 
         public override bool Equals(object? other)
         {
-            if(other?.GetType() != this.GetType())
+            if (other?.GetType() != this.GetType())
             {
                 return false;
             }
@@ -57,12 +57,12 @@ namespace DDD.Domain.Model
 
         public bool Equals(TEnumeration? other)
         {
-            if(this.Value is null ^ (other is null || other.Value is null))
+            if (this.Value is null ^ (other is null || other.Value is null))
             {
                 return false;
             }
 
-            if(this.Value is null && (other is null || other.Value is null))
+            if (this.Value is null && (other is null || other.Value is null))
             {
                 return true;
             }
@@ -72,14 +72,15 @@ namespace DDD.Domain.Model
 
         public static bool operator ==(
             Enumeration<TValue, TEnumeration> lhs,
-            Enumeration<TValue, TEnumeration> rhs)
+            Enumeration<TValue, TEnumeration> rhs
+        )
         {
-            if(lhs is null && rhs is null)
+            if (lhs is null && rhs is null)
             {
                 return true;
             }
 
-            if(lhs is null || rhs is null)
+            if (lhs is null || rhs is null)
             {
                 return false;
             }
@@ -89,26 +90,26 @@ namespace DDD.Domain.Model
 
         public static bool operator !=(
             Enumeration<TValue, TEnumeration> lhs,
-            Enumeration<TValue, TEnumeration> rhs)
+            Enumeration<TValue, TEnumeration> rhs
+        )
         {
             return !(lhs == rhs);
         }
 
-        public override string? ToString()
-            => this.Value?.ToString();
+        public override string? ToString() => this.Value?.ToString();
 
-        public static implicit operator Enumeration<TValue, TEnumeration>(TValue value)
-            => GetValues().FirstOrDefault(v => v is not null && AreValuesEqual(v.Value, value))
-                ?? throw new ArgumentException($"Wrong {typeof(TEnumeration).Name} value.");
+        public static implicit operator Enumeration<TValue, TEnumeration>(TValue value) =>
+            GetValues().FirstOrDefault(v => v is not null && AreValuesEqual(v.Value, value))
+            ?? throw new ArgumentException($"Wrong {typeof(TEnumeration).Name} value.");
 
         private static bool AreValuesEqual(TValue? lhsValue, TValue? rhsValue)
         {
-            if(lhsValue is null ^ rhsValue is null)
+            if (lhsValue is null ^ rhsValue is null)
             {
                 return false;
             }
 
-            if(lhsValue is null && rhsValue is null)
+            if (lhsValue is null && rhsValue is null)
             {
                 return true;
             }
@@ -118,7 +119,7 @@ namespace DDD.Domain.Model
 
         public static implicit operator TValue?(Enumeration<TValue, TEnumeration>? value)
         {
-            if(value is null)
+            if (value is null)
             {
                 return default;
             }

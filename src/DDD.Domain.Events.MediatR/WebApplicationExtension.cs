@@ -10,7 +10,9 @@ namespace BShelf.API
     {
         public static void UseMediatREventDispatcher(this WebApplication application)
         {
-            EventManager.Instance.UseMediatREventDispatcher(application.Services.GetRequiredService<IMediator>());
+            EventManager.Instance.UseMediatREventDispatcher(
+                application.Services.GetRequiredService<IMediator>()
+            );
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using System.Threading.Tasks;
+using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events
 {
@@ -43,7 +43,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 .Callback(() => dispatched = true);
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
-            using(EventsScope eventsScope = new EventsScope())
+            using (EventsScope eventsScope = new EventsScope())
             {
                 EventManager.Instance.Notify(eventMock.Object);
             }
@@ -59,7 +59,7 @@ namespace DDD.Tests.Unit.Domain.Events
             Mock<IEventDispatcher> eventDispatcherMock = new();
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
-            using(EventsScope eventsScope = new EventsScope())
+            using (EventsScope eventsScope = new EventsScope())
             {
                 EventManager.Instance.Notify(eventMock.Object);
 
@@ -87,9 +87,9 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             Assert.Throws(
                 Is.InstanceOf<InvalidOperationException>()
-                    .And.Message
-                    .EqualTo("Event dispatcher is uninitialized."),
-                    () => EventManager.Instance.Notify(new EventStub()));
+                    .And.Message.EqualTo("Event dispatcher is uninitialized."),
+                () => EventManager.Instance.Notify(new EventStub())
+            );
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace DDD.Tests.Unit.Domain.Events
                 .Callback(() => dispatched = true);
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
-            using(EventsScope eventsScope = new EventsScope())
+            using (EventsScope eventsScope = new EventsScope())
             {
                 await EventManager.Instance.NotifyAsync(eventMock.Object);
             }
@@ -119,7 +119,7 @@ namespace DDD.Tests.Unit.Domain.Events
             Mock<IEventDispatcher> eventDispatcherMock = new();
             EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
 
-            using(EventsScope eventsScope = new EventsScope())
+            using (EventsScope eventsScope = new EventsScope())
             {
                 await EventManager.Instance.NotifyAsync(eventMock.Object);
 
@@ -147,9 +147,9 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             Assert.ThrowsAsync(
                 Is.InstanceOf<InvalidOperationException>()
-                    .And.Message
-                    .EqualTo("Event dispatcher is uninitialized."),
-                    async () => await EventManager.Instance.NotifyAsync(new EventStub()));
+                    .And.Message.EqualTo("Event dispatcher is uninitialized."),
+                async () => await EventManager.Instance.NotifyAsync(new EventStub())
+            );
         }
     }
 }

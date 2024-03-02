@@ -1,6 +1,4 @@
 ﻿namespace DDD.Domain.Model
 {
-    public interface IDomainObject
-    {
-    }
+    public interface IDomainObject { }
 }

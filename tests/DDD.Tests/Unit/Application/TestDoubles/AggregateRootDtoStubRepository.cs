@@ -1,7 +1,7 @@
-﻿using DDD.Application.Persistence;
-using DDD.Domain.Persistence;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DDD.Application.Persistence;
+using DDD.Domain.Persistence;
 
 namespace DDD.Tests.Unit.Application.TestDoubles
 {
@@ -36,7 +36,7 @@ namespace DDD.Tests.Unit.Application.TestDoubles
 
         public void Update(AggregateRootDtoStub dto)
         {
-            if(this.Dtos is not null)
+            if (this.Dtos is not null)
             {
                 this.Dtos[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto;
             }
