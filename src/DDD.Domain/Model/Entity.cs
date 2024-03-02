@@ -5,12 +5,16 @@ namespace DDD.Domain.Model
     public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
          where TIdentifier : notnull, IEquatable<TIdentifier>
     {
-        public TIdentifier Id { get; protected set; }
+        private TIdentifier id;
+
+        public TIdentifier Id
+        {
+            get => id;
+            protected set => id = value ?? throw new ArgumentNullException(nameof(this.id));
+        }
 
         protected Entity(TIdentifier id)
         {
-            ArgumentNullException.ThrowIfNull(id);
-
             this.Id = id;
         }
 

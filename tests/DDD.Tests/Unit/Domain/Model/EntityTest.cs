@@ -232,6 +232,17 @@ namespace DDD.Tests.Unit.Domain.Model
         }
 
         [Test]
+        public void TestSet_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
+        {
+            Assert.Throws(
+                Is.InstanceOf<ArgumentNullException>()
+                    .And.Property(nameof(ArgumentNullException.ParamName))
+                    .EqualTo("id"),
+                () => new StringEntityStub("AAA").Id = null!);
+        }
+
+
+        [Test]
         public void TestConstructing_WhenIdGiven_ThenIdIsSet()
         {
             StringEntityStub stringEntityStub = new StringEntityStub("1");
