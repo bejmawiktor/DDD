@@ -2,26 +2,23 @@
 using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
 
-namespace DDD.Tests.Unit.Domain.Model
-{
-    [TestFixture]
-    public class ValidatedEntityTest
-    {
-        [Test]
-        public void TestConstructing_WhenValidatedObjectIsNotValid_ThenValidationExceptionsAreThrown()
-        {
-            Assert.Throws(
-                Is.InstanceOf<ArgumentNullException>()
-                    .And.Property(nameof(ArgumentNullException.ParamName))
-                    .EqualTo("field1"),
-                () => new ValidatedEntityFake("1", null)
-            );
-        }
+namespace DDD.Tests.Unit.Domain.Model;
 
-        [Test]
-        public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown()
-        {
-            Assert.DoesNotThrow(() => new ValidatedEntityFake("1", 1));
-        }
+[TestFixture]
+public class ValidatedEntityTest
+{
+    [Test]
+    public void TestConstructing_WhenValidatedObjectIsNotValid_ThenValidationExceptionsAreThrown()
+    {
+        _ = Assert.Throws(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("field1"),
+            () => new ValidatedEntityFake("1", null)
+        );
     }
+
+    [Test]
+    public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown() =>
+        Assert.DoesNotThrow(() => new ValidatedEntityFake("1", 1));
 }
