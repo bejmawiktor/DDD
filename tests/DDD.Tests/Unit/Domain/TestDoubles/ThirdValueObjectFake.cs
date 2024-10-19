@@ -1,26 +1,25 @@
 ﻿using System.Collections.Generic;
 using DDD.Domain.Model;
 
-namespace DDD.Tests.Unit.Domain.TestDoubles
+namespace DDD.Tests.Unit.Domain.TestDoubles;
+
+public class ThirdValueObjectFake : ValueObject
 {
-    public class ThirdValueObjectFake : ValueObject
+    public int Field1 { get; }
+    public double Field2 { get; }
+    public string? Field3 { get; }
+
+    public ThirdValueObjectFake(int field1, double field2, string? field3)
     {
-        public int Field1 { get; }
-        public double Field2 { get; }
-        public string? Field3 { get; }
+        this.Field1 = field1;
+        this.Field2 = field2;
+        this.Field3 = field3;
+    }
 
-        public ThirdValueObjectFake(int field1, double field2, string? field3)
-        {
-            this.Field1 = field1;
-            this.Field2 = field2;
-            this.Field3 = field3;
-        }
-
-        protected override IEnumerable<object?> GetEqualityMembers()
-        {
-            yield return this.Field1;
-            yield return this.Field2;
-            yield return this.Field3;
-        }
+    protected override IEnumerable<object?> GetEqualityMembers()
+    {
+        yield return this.Field1;
+        yield return this.Field2;
+        yield return this.Field3;
     }
 }

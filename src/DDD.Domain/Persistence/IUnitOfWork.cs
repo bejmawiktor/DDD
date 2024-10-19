@@ -1,7 +1,6 @@
-﻿namespace DDD.Domain.Persistence
+﻿namespace DDD.Domain.Persistence;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        ITransactionScope BeginScope();
-    }
+    ITransactionScope BeginScope();
 }

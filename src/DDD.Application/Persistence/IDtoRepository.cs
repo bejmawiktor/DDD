@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using DDD.Domain.Persistence;
 
-namespace DDD.Application.Persistence
+namespace DDD.Application.Persistence;
+
+public interface IDtoRepository<TDto, TDtoIdentifier>
 {
-    public interface IDtoRepository<TDto, TDtoIdentifier>
-    {
-        TDto? Get(TDtoIdentifier identifier);
+    TDto? Get(TDtoIdentifier identifier);
 
-        IEnumerable<TDto> Get(Pagination? pagination = null);
+    IEnumerable<TDto> Get(Pagination? pagination = null);
 
-        void Add(TDto dto);
+    void Add(TDto dto);
 
-        void Remove(TDto dto);
+    void Remove(TDto dto);
 
-        void Update(TDto dto);
-    }
+    void Update(TDto dto);
 }

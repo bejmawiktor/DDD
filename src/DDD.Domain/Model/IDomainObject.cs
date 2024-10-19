@@ -1,4 +1,3 @@
-﻿namespace DDD.Domain.Model
-{
-    public interface IDomainObject { }
-}
+﻿namespace DDD.Domain.Model;
+
+public interface IDomainObject { }
