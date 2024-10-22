@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DDD.Domain.Common;
 using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
@@ -12,6 +13,9 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 [TestFixture]
 internal class EventDispatcherTest
 {
+    private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+        DDD.Domain.Events.EventManager.Instance;
+
     [Test]
     public void TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
@@ -24,21 +28,29 @@ internal class EventDispatcherTest
     }
 
     [TearDown]
-    public void ClearEventManager() => EventManager.Instance.EventDispatcher = null;
+    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
 
     [Test]
     public void TestDispatch_WhenEventIsPublished_ThenEventIsHandled()
     {
         EventStub eventStub = new();
         ServiceProvider servicesProvider = new ServiceCollection()
-            .AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly)
-            )
+            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventDispatcher>())
             .BuildServiceProvider();
-        EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        EventManager.Instance.EventDispatcher = eventDispatcher;
 
-        EventManager.Instance.Notify(eventStub);
+        System.Collections.Generic.IEnumerable<
+            INotificationHandler<Notification<EventStub>>
+        > services = servicesProvider.GetServices<INotificationHandler<Notification<EventStub>>>();
+
+        foreach (INotificationHandler<Notification<EventStub>> service in services)
+        {
+            Console.WriteLine($"{service.ToString()}");
+        }
+
+        EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
+        this.EventManager.Dispatcher = eventDispatcher;
+
+        this.EventManager.Notify(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }
@@ -53,9 +65,9 @@ internal class EventDispatcherTest
             )
             .BuildServiceProvider();
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        EventManager.Instance.EventDispatcher = eventDispatcher;
+        this.EventManager.Dispatcher = eventDispatcher;
 
-        await EventManager.Instance.NotifyAsync(eventStub);
+        await this.EventManager.NotifyAsync(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }

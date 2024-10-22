@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DDD.Domain.Common;
 using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
 
-namespace DDD.Tests.Unit.Domain.Events;
-
-[TestFixture]
-public class EventsScopeTest
+namespace DDD.Tests.Unit.Domain.Events
 {
-    [TearDown]
-    public void ClearEventManager()
+    [TestFixture]
+    public class EventsScopeTest
     {
-        EventManager.CurrentScope = null;
-        EventManager.Instance.EventDispatcher = null;
-    }
+        [TearDown]
+        public void ClearEventManager()
+        {
+            EventManager.CurrentScope = null;
+            EventManager.Instance.Dispatcher = null;
+        }
 
     [Test]
     public void TestConstructor_WhenCreating_ThenEventsListIsSetAsEmpty()
     {
         EventsScope eventScope = new();
 
-        Assert.That(eventScope.Events, Is.Empty);
-    }
+            Assert.That(eventScope.Items, Is.Empty);
+        }
 
     [Test]
     public void TestConstructor_WhenCreating_ThenCurrentScopeFromEventManagerIsSetToCreatedScope()
@@ -33,17 +34,19 @@ public class EventsScopeTest
         Assert.That(EventManager.CurrentScope, Is.SameAs(eventScope));
     }
 
-    [Test]
-    public void TestAddEvent_WhenNullEventGiven_ThenArgumentNullExceptionIsThrown()
-    {
-        using EventsScope eventScope = new();
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("@event"),
-            () => eventScope.Add((IEvent?)null!)
-        );
-    }
+        [Test]
+        public void TestAddEvent_WhenNullEventGiven_ThenArgumentNullExceptionIsThrown()
+        {
+            using (EventsScope eventScope = new())
+            {
+                Assert.Throws(
+                    Is.InstanceOf<ArgumentNullException>()
+                        .And.Property(nameof(ArgumentNullException.ParamName))
+                        .EqualTo("item"),
+                    () => eventScope.Add((IEvent?)null!)
+                );
+            }
+        }
 
     [Test]
     public void TestAddEvent_WhenEventGiven_ThenEventIsAdded()
@@ -55,18 +58,18 @@ public class EventsScopeTest
         {
             eventsScope.Add(@event);
 
-            Assert.That(eventsScope.Events.Contains(@event));
+                Assert.That(eventsScope.Items.Contains(@event));
+            }
         }
-    }
 
-    [Test]
-    public void TestPublish_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        [Test]
+        public void TestPublish_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -76,8 +79,9 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
-    }
+                Assert.That(parentEventScope.Items.Count, Is.EqualTo(1));
+            }
+        }
 
     [Test]
     public void TestPublish_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
@@ -88,21 +92,22 @@ public class EventsScopeTest
         using EventsScope eventScope = new();
         eventScope.Add(@event);
 
-        _ = Assert.Throws(
-            Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("Event dispatcher is uninitialized."),
-            eventScope.Publish
-        );
-    }
+                Assert.Throws(
+                    Is.InstanceOf<InvalidOperationException>()
+                        .And.Message.EqualTo("Dispatcher is uninitialized."),
+                    () => eventScope.Publish()
+                );
+            }
+        }
 
-    [Test]
-    public void TestPublish_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        [Test]
+        public void TestPublish_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -126,20 +131,21 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(3));
-    }
+                Assert.That(parentEventScope.Items.Count, Is.EqualTo(3));
+            }
+        }
 
-    [Test]
-    public void TestPublish_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
-    {
-        bool dispatched = false;
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock
-            .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
-            .Callback(() => dispatched = true);
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-        EventStub @event = new();
-        EventsScope? eventsScope = null;
+        [Test]
+        public void TestPublish_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
+        {
+            bool dispatched = false;
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock
+                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
+                .Callback(() => dispatched = true);
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+            EventStub @event = new();
+            EventsScope? eventsScope = null;
 
         using (eventsScope = new EventsScope())
         {
@@ -151,32 +157,33 @@ public class EventsScopeTest
         Assert.That(dispatched, Is.True);
     }
 
-    [Test]
-    public void TestPublish_WhenPublishing_ThenEventsAreCleared()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-        IEvent @event = eventMock.Object;
-        EventsScope? eventsScope;
-        using (eventsScope = new EventsScope())
+        [Test]
+        public void TestPublish_WhenPublishing_ThenEventsAreCleared()
         {
-            eventsScope.Add(@event);
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+            IEvent @event = eventMock.Object;
+            EventsScope? eventsScope = null;
+
+            using (eventsScope = new EventsScope())
+            {
+                eventsScope.Add(@event);
 
             eventsScope.Publish();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
-    }
+            Assert.That(eventsScope.Items, Is.Empty);
+        }
 
-    [Test]
-    public async Task TestPublishAsync_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        [Test]
+        public async Task TestPublishAsync_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -186,8 +193,9 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
-    }
+                Assert.That(parentEventScope.Items.Count, Is.EqualTo(1));
+            }
+        }
 
     [Test]
     public void TestPublishAsync_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
@@ -198,21 +206,22 @@ public class EventsScopeTest
         using EventsScope eventScope = new();
         eventScope.Add(@event);
 
-        _ = Assert.ThrowsAsync(
-            Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("Event dispatcher is uninitialized."),
-            eventScope.PublishAsync
-        );
-    }
+                Assert.ThrowsAsync(
+                    Is.InstanceOf<InvalidOperationException>()
+                        .And.Message.EqualTo("Dispatcher is uninitialized."),
+                    async () => await eventScope.PublishAsync()
+                );
+            }
+        }
 
-    [Test]
-    public async Task TestPublishAsync_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        [Test]
+        public async Task TestPublishAsync_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -236,20 +245,21 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(3));
-    }
+                Assert.That(parentEventScope.Items.Count, Is.EqualTo(3));
+            }
+        }
 
-    [Test]
-    public async Task TestPublishAsync_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
-    {
-        bool dispatched = false;
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock
-            .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
-            .Callback(() => dispatched = true);
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-        EventStub @event = new();
-        EventsScope? eventsScope = null;
+        [Test]
+        public async Task TestPublishAsync_WhenPublishingWithoutParentEventScope_ThenEventsAreDispatched()
+        {
+            bool dispatched = false;
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock
+                .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
+                .Callback(() => dispatched = true);
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+            EventStub @event = new();
+            EventsScope? eventsScope = null;
 
         using (eventsScope = new EventsScope())
         {
@@ -261,14 +271,14 @@ public class EventsScopeTest
         Assert.That(dispatched, Is.True);
     }
 
-    [Test]
-    public async Task TestPublishAsync_WhenPublishing_ThenEventsAreCleared()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-        IEvent @event = eventMock.Object;
-        EventsScope? eventsScope;
+        [Test]
+        public async Task TestPublishAsync_WhenPublishing_ThenEventsAreCleared()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+            IEvent @event = eventMock.Object;
+            EventsScope? eventsScope;
 
         using (eventsScope = new EventsScope())
         {
@@ -277,8 +287,8 @@ public class EventsScopeTest
             await eventsScope.PublishAsync();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
-    }
+            Assert.That(eventsScope.Items, Is.Empty);
+        }
 
     [Test]
     public void TestClear_WhenClearing_ThenEventsAreEmpty()
@@ -294,8 +304,8 @@ public class EventsScopeTest
             eventsScope.Clear();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
-    }
+            Assert.That(eventsScope.Items, Is.Empty);
+        }
 
     [Test]
     public void TestDispose_WhenDisposingCurrentScope_ThenCurrentScopeIsNull()
@@ -305,35 +315,37 @@ public class EventsScopeTest
         Assert.That(EventManager.CurrentScope, Is.Null);
     }
 
-    [Test]
-    public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenInvalidOperationExceptionIsThrown()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        [Test]
+        public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenInvalidOperationExceptionIsThrown()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using EventsScope nestedChildEventScope = new();
         nestedChildEventScope.Add(@event);
 
-        _ = Assert.Throws(
-            Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("EventsScope nested incorrectly."),
-            parentEventScope.Dispose
-        );
-    }
+                    Assert.Throws(
+                        Is.InstanceOf<InvalidOperationException>()
+                            .And.Message.EqualTo("Scope nested incorrectly."),
+                        () => parentEventScope.Dispose()
+                    );
+                }
+            }
+        }
 
-    [Test]
-    public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenEventsAreCleared()
-    {
-        Mock<IEvent> eventMock = new();
-        Mock<IEventDispatcher> eventDispatcherMock = new();
-        _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
-        IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-        EventsScope? parentEventScope = null;
+        [Test]
+        public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenEventsAreCleared()
+        {
+            Mock<IEvent> eventMock = new();
+            Mock<IEventDispatcher> eventDispatcherMock = new();
+            eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
+            IEvent @event = eventMock.Object;
+            EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+            EventsScope? parentEventScope = null;
 
         try
         {
@@ -347,6 +359,7 @@ public class EventsScopeTest
         }
         catch (InvalidOperationException) { }
 
-        Assert.That(parentEventScope?.Events, Is.Empty);
+            Assert.That(parentEventScope?.Items, Is.Empty);
+        }
     }
 }
