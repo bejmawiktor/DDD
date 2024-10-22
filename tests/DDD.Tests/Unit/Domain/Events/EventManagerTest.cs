@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DDD.Domain.Common;
 using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
@@ -10,24 +11,27 @@ namespace DDD.Tests.Unit.Domain.Events
     [TestFixture]
     public class EventManagerTest
     {
+        private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+            DDD.Domain.Events.EventManager.Instance;
+
         [TearDown]
         public void ClearEventManager()
         {
-            EventManager.CurrentScope = null;
-            EventManager.Instance.EventDispatcher = null;
+            DDD.Domain.Events.EventManager.CurrentScope = null;
+            this.EventManager.Dispatcher = null;
         }
 
         [Test]
         public void TestEventManager_WhenNoEventScopeCreated_ThenEventsAreDispatchedImmediately()
         {
             bool dispatched = false;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
-            EventManager.Instance.Notify(new EventStub());
+            this.EventManager.Notify(new EventStub());
 
             Assert.That(dispatched, Is.True);
         }
@@ -37,15 +41,15 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             bool dispatched = false;
             Mock<IEvent> eventMock = new();
-            Mock<IEventDispatcher> eventDispatcherMock = new();
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
                 .Callback(() => dispatched = true);
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
             using (EventsScope eventsScope = new EventsScope())
             {
-                EventManager.Instance.Notify(eventMock.Object);
+                this.EventManager.Notify(eventMock.Object);
             }
 
             Assert.That(dispatched, Is.False);
@@ -56,39 +60,24 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             Mock<IEvent> eventMock = new();
             IEvent @event = eventMock.Object;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
             using (EventsScope eventsScope = new EventsScope())
             {
-                EventManager.Instance.Notify(eventMock.Object);
+                this.EventManager.Notify(eventMock.Object);
 
-                Assert.That(eventsScope.Events.Contains(@event));
+                Assert.That(eventsScope.Items.Contains(@event));
             }
         }
 
         [Test]
-        public void TestNotify_WhenScopeWasntCreated_ThenEventsAreDispatched()
-        {
-            bool dispatched = false;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
-            eventDispatcherMock
-                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
-                .Callback(() => dispatched = true);
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
-
-            EventManager.Instance.Notify(new EventStub());
-
-            Assert.That(dispatched, Is.True);
-        }
-
-        [Test]
-        public void TestNotify_WhenScopeWasntCreatedAndEventDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
+        public void TestNotify_WhenScopeWasntCreatedAndDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
         {
             Assert.Throws(
                 Is.InstanceOf<InvalidOperationException>()
-                    .And.Message.EqualTo("Event dispatcher is uninitialized."),
-                () => EventManager.Instance.Notify(new EventStub())
+                    .And.Message.EqualTo("Dispatcher is uninitialized."),
+                () => this.EventManager.Notify(new EventStub())
             );
         }
 
@@ -97,15 +86,15 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             bool dispatched = false;
             Mock<IEvent> eventMock = new();
-            Mock<IEventDispatcher> eventDispatcherMock = new();
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
                 .Callback(() => dispatched = true);
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
             using (EventsScope eventsScope = new EventsScope())
             {
-                await EventManager.Instance.NotifyAsync(eventMock.Object);
+                await this.EventManager.NotifyAsync(eventMock.Object);
             }
 
             Assert.That(dispatched, Is.False);
@@ -116,14 +105,14 @@ namespace DDD.Tests.Unit.Domain.Events
         {
             Mock<IEvent> eventMock = new();
             IEvent @event = eventMock.Object;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
             using (EventsScope eventsScope = new EventsScope())
             {
-                await EventManager.Instance.NotifyAsync(eventMock.Object);
+                await this.EventManager.NotifyAsync(eventMock.Object);
 
-                Assert.That(eventsScope.Events.Contains(@event));
+                Assert.That(eventsScope.Items.Contains(@event));
             }
         }
 
@@ -131,24 +120,24 @@ namespace DDD.Tests.Unit.Domain.Events
         public async Task TestNotifyAsync_WhenScopeWasntCreated_ThenEventsAreDispatched()
         {
             bool dispatched = false;
-            Mock<IEventDispatcher> eventDispatcherMock = new();
+            Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
                 .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
                 .Callback(() => dispatched = true);
-            EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+            this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
-            await EventManager.Instance.NotifyAsync(new EventStub());
+            await this.EventManager.NotifyAsync(new EventStub());
 
             Assert.That(dispatched, Is.True);
         }
 
         [Test]
-        public void TestNotifyAsync_WhenScopeWasntCreatedAndEventDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
+        public void TestNotifyAsync_WhenScopeWasntCreatedAndDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
         {
             Assert.ThrowsAsync(
                 Is.InstanceOf<InvalidOperationException>()
-                    .And.Message.EqualTo("Event dispatcher is uninitialized."),
-                async () => await EventManager.Instance.NotifyAsync(new EventStub())
+                    .And.Message.EqualTo("Dispatcher is uninitialized."),
+                async () => await this.EventManager.NotifyAsync(new EventStub())
             );
         }
     }

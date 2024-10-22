@@ -30,7 +30,7 @@ internal class ScopeHandlerFake : IScopeHandler<ScopeFake, string, ScopeHandlerF
 
     public static ScopeHandlerFake Instance => instance.Value;
 
-    public IDispatcher? Dispatcher { get; set; }
+    public IDispatcher<string>? Dispatcher { get; set; }
 
     public ScopeHandlerFake() { }
 }

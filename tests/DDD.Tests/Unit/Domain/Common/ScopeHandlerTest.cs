@@ -24,7 +24,7 @@ internal class ScopeHandlerTest
     public void TestScopeHandler_WhenNoScopeCreated_ThenItemsAreDispatchedImmediately()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -40,7 +40,7 @@ internal class ScopeHandlerTest
     {
         bool dispatched = false;
         string item = "item";
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -57,7 +57,7 @@ internal class ScopeHandlerTest
     [Test]
     public void TestNotify_WhenScopeWasCreated_ThenItemsAreAddedToScopeItems()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         this.ScopeHandler.Dispatcher = dispatcherMock.Object;
         string item = "item";
 
@@ -72,7 +72,7 @@ internal class ScopeHandlerTest
     public void TestNotify_WhenScopeWasntCreated_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -98,7 +98,7 @@ internal class ScopeHandlerTest
     {
         bool dispatched = false;
         string item = "item";
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -115,7 +115,7 @@ internal class ScopeHandlerTest
     [Test]
     public async Task TestNotifyAsync_WhenScopeWasCreated_ThenItemsAreAddedToScopeItems()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         this.ScopeHandler.Dispatcher = dispatcherMock.Object;
         string item = "item";
         using ScopeFake scope = new();
@@ -128,7 +128,7 @@ internal class ScopeHandlerTest
     public async Task TestNotifyAsync_WhenScopeWasntCreated_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<string>()))
             .Callback(() => dispatched = true);

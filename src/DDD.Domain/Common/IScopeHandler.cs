@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DDD.Domain.Common;
 
-internal interface IScopeHandler<TScope, in TItem, TScopeHandler>
+public interface IScopeHandler<TScope, TItem, TScopeHandler>
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : IScopeHandler<TScope, TItem, TScopeHandler>, new()
 {
@@ -43,5 +42,5 @@ internal interface IScopeHandler<TScope, in TItem, TScopeHandler>
         return Task.CompletedTask;
     }
 
-    public IDispatcher? Dispatcher { get; set; }
+    public IDispatcher<TItem>? Dispatcher { get; set; }
 }

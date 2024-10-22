@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DDD.Domain.Common;
 
 namespace DDD.Domain.Events
 {
-    public sealed class EventManager
+    public sealed class EventManager : IScopeHandler<EventsScope, IEvent, EventManager>
     {
-        private static readonly Lazy<EventManager> instance = new(
-            () => new EventManager()
-        );
+        static EventsScope? IScopeHandler<EventsScope, IEvent, EventManager>.CurrentScope
+        {
+            get => EventManager.CurrentScope;
+            set => EventManager.CurrentScope = value;
+        }
 
-        private static readonly AsyncLocal<EventsScope?> localEventsScope =
-            new();
+        static EventManager IScopeHandler<EventsScope, IEvent, EventManager>.Instance =>
+            EventManager.Instance;
+
+        private static readonly Lazy<EventManager> instance = new(() => new EventManager());
+
+        private static readonly AsyncLocal<EventsScope?> localEventsScope = new();
 
         public static EventsScope? CurrentScope
         {
@@ -21,44 +28,8 @@ namespace DDD.Domain.Events
 
         public static EventManager Instance => instance.Value;
 
-        public IEventDispatcher? EventDispatcher { get; set; }
+        public IDispatcher<IEvent>? Dispatcher { get; set; }
 
-        private EventManager() { }
-
-        public void Notify<TEvent>(TEvent @event)
-            where TEvent : IEvent
-        {
-            if (EventManager.CurrentScope is null)
-            {
-                if (this.EventDispatcher is null)
-                {
-                    throw new InvalidOperationException("Event dispatcher is uninitialized.");
-                }
-
-                this.EventDispatcher.Dispatch(@event);
-            }
-            else
-            {
-                EventManager.CurrentScope.Add(@event);
-            }
-        }
-
-        public Task NotifyAsync<TEvent>(TEvent @event)
-            where TEvent : IEvent
-        {
-            if (EventManager.CurrentScope is null)
-            {
-                if (this.EventDispatcher is null)
-                {
-                    throw new InvalidOperationException("Event dispatcher is uninitialized.");
-                }
-
-                return this.EventDispatcher.DispatchAsync(@event);
-            }
-
-            EventManager.CurrentScope.Add(@event);
-
-            return Task.CompletedTask;
-        }
+        public EventManager() { }
     }
 }

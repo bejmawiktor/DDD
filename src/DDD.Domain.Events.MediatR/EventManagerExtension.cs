@@ -1,17 +1,11 @@
-﻿using DDD.Domain.Events;
-using DDD.Domain.Events.MediatR;
-using MediatR;
+﻿using MediatR;
 
-namespace BShelf.Core
+namespace DDD.Domain.Events.MediatR;
+
+public static class EventManagerExtension
 {
-    public static class EventManagerExtension
-    {
-        public static void UseMediatREventDispatcher(
-            this EventManager eventManger,
-            IMediator mediator
-        )
-        {
-            eventManger.EventDispatcher = new EventDispatcher(mediator);
-        }
-    }
+    public static void UseMediatREventDispatcher(
+        this EventManager eventManger,
+        IMediator mediator
+    ) => eventManger.Dispatcher = new EventDispatcher(mediator);
 }

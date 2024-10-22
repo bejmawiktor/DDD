@@ -63,7 +63,7 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -97,7 +97,7 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -131,7 +131,7 @@ public class ScopeTest
     public void TestPublish_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -152,7 +152,7 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenPublishing_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
         ScopeFake? scope;
@@ -169,7 +169,7 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -203,7 +203,7 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -237,7 +237,7 @@ public class ScopeTest
     public async Task TestPublishAsync_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -258,7 +258,7 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenPublishing_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
         ScopeFake? scope;
@@ -300,7 +300,7 @@ public class ScopeTest
     [Test]
     public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenInvalidOperationExceptionIsThrown()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -319,7 +319,7 @@ public class ScopeTest
     [Test]
     public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;

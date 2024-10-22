@@ -5,12 +5,12 @@ using DDD.Domain.Events;
 
 namespace DDD.Domain.Common;
 
-internal abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
+public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : IScopeHandler<TScope, TItem, TScopeHandler>, new()
 {
     private bool IsDisposed { get; set; }
-    protected List<TItem> Items { get; set; }
+    protected internal List<TItem> Items { get; set; }
     private TScope? ParentScope { get; }
     private int NestedScopesCounter { get; set; }
 
@@ -92,7 +92,7 @@ internal abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    protected void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
         if (!this.IsDisposed)
         {

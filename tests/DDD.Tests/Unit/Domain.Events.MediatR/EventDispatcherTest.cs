@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DDD.Domain.Common;
 using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
@@ -7,64 +8,67 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace DDD.Tests.Unit.Domain.Events.MediatR
+namespace DDD.Tests.Unit.Domain.Events.MediatR;
+
+[TestFixture]
+internal class EventDispatcherTest
 {
-    [TestFixture]
-    internal class EventDispatcherTest
+    private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+        DDD.Domain.Events.EventManager.Instance;
+
+    [Test]
+    public void TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
-        [Test]
-        public void TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
+        _ = Assert.Throws(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("mediator"),
+            () => new EventDispatcher(null!)
+        );
+    }
+
+    [TearDown]
+    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+
+    [Test]
+    public void TestDispatch_WhenEventIsPublished_ThenEventIsHandled()
+    {
+        EventStub eventStub = new();
+        ServiceProvider servicesProvider = new ServiceCollection()
+            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventDispatcher>())
+            .BuildServiceProvider();
+
+        System.Collections.Generic.IEnumerable<
+            INotificationHandler<Notification<EventStub>>
+        > services = servicesProvider.GetServices<INotificationHandler<Notification<EventStub>>>();
+
+        foreach (INotificationHandler<Notification<EventStub>> service in services)
         {
-            Assert.Throws(
-                Is.InstanceOf<ArgumentNullException>()
-                    .And.Property(nameof(ArgumentNullException.ParamName))
-                    .EqualTo("mediator"),
-                () => new EventDispatcher(null!)
-            );
+            Console.WriteLine($"{service.ToString()}");
         }
 
-        [TearDown]
-        public void ClearEventManager()
-        {
-            EventManager.Instance.EventDispatcher = null;
-        }
+        EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
+        this.EventManager.Dispatcher = eventDispatcher;
 
-        [Test]
-        public void TestDispatch_WhenEventIsPublished_ThenEventIsHandled()
-        {
-            EventStub eventStub = new();
-            var servicesProvider = new ServiceCollection()
-                .AddMediatR(cfg =>
-                    cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly)
-                )
-                .BuildServiceProvider();
-            EventDispatcher eventDispatcher = new(
-                servicesProvider.GetRequiredService<IMediator>()
-            );
-            EventManager.Instance.EventDispatcher = eventDispatcher;
+        this.EventManager.Notify(eventStub);
 
-            EventManager.Instance.Notify(eventStub);
+        Assert.That(eventStub.WasHandled, Is.True);
+    }
 
-            Assert.That(eventStub.WasHandled, Is.True);
-        }
+    [Test]
+    public async Task TestDispatchAsync_WhenEventIsPublished_ThenEventIsHandled()
+    {
+        EventStub eventStub = new();
+        ServiceProvider servicesProvider = new ServiceCollection()
+            .AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly)
+            )
+            .BuildServiceProvider();
+        EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
+        this.EventManager.Dispatcher = eventDispatcher;
 
-        [Test]
-        public async Task TestDispatchAsync_WhenEventIsPublished_ThenEventIsHandled()
-        {
-            EventStub eventStub = new();
-            var servicesProvider = new ServiceCollection()
-                .AddMediatR(cfg =>
-                    cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly)
-                )
-                .BuildServiceProvider();
-            EventDispatcher eventDispatcher = new(
-                servicesProvider.GetRequiredService<IMediator>()
-            );
-            EventManager.Instance.EventDispatcher = eventDispatcher;
+        await this.EventManager.NotifyAsync(eventStub);
 
-            await EventManager.Instance.NotifyAsync(eventStub);
-
-            Assert.That(eventStub.WasHandled, Is.True);
-        }
+        Assert.That(eventStub.WasHandled, Is.True);
     }
 }
