@@ -27,7 +27,7 @@ namespace DDD.Tests.Unit.Domain.Events
             bool dispatched = false;
             Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
-                .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
+                .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
                 .Callback(() => dispatched = true);
             this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
@@ -122,7 +122,7 @@ namespace DDD.Tests.Unit.Domain.Events
             bool dispatched = false;
             Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
             eventDispatcherMock
-                .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
+                .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
                 .Callback(() => dispatched = true);
             this.EventManager.Dispatcher = eventDispatcherMock.Object;
 
