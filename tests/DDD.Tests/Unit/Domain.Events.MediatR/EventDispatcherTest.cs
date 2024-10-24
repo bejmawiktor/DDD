@@ -13,7 +13,7 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 [TestFixture]
 internal class EventDispatcherTest
 {
-    private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+    private static IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
         DDD.Domain.Events.EventManager.Instance;
 
     [Test]
@@ -38,9 +38,9 @@ internal class EventDispatcherTest
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventStubHandler>())
             .BuildServiceProvider();
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        this.EventManager.Dispatcher = eventDispatcher;
+        EventManager.Dispatcher = eventDispatcher;
 
-        this.EventManager.Notify(eventStub);
+        EventManager.Notify(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }
@@ -55,9 +55,9 @@ internal class EventDispatcherTest
             )
             .BuildServiceProvider();
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        this.EventManager.Dispatcher = eventDispatcher;
+        EventManager.Dispatcher = eventDispatcher;
 
-        await this.EventManager.NotifyAsync(eventStub);
+        await EventManager.NotifyAsync(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }

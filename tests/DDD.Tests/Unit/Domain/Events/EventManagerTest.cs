@@ -11,14 +11,14 @@ namespace DDD.Tests.Unit.Domain.Events;
 [TestFixture]
 public class EventManagerTest
 {
-    private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+    private static IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
         DDD.Domain.Events.EventManager.Instance;
 
     [TearDown]
     public void ClearEventManager()
     {
         DDD.Domain.Events.EventManager.CurrentScope = null;
-        this.EventManager.Dispatcher = null;
+        EventManager.Dispatcher = null;
     }
 
     [Test]
@@ -29,9 +29,9 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
-        this.EventManager.Notify(new EventStub());
+        EventManager.Notify(new EventStub());
 
         Assert.That(dispatched, Is.True);
     }
@@ -45,11 +45,11 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
         using(EventsScope eventsScope = new())
         {
-            this.EventManager.Notify(eventMock.Object);
+            EventManager.Notify(eventMock.Object);
         }
 
         Assert.That(dispatched, Is.False);
@@ -61,10 +61,10 @@ public class EventManagerTest
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
         Mock<IDispatcher> eventDispatcherMock = new();
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
-        this.EventManager.Notify(eventMock.Object);
+        EventManager.Notify(eventMock.Object);
 
         Assert.That(eventsScope.Items.Contains(@event));
     }
@@ -75,7 +75,7 @@ public class EventManagerTest
         _ = Assert.Throws(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            () => this.EventManager.Notify(new EventStub())
+            () => EventManager.Notify(new EventStub())
         );
     }
 
@@ -88,11 +88,11 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
         using(EventsScope eventsScope = new())
         {
-            await this.EventManager.NotifyAsync(eventMock.Object);
+            await EventManager.NotifyAsync(eventMock.Object);
         }
 
         Assert.That(dispatched, Is.False);
@@ -104,10 +104,10 @@ public class EventManagerTest
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
         Mock<IDispatcher> eventDispatcherMock = new();
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
-        await this.EventManager.NotifyAsync(eventMock.Object);
+        await EventManager.NotifyAsync(eventMock.Object);
 
         Assert.That(eventsScope.Items.Contains(@event));
     }
@@ -120,9 +120,9 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        this.EventManager.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Dispatcher = eventDispatcherMock.Object;
 
-        await this.EventManager.NotifyAsync(new EventStub());
+        await EventManager.NotifyAsync(new EventStub());
 
         Assert.That(dispatched, Is.True);
     }
@@ -133,7 +133,7 @@ public class EventManagerTest
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            async () => await this.EventManager.NotifyAsync(new EventStub())
+            async () => await EventManager.NotifyAsync(new EventStub())
         );
     }
 }
