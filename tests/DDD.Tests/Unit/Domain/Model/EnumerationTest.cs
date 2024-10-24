@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -416,14 +416,15 @@ public class EnumerationTest
     [Test]
     public void TestGetValues_WhenGettingValues_ThenValuesAreReturned()
     {
-        IEnumerable<FirstStringEnumerationFake?> expectedValues = new FirstStringEnumerationFake?[]
-        {
-            FirstStringEnumerationFake.One,
-            FirstStringEnumerationFake.Two,
-            FirstStringEnumerationFake.Three,
-            FirstStringEnumerationFake.Zero,
-            FirstStringEnumerationFake.Null
-        };
+        IEnumerable<FirstStringEnumerationFake?> expectedValues =
+            new FirstStringEnumerationFake?[]
+            {
+                FirstStringEnumerationFake.One,
+                FirstStringEnumerationFake.Two,
+                FirstStringEnumerationFake.Three,
+                FirstStringEnumerationFake.Zero,
+                FirstStringEnumerationFake.Null
+            };
 
         Assert.That(FirstStringEnumerationFake.GetValues(), Is.EquivalentTo(expectedValues));
     }
@@ -522,10 +523,8 @@ public class EnumerationTest
     }
 
     [Test]
-    public void TestToString_WhenConvertingNullValue_ThenNullIsReturned() =>
-        Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
+    public void TestToString_WhenConvertingNullValue_ThenNullIsReturned() => Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
 
     [Test]
-    public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() =>
-        Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
+    public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() => Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
 }

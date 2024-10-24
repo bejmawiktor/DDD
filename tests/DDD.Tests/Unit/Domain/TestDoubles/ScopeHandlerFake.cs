@@ -1,9 +1,6 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using DDD.Domain.Common;
+using System;
 using System.Threading;
-using System.Threading.Tasks;
-using DDD.Domain.Common;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
@@ -30,7 +27,7 @@ internal class ScopeHandlerFake : IScopeHandler<ScopeFake, string, ScopeHandlerF
 
     public static ScopeHandlerFake Instance => instance.Value;
 
-    public IDispatcher<string>? Dispatcher { get; set; }
+    public IDispatcher? Dispatcher { get; set; }
 
     public ScopeHandlerFake() { }
 }

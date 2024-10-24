@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -28,9 +28,9 @@ public class IdentifierTest
         yield return new TestCaseData(
             new object[] { new StringIdFake("5"), new StringIdFake("2"), false }
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(6)");
-        yield return new TestCaseData(new object?[] { new StringIdFake("5"), null, false }).SetName(
-            $"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(7)"
-        );
+        yield return new TestCaseData(
+            new object?[] { new StringIdFake("5"), null, false }
+        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(7)");
     }
 
     [Test]

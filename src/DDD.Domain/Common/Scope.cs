@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DDD.Domain.Events;
 
 namespace DDD.Domain.Common;
 
@@ -16,10 +15,10 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
     protected Scope()
     {
-        this.Items = new List<TItem>();
-        this.ParentScope = TScopeHandler.CurrentScope as TScope;
+        this.Items = [];
+        this.ParentScope = TScopeHandler.CurrentScope;
 
-        if (this.ParentScope is not null)
+        if(this.ParentScope is not null)
         {
             this.ParentScope.NestedScopesCounter++;
         }
@@ -36,11 +35,11 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
     public void Publish()
     {
-        if (this.ParentScope is null)
+        if(this.ParentScope is null)
         {
-            foreach (TItem item in this.Items)
+            foreach(TItem item in this.Items)
             {
-                if (TScopeHandler.Instance.Dispatcher is null)
+                if(TScopeHandler.Instance.Dispatcher is null)
                 {
                     throw new InvalidOperationException("Dispatcher is uninitialized.");
                 }
@@ -60,13 +59,13 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
     public Task PublishAsync()
     {
-        List<Task> tasks = new();
+        List<Task> tasks = [];
 
-        if (this.ParentScope is null)
+        if(this.ParentScope is null)
         {
-            foreach (TItem item in this.Items)
+            foreach(TItem item in this.Items)
             {
-                if (TScopeHandler.Instance.Dispatcher is null)
+                if(TScopeHandler.Instance.Dispatcher is null)
                 {
                     throw new InvalidOperationException("Dispatcher is uninitialized.");
                 }
@@ -94,25 +93,25 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!this.IsDisposed)
+        if(!this.IsDisposed)
         {
-            if (this.ParentScope is not null)
+            if(this.ParentScope is not null)
             {
                 this.ParentScope.NestedScopesCounter--;
             }
 
-            if (this.NestedScopesCounter > 0)
+            if(this.NestedScopesCounter > 0)
             {
                 this.Clear();
                 throw new InvalidOperationException("Scope nested incorrectly.");
             }
 
-            if (disposing)
+            if(disposing)
             {
                 this.Clear();
             }
 
-            if (ReferenceEquals(this, TScopeHandler.CurrentScope))
+            if(ReferenceEquals(this, TScopeHandler.CurrentScope))
             {
                 TScopeHandler.CurrentScope = this.ParentScope;
             }

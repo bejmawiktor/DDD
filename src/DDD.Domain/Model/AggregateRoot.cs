@@ -2,7 +2,9 @@
 
 namespace DDD.Domain.Model;
 
-public abstract class AggregateRoot<TIdentifier> : Entity<TIdentifier>, IAggregateRoot<TIdentifier>
+public abstract class AggregateRoot<TIdentifier>
+    : Entity<TIdentifier>,
+        IAggregateRoot<TIdentifier>
     where TIdentifier : IEquatable<TIdentifier>
 {
     protected AggregateRoot(TIdentifier id)

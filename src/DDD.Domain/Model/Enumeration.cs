@@ -45,16 +45,12 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
 
     public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Value);
 
-    public override bool Equals(object? other) =>
-        (other?.GetType()) == this.GetType() && this.Equals(other as TEnumeration);
+    public override bool Equals(object? other) => (other?.GetType()) == this.GetType() && this.Equals(other as TEnumeration);
 
     public bool Equals(TEnumeration? other)
     {
         return !(this.Value is null ^ (other is null || other.Value is null))
-            && (
-                (this.Value is null && (other is null || other.Value is null))
-                || this.Value!.Equals(other!.Value)
-            );
+&& ((this.Value is null && (other is null || other.Value is null)) || this.Value!.Equals(other!.Value));
     }
 
     public static bool operator ==(
@@ -73,10 +69,7 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
         GetValues().FirstOrDefault(v => v is not null && AreValuesEqual(v.Value, value))
         ?? throw new ArgumentException($"Wrong {typeof(TEnumeration).Name} value.");
 
-    private static bool AreValuesEqual(TValue? lhsValue, TValue? rhsValue) =>
-        !(lhsValue is null ^ rhsValue is null)
-        && ((lhsValue is null && rhsValue is null) || lhsValue!.Equals(rhsValue));
+    private static bool AreValuesEqual(TValue? lhsValue, TValue? rhsValue) => !(lhsValue is null ^ rhsValue is null) && ((lhsValue is null && rhsValue is null) || lhsValue!.Equals(rhsValue));
 
-    public static implicit operator TValue?(Enumeration<TValue, TEnumeration>? value) =>
-        value is null ? default : value.Value;
+    public static implicit operator TValue?(Enumeration<TValue, TEnumeration>? value) => value is null ? default : value.Value;
 }

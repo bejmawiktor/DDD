@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.Model;
 

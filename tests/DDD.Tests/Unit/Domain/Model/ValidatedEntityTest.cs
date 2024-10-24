@@ -1,6 +1,6 @@
-﻿using System;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
+using System;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -19,6 +19,5 @@ public class ValidatedEntityTest
     }
 
     [Test]
-    public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown() =>
-        Assert.DoesNotThrow(() => new ValidatedEntityFake("1", 1));
+    public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown() => Assert.DoesNotThrow(() => new ValidatedEntityFake("1", 1));
 }

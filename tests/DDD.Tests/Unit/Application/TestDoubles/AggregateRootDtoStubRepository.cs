@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DDD.Application.Persistence;
+﻿using DDD.Application.Persistence;
 using DDD.Domain.Persistence;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
@@ -14,20 +14,17 @@ public class AggregateRootDtoStubRepository : IDtoRepository<AggregateRootDtoStu
         this.Dtos = dtos;
     }
 
-    public AggregateRootDtoStub? Get(string identifier) =>
-        this.Dtos?.FirstOrDefault(d => d.Id == identifier);
+    public AggregateRootDtoStub? Get(string identifier) => this.Dtos?.FirstOrDefault(d => d.Id == identifier);
 
-    public IEnumerable<AggregateRootDtoStub> Get(Pagination? pagination = null) =>
-        this.Dtos ?? Enumerable.Empty<AggregateRootDtoStub>();
+    public IEnumerable<AggregateRootDtoStub> Get(Pagination? pagination = null) => this.Dtos ?? Enumerable.Empty<AggregateRootDtoStub>();
 
     public void Add(AggregateRootDtoStub dto) => this.Dtos?.Add(dto);
 
-    public void Remove(AggregateRootDtoStub dto) =>
-        this.Dtos?.RemoveAt(this.Dtos.FindIndex(e => e.Id == dto.Id));
+    public void Remove(AggregateRootDtoStub dto) => this.Dtos?.RemoveAt(this.Dtos.FindIndex(e => e.Id == dto.Id));
 
     public void Update(AggregateRootDtoStub dto)
     {
-        if (this.Dtos is not null)
+        if(this.Dtos is not null)
         {
             this.Dtos[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto;
         }

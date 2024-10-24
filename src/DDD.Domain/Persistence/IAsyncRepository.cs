@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DDD.Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DDD.Domain.Model;
 
 namespace DDD.Domain.Persistence;
 

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Persistence;
+﻿using DDD.Domain.Persistence;
+using System.Collections.Generic;
 
 namespace DDD.Application.Persistence;
 

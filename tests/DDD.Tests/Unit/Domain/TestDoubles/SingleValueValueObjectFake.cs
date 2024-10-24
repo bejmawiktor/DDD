@@ -1,5 +1,5 @@
-﻿using System;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
+using System;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 

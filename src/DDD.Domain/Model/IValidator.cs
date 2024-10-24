@@ -1,7 +1,6 @@
-﻿namespace DDD.Domain.Model
+﻿namespace DDD.Domain.Model;
+
+public interface IValidator<in TValidatedObject>
 {
-    public interface IValidator<in TValidatedObject>
-    {
-        void Validate(TValidatedObject validatedObject);
-    }
+    void Validate(TValidatedObject validatedObject);
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DDD.Application.Model;
+﻿using DDD.Application.Model;
 using DDD.Application.Model.Converters;
 using DDD.Domain.Model;
 using DDD.Domain.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DDD.Application.Persistence.Adapters;
 
@@ -41,7 +41,9 @@ public interface IRepositoryAdapter<
         return aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
     }
 
-    IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(Pagination? pagination)
+    IEnumerable<TAggregateRoot> IRepository<TAggregateRoot, TIdentifier>.Get(
+        Pagination? pagination
+    )
     {
         IEnumerable<TDto> aggregateRootDtos = this.DtoRepository.Get(pagination);
 
@@ -50,39 +52,9 @@ public interface IRepositoryAdapter<
             : this.DtoRepository.Get(pagination).Select(r => r.ToDomainObject());
     }
 
-    void IRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity) =>
-        this.DtoRepository.Add(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    void IRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity) => this.DtoRepository.Add(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 
-    void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity) =>
-        this.DtoRepository.Remove(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity) => this.DtoRepository.Remove(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 
-    void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity) =>
-        this.DtoRepository.Update(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity) => this.DtoRepository.Update(IRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TDtoAggregateRootConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 }

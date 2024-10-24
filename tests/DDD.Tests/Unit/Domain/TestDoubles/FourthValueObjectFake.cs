@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
@@ -22,7 +22,7 @@ public class FourthValueObjectFake : ValueObject
     {
         yield return this.Field1;
         yield return this.Field2;
-        if (this.Field4)
+        if(this.Field4)
         {
             yield return this.Field3;
         }

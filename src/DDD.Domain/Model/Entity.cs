@@ -18,11 +18,9 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
         this.Id = id;
     }
 
-    public static bool operator ==(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs) =>
-        (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
+    public static bool operator ==(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs) => (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
 
-    public static bool operator !=(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs) =>
-        !(lhs == rhs);
+    public static bool operator !=(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs) => !(lhs == rhs);
 
     public override bool Equals(object? obj)
     {

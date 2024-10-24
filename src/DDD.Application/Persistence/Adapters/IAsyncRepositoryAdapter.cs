@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DDD.Application.Model;
+﻿using DDD.Application.Model;
 using DDD.Application.Model.Converters;
 using DDD.Domain.Model;
 using DDD.Domain.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DDD.Application.Persistence.Adapters;
 
@@ -38,30 +38,11 @@ public interface IAsyncRepositoryAdapter<
     )
     {
         return this
-            .DtoRepository.GetAsync(
-                IAsyncRepositoryAdapter<
-                    TDto,
-                    TDtoIdentifier,
-                    TDtoRepository,
-                    TAggregateRootDtoConverter,
-                    TAggregateRoot,
-                    TIdentifier
-                >.Converter.ToDtoIdentifier(identifier)
-            )
-            .ContinueWith(a =>
-                IAsyncRepositoryAdapter<
-                    TDto,
-                    TDtoIdentifier,
-                    TDtoRepository,
-                    TAggregateRootDtoConverter,
-                    TAggregateRoot,
-                    TIdentifier
-                >.ConvertDto(a.Result)
-            );
+            .DtoRepository.GetAsync(IAsyncRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TAggregateRootDtoConverter, TAggregateRoot, TIdentifier>.Converter.ToDtoIdentifier(identifier))
+            .ContinueWith(a => IAsyncRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TAggregateRootDtoConverter, TAggregateRoot, TIdentifier>.ConvertDto(a.Result));
     }
 
-    private static TAggregateRoot? ConvertDto(TDto? aggregateRootDto) =>
-        aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
+    private static TAggregateRoot? ConvertDto(TDto? aggregateRootDto) => aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
 
     Task<IEnumerable<TAggregateRoot>> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(
         Pagination? pagination
@@ -74,39 +55,9 @@ public interface IAsyncRepositoryAdapter<
             );
     }
 
-    Task IAsyncRepository<TAggregateRoot, TIdentifier>.AddAsync(TAggregateRoot entity) =>
-        this.DtoRepository.AddAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    Task IAsyncRepository<TAggregateRoot, TIdentifier>.AddAsync(TAggregateRoot entity) => this.DtoRepository.AddAsync(IAsyncRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TAggregateRootDtoConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 
-    Task IAsyncRepository<TAggregateRoot, TIdentifier>.RemoveAsync(TAggregateRoot entity) =>
-        this.DtoRepository.RemoveAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    Task IAsyncRepository<TAggregateRoot, TIdentifier>.RemoveAsync(TAggregateRoot entity) => this.DtoRepository.RemoveAsync(IAsyncRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TAggregateRootDtoConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 
-    Task IAsyncRepository<TAggregateRoot, TIdentifier>.UpdateAsync(TAggregateRoot entity) =>
-        this.DtoRepository.UpdateAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+    Task IAsyncRepository<TAggregateRoot, TIdentifier>.UpdateAsync(TAggregateRoot entity) => this.DtoRepository.UpdateAsync(IAsyncRepositoryAdapter<TDto, TDtoIdentifier, TDtoRepository, TAggregateRootDtoConverter, TAggregateRoot, TIdentifier>.Converter.ToDto(entity));
 }

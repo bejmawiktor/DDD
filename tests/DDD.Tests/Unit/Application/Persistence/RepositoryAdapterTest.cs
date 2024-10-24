@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Persistence;
+﻿using DDD.Domain.Persistence;
 using DDD.Tests.Unit.Application.TestDoubles;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Application.Persistence;
 
@@ -11,7 +11,8 @@ public class RepositoryAdapterTest
     [Test]
     public void TestGet_WhenIdentifierGiven_ThenAggregateRootIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs =
+            [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -23,19 +24,24 @@ public class RepositoryAdapterTest
     [Test]
     public void TestGet_WhenPaginationGiven_ThenAggregateRootsAreReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs =
+            [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
         IEnumerable<AggregateRootStub> aggregateRoots = repository.Get(new Pagination(1, 100));
 
-        Assert.That(aggregateRoots, Is.EqualTo(new AggregateRootStub[] { new("1") }));
+        Assert.That(
+            aggregateRoots,
+            Is.EqualTo(new AggregateRootStub[] { new("1") })
+        );
     }
 
     [Test]
     public void TestGet_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs =
+            [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -58,7 +64,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestAdd_WhenAggregateRootDtoGiven_ThenAggregateRootIsSet()
     {
-        AggregateRootDtoStubRepository dtoRepository = new(new List<AggregateRootDtoStub>());
+        AggregateRootDtoStubRepository dtoRepository = new([]);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
         repository.Add(new AggregateRootStub("1"));
@@ -69,7 +75,8 @@ public class RepositoryAdapterTest
     [Test]
     public void TestRemove_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs =
+            [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -81,7 +88,8 @@ public class RepositoryAdapterTest
     [Test]
     public void TestUpdate_WhenAggregateRootDtoGiven_ThenAggregateRootIsUpdated()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs =
+            [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 

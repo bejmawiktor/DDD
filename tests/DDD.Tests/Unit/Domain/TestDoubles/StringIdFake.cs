@@ -1,5 +1,5 @@
-﻿using System;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
+using System;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
@@ -10,7 +10,7 @@ public class StringIdFake : Identifier<string, StringIdFake>
 
     protected override void ValidateValue(string value)
     {
-        if (value?.Length == 0)
+        if(value?.Length == 0)
         {
             throw new ArgumentException("Id could not be empty.");
         }
