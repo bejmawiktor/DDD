@@ -11,11 +11,11 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 [TestFixture]
 internal class EventManagerExtensionTest
 {
-    private IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
+    private static IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
         DDD.Domain.Events.EventManager.Instance;
 
     [TearDown]
-    public void ClearEventManager() => this.EventManager.Dispatcher = null;
+    public void ClearEventManager() => EventManager.Dispatcher = null;
 
     [Test]
     public void TestUseMediatREventDispatcher_WhenMediatorGiven_ThenMediatorIsSet()
@@ -25,7 +25,7 @@ internal class EventManagerExtensionTest
 
         DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(mediator);
 
-        Assert.That(this.EventManager.Dispatcher, Is.Not.Null);
+        Assert.That(EventManager.Dispatcher, Is.Not.Null);
     }
 
     [Test]
