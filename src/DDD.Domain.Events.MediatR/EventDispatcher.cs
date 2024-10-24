@@ -11,10 +11,8 @@ internal class EventDispatcher : IEventDispatcher
         this.Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    public void Dispatch<TEvent>(TEvent @event)
-        where TEvent : IEvent =>
-        this.Mediator.Publish(new Notification<TEvent>(@event)).GetAwaiter().GetResult();
+    public void Dispatch<TEvent>(TEvent @event) =>
+        this.Mediator.Publish(@event).GetAwaiter().GetResult();
 
-    public Task DispatchAsync<TEvent>(TEvent @event)
-        where TEvent : IEvent => this.Mediator.Publish(new Notification<TEvent>(@event));
+    public Task DispatchAsync<TEvent>(TEvent @event) => this.Mediator.Publish(@event);
 }

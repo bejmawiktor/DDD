@@ -13,9 +13,9 @@ public interface IScopeHandler<TScope, TItem, TScopeHandler>
 
     void Notify(TItem item)
     {
-        if (TScopeHandler.CurrentScope is null)
+        if(TScopeHandler.CurrentScope is null)
         {
-            if (this.Dispatcher is null)
+            if(this.Dispatcher is null)
             {
                 throw new InvalidOperationException("Dispatcher is uninitialized.");
             }
@@ -30,7 +30,7 @@ public interface IScopeHandler<TScope, TItem, TScopeHandler>
 
     Task NotifyAsync(TItem item)
     {
-        if (TScopeHandler.CurrentScope is null)
+        if(TScopeHandler.CurrentScope is null)
         {
             return this.Dispatcher is null
                 ? throw new InvalidOperationException("Dispatcher is uninitialized.")
@@ -42,5 +42,5 @@ public interface IScopeHandler<TScope, TItem, TScopeHandler>
         return Task.CompletedTask;
     }
 
-    public IDispatcher<TItem>? Dispatcher { get; set; }
+    public IDispatcher? Dispatcher { get; set; }
 }

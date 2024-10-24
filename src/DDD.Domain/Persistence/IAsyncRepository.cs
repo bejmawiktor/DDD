@@ -1,22 +1,21 @@
-﻿using System;
+﻿using DDD.Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DDD.Domain.Model;
 
-namespace DDD.Domain.Persistence
+namespace DDD.Domain.Persistence;
+
+public interface IAsyncRepository<TAggregateRoot, TIdentifier>
+    where TAggregateRoot : IAggregateRoot<TIdentifier>
+    where TIdentifier : IEquatable<TIdentifier>
 {
-    public interface IAsyncRepository<TAggregateRoot, TIdentifier>
-        where TAggregateRoot : IAggregateRoot<TIdentifier>
-        where TIdentifier : IEquatable<TIdentifier>
-    {
-        Task<TAggregateRoot?> GetAsync(TIdentifier identifier);
+    Task<TAggregateRoot?> GetAsync(TIdentifier identifier);
 
-        Task<IEnumerable<TAggregateRoot>> GetAsync(Pagination? pagination = null);
+    Task<IEnumerable<TAggregateRoot>> GetAsync(Pagination? pagination = null);
 
-        Task AddAsync(TAggregateRoot entity);
+    Task AddAsync(TAggregateRoot entity);
 
-        Task UpdateAsync(TAggregateRoot entity);
+    Task UpdateAsync(TAggregateRoot entity);
 
-        Task RemoveAsync(TAggregateRoot entity);
-    }
+    Task RemoveAsync(TAggregateRoot entity);
 }

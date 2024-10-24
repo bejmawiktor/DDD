@@ -1,16 +1,12 @@
-﻿using System;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
+using System;
 
-namespace DDD.Tests.Unit.Domain.TestDoubles
+namespace DDD.Tests.Unit.Domain.TestDoubles;
+
+public class SingleValueValueObjectFake : ValueObject<string>
 {
-    public class SingleValueValueObjectFake : ValueObject<string>
-    {
-        public SingleValueValueObjectFake(string value)
-            : base(value) { }
+    public SingleValueValueObjectFake(string value)
+        : base(value) { }
 
-        protected override void ValidateValue(string value)
-        {
-            ArgumentNullException.ThrowIfNull(value);
-        }
-    }
+    protected override void ValidateValue(string value) => ArgumentNullException.ThrowIfNull(value);
 }

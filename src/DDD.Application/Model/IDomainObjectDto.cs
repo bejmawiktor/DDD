@@ -1,10 +1,9 @@
 ﻿using DDD.Domain.Model;
 
-namespace DDD.Application.Model
+namespace DDD.Application.Model;
+
+public interface IDomainObjectDto<out TDomainObject>
+    where TDomainObject : IDomainObject
 {
-    public interface IDomainObjectDto<out TDomainObject>
-        where TDomainObject : IDomainObject
-    {
-        protected internal abstract TDomainObject ToDomainObject();
-    }
+    protected internal abstract TDomainObject ToDomainObject();
 }

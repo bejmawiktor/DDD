@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using DDD.Domain.Common;
+﻿using DDD.Domain.Common;
 using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
@@ -35,18 +35,8 @@ internal class EventDispatcherTest
     {
         EventStub eventStub = new();
         ServiceProvider servicesProvider = new ServiceCollection()
-            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventDispatcher>())
+            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventStubHandler>())
             .BuildServiceProvider();
-
-        System.Collections.Generic.IEnumerable<
-            INotificationHandler<Notification<EventStub>>
-        > services = servicesProvider.GetServices<INotificationHandler<Notification<EventStub>>>();
-
-        foreach (INotificationHandler<Notification<EventStub>> service in services)
-        {
-            Console.WriteLine($"{service.ToString()}");
-        }
-
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
         this.EventManager.Dispatcher = eventDispatcher;
 

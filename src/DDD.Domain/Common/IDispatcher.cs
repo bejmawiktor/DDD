@@ -2,11 +2,9 @@
 
 namespace DDD.Domain.Common;
 
-public interface IDispatcher<TItemBase>
+public interface IDispatcher
 {
-    void Dispatch<TItem>(TItem item)
-        where TItem : TItemBase;
+    void Dispatch<TItem>(TItem item);
 
-    Task DispatchAsync<TItem>(TItem item)
-        where TItem : TItemBase;
+    Task DispatchAsync<TItem>(TItem item);
 }

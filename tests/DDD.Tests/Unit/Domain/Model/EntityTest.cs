@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -187,7 +187,7 @@ public class EntityTest
     [Test]
     public void TestConstructing_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        Assert.Throws(
+        _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("id"),
@@ -198,7 +198,7 @@ public class EntityTest
     [Test]
     public void TestSet_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        Assert.Throws(
+        _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("id"),
@@ -209,7 +209,7 @@ public class EntityTest
     [Test]
     public void TestConstructing_WhenIdGiven_ThenIdIsSet()
     {
-        StringEntityStub stringEntityStub = new StringEntityStub("1");
+        StringEntityStub stringEntityStub = new("1");
 
         Assert.That(stringEntityStub.Id, Is.EqualTo("1"));
     }
@@ -219,30 +219,21 @@ public class EntityTest
         object lhsEntity,
         object rhsEntity,
         bool expectedEqualsResult
-    )
-    {
-        Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
-    }
+    ) => Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
 
     [TestCaseSource(nameof(EqualsOperatorTestData))]
     public void TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
         StringEntityStub lhsEntity,
         StringEntityStub rhsEntity,
         bool expectedEqualsResult
-    )
-    {
-        Assert.That(lhsEntity == rhsEntity, Is.EqualTo(expectedEqualsResult));
-    }
+    ) => Assert.That(lhsEntity == rhsEntity, Is.EqualTo(expectedEqualsResult));
 
     [TestCaseSource(nameof(NotEqualsOperatorTestData))]
     public void TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
         StringEntityStub lhsEntity,
         StringEntityStub rhsEntity,
         bool expectedEqualsResult
-    )
-    {
-        Assert.That(lhsEntity != rhsEntity, Is.EqualTo(expectedEqualsResult));
-    }
+    ) => Assert.That(lhsEntity != rhsEntity, Is.EqualTo(expectedEqualsResult));
 
     [TestCaseSource(nameof(GetHashCodeTestData))]
     public void TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned(

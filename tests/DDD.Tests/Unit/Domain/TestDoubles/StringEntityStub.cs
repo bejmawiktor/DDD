@@ -1,16 +1,15 @@
 ﻿using DDD.Domain.Model;
 
-namespace DDD.Tests.Unit.Domain.TestDoubles
-{
-    public class StringEntityStub : Entity<string>
-    {
-        public new string Id
-        {
-            get => base.Id;
-            set => base.Id = value;
-        }
+namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-        public StringEntityStub(string id)
-            : base(id) { }
+public class StringEntityStub : Entity<string>
+{
+    public new string Id
+    {
+        get => base.Id;
+        set => base.Id = value;
     }
+
+    public StringEntityStub(string id)
+        : base(id) { }
 }

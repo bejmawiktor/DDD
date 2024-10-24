@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace DDD.Domain.Persistence
+namespace DDD.Domain.Persistence;
+
+public interface ITransactionScope : IDisposable
 {
-    public interface ITransactionScope : IDisposable
-    {
-        void Complete();
-    }
+    void Complete();
 }
