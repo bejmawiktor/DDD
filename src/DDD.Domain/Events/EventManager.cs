@@ -1,10 +1,10 @@
-﻿using DDD.Domain.Common;
+﻿using DDD.Domain.Utils;
 
 namespace DDD.Domain.Events;
 
 public sealed class EventManager : ScopeHandler<EventsScope, IEvent, EventManager>
 {
-    public override IDispatcher? Dispatcher { get; set; }
+    public override IDispatcher<IEvent>? Dispatcher { get; set; }
 
     public EventManager() { }
 }

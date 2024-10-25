@@ -1,5 +1,5 @@
-﻿using DDD.Domain.Common;
+﻿using DDD.Domain.Utils;
 
 namespace DDD.Domain.Events;
 
-public interface IEventDispatcher : IDispatcher { }
+public interface IEventDispatcher : IDispatcher<IEvent> { }

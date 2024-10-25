@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DDD.Domain.Common;
+namespace DDD.Domain.Utils;
 
 public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
     where TScope : Scope<TItem, TScope, TScopeHandler>
@@ -22,9 +22,9 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
 
     public void Notify(TItem item)
     {
-        if(ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
+        if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {
-            if(this.Dispatcher is null)
+            if (this.Dispatcher is null)
             {
                 throw new InvalidOperationException("Dispatcher is uninitialized.");
             }
@@ -39,7 +39,7 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
 
     public Task NotifyAsync(TItem item)
     {
-        if(ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
+        if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {
             return this.Dispatcher is null
                 ? throw new InvalidOperationException("Dispatcher is uninitialized.")
@@ -51,5 +51,5 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
         return Task.CompletedTask;
     }
 
-    public abstract IDispatcher? Dispatcher { get; set; }
+    public abstract IDispatcher<TItem>? Dispatcher { get; set; }
 }

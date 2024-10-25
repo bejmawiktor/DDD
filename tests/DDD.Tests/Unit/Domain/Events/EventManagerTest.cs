@@ -1,10 +1,10 @@
-﻿using DDD.Domain.Common;
+﻿using System;
+using System.Threading.Tasks;
 using DDD.Domain.Events;
+using DDD.Domain.Utils;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
@@ -22,7 +22,7 @@ public class EventManagerTest
     public void TestEventManager_WhenNoEventScopeCreated_ThenEventsAreDispatchedImmediately()
     {
         bool dispatched = false;
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
@@ -38,13 +38,13 @@ public class EventManagerTest
     {
         bool dispatched = false;
         Mock<IEvent> eventMock = new();
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
         DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
-        using(EventsScope eventsScope = new())
+        using (EventsScope eventsScope = new())
         {
             EventManager.Instance.Notify(eventMock.Object);
         }
@@ -57,7 +57,7 @@ public class EventManagerTest
     {
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
@@ -81,13 +81,13 @@ public class EventManagerTest
     {
         bool dispatched = false;
         Mock<IEvent> eventMock = new();
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
         DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
-        using(EventsScope eventsScope = new())
+        using (EventsScope eventsScope = new())
         {
             await EventManager.Instance.NotifyAsync(eventMock.Object);
         }
@@ -100,7 +100,7 @@ public class EventManagerTest
     {
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
@@ -113,7 +113,7 @@ public class EventManagerTest
     public async Task TestNotifyAsync_WhenScopeWasntCreated_ThenEventsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> eventDispatcherMock = new();
+        Mock<IDispatcher<IEvent>> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
