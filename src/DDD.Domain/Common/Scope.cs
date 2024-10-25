@@ -6,7 +6,7 @@ namespace DDD.Domain.Common;
 
 public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
     where TScope : Scope<TItem, TScope, TScopeHandler>
-    where TScopeHandler : IScopeHandler<TScope, TItem, TScopeHandler>, new()
+    where TScopeHandler : ScopeHandler<TScope, TItem, TScopeHandler>, new()
 {
     private bool IsDisposed { get; set; }
     protected internal List<TItem> Items { get; set; }
@@ -16,14 +16,14 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
     protected Scope()
     {
         this.Items = [];
-        this.ParentScope = TScopeHandler.CurrentScope;
+        this.ParentScope = ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope;
 
         if(this.ParentScope is not null)
         {
             this.ParentScope.NestedScopesCounter++;
         }
 
-        TScopeHandler.CurrentScope = this as TScope;
+        ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope = this as TScope;
     }
 
     public void Add(TItem item)
@@ -39,12 +39,12 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
         {
             foreach(TItem item in this.Items)
             {
-                if(TScopeHandler.Instance.Dispatcher is null)
+                if(ScopeHandler<TScope, TItem, TScopeHandler>.Instance.Dispatcher is null)
                 {
                     throw new InvalidOperationException("Dispatcher is uninitialized.");
                 }
 
-                TScopeHandler.Instance.Dispatcher.Dispatch((dynamic)item);
+                ScopeHandler<TScope, TItem, TScopeHandler>.Instance.Dispatcher.Dispatch((dynamic)item);
             }
         }
         else
@@ -65,12 +65,12 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
         {
             foreach(TItem item in this.Items)
             {
-                if(TScopeHandler.Instance.Dispatcher is null)
+                if(ScopeHandler<TScope, TItem, TScopeHandler>.Instance.Dispatcher is null)
                 {
                     throw new InvalidOperationException("Dispatcher is uninitialized.");
                 }
 
-                tasks.Add(TScopeHandler.Instance.Dispatcher.DispatchAsync((dynamic)item));
+                tasks.Add(ScopeHandler<TScope, TItem, TScopeHandler>.Instance.Dispatcher.DispatchAsync((dynamic)item));
             }
         }
         else
@@ -111,9 +111,9 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
                 this.Clear();
             }
 
-            if(ReferenceEquals(this, TScopeHandler.CurrentScope))
+            if(ReferenceEquals(this, ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope))
             {
-                TScopeHandler.CurrentScope = this.ParentScope;
+                ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope = this.ParentScope;
             }
         }
 

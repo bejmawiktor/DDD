@@ -1,5 +1,4 @@
-﻿using DDD.Domain.Common;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
@@ -13,9 +12,6 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 [TestFixture]
 internal class EventDispatcherTest
 {
-    private static IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
-        DDD.Domain.Events.EventManager.Instance;
-
     [Test]
     public void TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
@@ -38,9 +34,9 @@ internal class EventDispatcherTest
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventStubHandler>())
             .BuildServiceProvider();
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        EventManager.Dispatcher = eventDispatcher;
+        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcher;
 
-        EventManager.Notify(eventStub);
+        EventManager.Instance.Notify(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }
@@ -55,9 +51,9 @@ internal class EventDispatcherTest
             )
             .BuildServiceProvider();
         EventDispatcher eventDispatcher = new(servicesProvider.GetRequiredService<IMediator>());
-        EventManager.Dispatcher = eventDispatcher;
+        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcher;
 
-        await EventManager.NotifyAsync(eventStub);
+        await EventManager.Instance.NotifyAsync(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }
