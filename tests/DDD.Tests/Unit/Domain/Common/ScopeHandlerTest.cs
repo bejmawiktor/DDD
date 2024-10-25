@@ -10,14 +10,11 @@ namespace DDD.Tests.Unit.Domain.Common;
 
 internal class ScopeHandlerTest
 {
-    private IScopeHandler<ScopeFake, string, ScopeHandlerFake> ScopeHandler =>
-        ScopeHandlerFake.Instance;
-
     [TearDown]
     public void ClearScopeHandler()
     {
         ScopeHandlerFake.CurrentScope = null;
-        this.ScopeHandler.Dispatcher = null;
+        ScopeHandlerFake.Instance.Dispatcher = null;
     }
 
     [Test]
@@ -28,9 +25,9 @@ internal class ScopeHandlerTest
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
-        this.ScopeHandler.Notify("item");
+        ScopeHandlerFake.Instance.Notify("item");
 
         Assert.That(dispatched, Is.True);
     }
@@ -44,11 +41,11 @@ internal class ScopeHandlerTest
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using(ScopeFake scope = new())
         {
-            this.ScopeHandler.Notify(item);
+            ScopeHandlerFake.Instance.Notify(item);
         }
 
         Assert.That(dispatched, Is.False);
@@ -58,12 +55,12 @@ internal class ScopeHandlerTest
     public void TestNotify_WhenScopeWasCreated_ThenItemsAreAddedToScopeItems()
     {
         Mock<IDispatcher> dispatcherMock = new();
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
 
         using ScopeFake scope = new();
 
-        this.ScopeHandler.Notify(item);
+        ScopeHandlerFake.Instance.Notify(item);
 
         Assert.That(scope.Items.AsEnumerable().Contains(item));
     }
@@ -76,9 +73,9 @@ internal class ScopeHandlerTest
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
-        this.ScopeHandler.Notify("item");
+        ScopeHandlerFake.Instance.Notify("item");
 
         Assert.That(dispatched, Is.True);
     }
@@ -89,7 +86,7 @@ internal class ScopeHandlerTest
         _ = Assert.Throws(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            () => this.ScopeHandler.Notify("item")
+            () => ScopeHandlerFake.Instance.Notify("item")
         );
     }
 
@@ -100,13 +97,13 @@ internal class ScopeHandlerTest
         string item = "item";
         Mock<IDispatcher> dispatcherMock = new();
         _ = dispatcherMock
-            .Setup(e => e.Dispatch(It.IsAny<string>()))
+            .Setup(e => e.DispatchAsync(It.IsAny<string>()))
             .Callback(() => dispatched = true);
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using(ScopeFake scope = new())
         {
-            await this.ScopeHandler.NotifyAsync(item);
+            await ScopeHandlerFake.Instance.NotifyAsync(item);
         }
 
         Assert.That(dispatched, Is.False);
@@ -116,10 +113,10 @@ internal class ScopeHandlerTest
     public async Task TestNotifyAsync_WhenScopeWasCreated_ThenItemsAreAddedToScopeItems()
     {
         Mock<IDispatcher> dispatcherMock = new();
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
         using ScopeFake scope = new();
-        await this.ScopeHandler.NotifyAsync(item);
+        await ScopeHandlerFake.Instance.NotifyAsync(item);
 
         Assert.That(scope.Items.Contains(item));
     }
@@ -132,9 +129,9 @@ internal class ScopeHandlerTest
         _ = dispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<string>()))
             .Callback(() => dispatched = true);
-        this.ScopeHandler.Dispatcher = dispatcherMock.Object;
+        ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
-        await this.ScopeHandler.NotifyAsync("item");
+        await ScopeHandlerFake.Instance.NotifyAsync("item");
 
         Assert.That(dispatched, Is.True);
     }
@@ -145,7 +142,7 @@ internal class ScopeHandlerTest
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            async () => await this.ScopeHandler.NotifyAsync("item")
+            async () => await ScopeHandlerFake.Instance.NotifyAsync("item")
         );
     }
 }

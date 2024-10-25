@@ -1,5 +1,4 @@
-﻿using DDD.Domain.Common;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using MediatR;
 using Moq;
@@ -11,11 +10,8 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 [TestFixture]
 internal class EventManagerExtensionTest
 {
-    private static IScopeHandler<EventsScope, IEvent, EventManager> EventManager =>
-        DDD.Domain.Events.EventManager.Instance;
-
     [TearDown]
-    public void ClearEventManager() => EventManager.Dispatcher = null;
+    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
 
     [Test]
     public void TestUseMediatREventDispatcher_WhenMediatorGiven_ThenMediatorIsSet()
@@ -25,7 +21,7 @@ internal class EventManagerExtensionTest
 
         DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(mediator);
 
-        Assert.That(EventManager.Dispatcher, Is.Not.Null);
+        Assert.That(EventManager.Instance.Dispatcher, Is.Not.Null);
     }
 
     [Test]
