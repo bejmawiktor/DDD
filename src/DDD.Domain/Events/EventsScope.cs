@@ -1,4 +1,4 @@
-﻿using DDD.Domain.Common;
+﻿using DDD.Domain.Utils;
 
 namespace DDD.Domain.Events;
 

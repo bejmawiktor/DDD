@@ -2,7 +2,5 @@
 
 namespace DDD.Domain.Events.MediatR;
 
-public interface IEventHandler<TEvent> : INotificationHandler<TEvent>
-    where TEvent : IEventNotification
-{
-}
+public interface IEventHandler<in TEvent> : INotificationHandler<TEvent>
+    where TEvent : IEvent, INotification { }

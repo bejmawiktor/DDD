@@ -1,12 +1,12 @@
-﻿using DDD.Domain.Common;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using DDD.Domain.Utils;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace DDD.Tests.Unit.Domain.Common;
+namespace DDD.Tests.Unit.Domain.Utils;
 
 [TestFixture]
 public class ScopeTest
@@ -51,7 +51,7 @@ public class ScopeTest
     {
         string item = "item";
         ScopeFake? scope;
-        using(scope = new())
+        using (scope = new())
         {
             scope.Add(item);
 
@@ -62,13 +62,13 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using ScopeFake parentScopeFake = new();
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
@@ -96,17 +96,17 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using ScopeFake parentScopeFake = new();
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
-            using(ScopeFake nestedChildScopeFake = new())
+            using (ScopeFake nestedChildScopeFake = new())
             {
                 nestedChildScopeFake.Add(item);
 
@@ -116,7 +116,7 @@ public class ScopeTest
             childScopeFake.Publish();
         }
 
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
@@ -130,7 +130,7 @@ public class ScopeTest
     public void TestPublish_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -138,7 +138,7 @@ public class ScopeTest
         string item = "item";
         ScopeFake? scope = null;
 
-        using(scope = new ScopeFake())
+        using (scope = new ScopeFake())
         {
             scope.Add(item);
 
@@ -151,11 +151,11 @@ public class ScopeTest
     [Test]
     public void TestPublish_WhenPublishing_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
         ScopeFake? scope;
-        using(scope = new ScopeFake())
+        using (scope = new ScopeFake())
         {
             scope.Add(item);
 
@@ -168,13 +168,13 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using ScopeFake parentScopeFake = new();
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
@@ -202,17 +202,17 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
 
         using ScopeFake parentScopeFake = new();
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
-            using(ScopeFake nestedChildScopeFake = new())
+            using (ScopeFake nestedChildScopeFake = new())
             {
                 nestedChildScopeFake.Add(item);
 
@@ -222,7 +222,7 @@ public class ScopeTest
             await childScopeFake.PublishAsync();
         }
 
-        using(ScopeFake childScopeFake = new())
+        using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
@@ -236,7 +236,7 @@ public class ScopeTest
     public async Task TestPublishAsync_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<string>()))
             .Callback(() => dispatched = true);
@@ -244,7 +244,7 @@ public class ScopeTest
         string item = "item";
         ScopeFake? scope = null;
 
-        using(scope = new ScopeFake())
+        using (scope = new ScopeFake())
         {
             scope.Add(item);
 
@@ -257,12 +257,12 @@ public class ScopeTest
     [Test]
     public async Task TestPublishAsync_WhenPublishing_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
         string item = "item";
         ScopeFake? scope;
 
-        using(scope = new ScopeFake())
+        using (scope = new ScopeFake())
         {
             scope.Add(item);
 
@@ -278,7 +278,7 @@ public class ScopeTest
         string item = "item";
         ScopeFake? scope;
 
-        using(scope = new ScopeFake())
+        using (scope = new ScopeFake())
         {
             scope.Add(item);
 
@@ -291,9 +291,7 @@ public class ScopeTest
     [Test]
     public void TestDispose_WhenDisposingCurrentScope_ThenCurrentScopeIsNull()
     {
-        using(ScopeFake scope = new())
-        {
-        }
+        using (ScopeFake scope = new()) { }
 
         Assert.That(ScopeHandlerFake.CurrentScope, Is.Null);
     }
@@ -301,7 +299,7 @@ public class ScopeTest
     [Test]
     public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenInvalidOperationExceptionIsThrown()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -320,7 +318,7 @@ public class ScopeTest
     [Test]
     public void TestDispose_WhenParentScopeIsDisposedBeforeChildIsDisposed_ThenItemsAreCleared()
     {
-        Mock<IDispatcher> dispatcherMock = new();
+        Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
         string item = "item";
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -328,7 +326,7 @@ public class ScopeTest
 
         try
         {
-            using(parentScopeFake = new ScopeFake())
+            using (parentScopeFake = new ScopeFake())
             {
                 using ScopeFake nestedChildScopeFake = new();
                 nestedChildScopeFake.Add(item);
@@ -336,7 +334,7 @@ public class ScopeTest
                 parentScopeFake.Dispose();
             }
         }
-        catch(InvalidOperationException) { }
+        catch (InvalidOperationException) { }
 
         Assert.That(parentScopeFake?.Items, Is.Empty);
     }
