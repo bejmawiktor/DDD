@@ -1,11 +1,11 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using System.Threading.Tasks;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
@@ -27,7 +27,7 @@ internal class EventDispatcherTest
     public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestDispatch_WhenEventIsPublished_ThenEventIsHandled()
+    public void TestDispatch_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
         ServiceProvider servicesProvider = new ServiceCollection()
@@ -42,7 +42,7 @@ internal class EventDispatcherTest
     }
 
     [Test]
-    public async Task TestDispatchAsync_WhenEventIsPublished_ThenEventIsHandled()
+    public async Task TestDispatchAsync_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
         ServiceProvider servicesProvider = new ServiceCollection()

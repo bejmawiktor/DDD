@@ -6,7 +6,8 @@ namespace DDD.Domain.Model;
 
 public abstract class ValueObject : IDomainObject
 {
-    public static bool operator ==(ValueObject lhs, ValueObject rhs) => (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
+    public static bool operator ==(ValueObject lhs, ValueObject rhs) =>
+        (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
 
     public static bool operator !=(ValueObject lhs, ValueObject rhs) => !(lhs == rhs);
 
@@ -14,7 +15,7 @@ public abstract class ValueObject : IDomainObject
 
     public override bool Equals(object? obj)
     {
-        if(this.GetType() != obj?.GetType())
+        if (this.GetType() != obj?.GetType())
         {
             return false;
         }
@@ -31,7 +32,7 @@ public abstract class ValueObject : IDomainObject
             int hash = 2893249;
             hash = (hash * 1674319) + this.GetType().GetHashCode();
 
-            foreach(object? memberValue in this.GetEqualityMembers())
+            foreach (object? memberValue in this.GetEqualityMembers())
             {
                 hash = (hash * 1674319) + (memberValue?.GetHashCode() ?? 0);
             }

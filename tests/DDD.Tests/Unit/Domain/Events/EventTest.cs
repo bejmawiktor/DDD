@@ -1,7 +1,7 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using DDD.Domain.Events;
 using Moq;
 using NUnit.Framework;
-using System;
 
 namespace DDD.Tests.Unit.Domain.Events;
 

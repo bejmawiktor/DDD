@@ -13,5 +13,6 @@ public class AggregateRootDtoStub : IAggregateRootDto<AggregateRootStub, string>
         this.Name = name;
     }
 
-    AggregateRootStub IDomainObjectDto<AggregateRootStub>.ToDomainObject() => new(this.Id, this.Name);
+    AggregateRootStub IDomainObjectDto<AggregateRootStub>.ToDomainObject() =>
+        new(this.Id, this.Name);
 }

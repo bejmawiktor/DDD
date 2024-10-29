@@ -60,7 +60,7 @@ public class ScopeTest
     }
 
     [Test]
-    public void TestPublish_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
+    public void TestApply_WhenApplingWithParentScope_ThenItemsAreAddedToParentScope()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
@@ -72,14 +72,14 @@ public class ScopeTest
         {
             childScopeFake.Add(item);
 
-            childScopeFake.Publish();
+            childScopeFake.Apply();
         }
 
         Assert.That(parentScopeFake.Items.Count, Is.EqualTo(1));
     }
 
     [Test]
-    public void TestPublish_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
+    public void TestApply_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
     {
         string item = "item";
 
@@ -89,12 +89,12 @@ public class ScopeTest
         _ = Assert.Throws(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            scope.Publish
+            scope.Apply
         );
     }
 
     [Test]
-    public void TestPublish_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
+    public void TestApply_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.Dispatch(It.IsAny<string>()));
@@ -110,24 +110,24 @@ public class ScopeTest
             {
                 nestedChildScopeFake.Add(item);
 
-                nestedChildScopeFake.Publish();
+                nestedChildScopeFake.Apply();
             }
 
-            childScopeFake.Publish();
+            childScopeFake.Apply();
         }
 
         using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
-            childScopeFake.Publish();
+            childScopeFake.Apply();
         }
 
         Assert.That(parentScopeFake.Items.Count, Is.EqualTo(3));
     }
 
     [Test]
-    public void TestPublish_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
+    public void TestApply_WhenApplingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
         Mock<IDispatcher<string>> dispatcherMock = new();
@@ -142,14 +142,14 @@ public class ScopeTest
         {
             scope.Add(item);
 
-            scope.Publish();
+            scope.Apply();
         }
 
         Assert.That(dispatched, Is.True);
     }
 
     [Test]
-    public void TestPublish_WhenPublishing_ThenItemsAreCleared()
+    public void TestApply_WhenAppling_ThenItemsAreCleared()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -159,14 +159,14 @@ public class ScopeTest
         {
             scope.Add(item);
 
-            scope.Publish();
+            scope.Apply();
         }
 
         Assert.That(scope.Items, Is.Empty);
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenPublishingWithParentScope_ThenItemsAreAddedToParentScope()
+    public async Task TestApplyAsync_WhenApplingWithParentScope_ThenItemsAreAddedToParentScope()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
@@ -178,14 +178,14 @@ public class ScopeTest
         {
             childScopeFake.Add(item);
 
-            await childScopeFake.PublishAsync();
+            await childScopeFake.ApplyAsync();
         }
 
         Assert.That(parentScopeFake.Items.Count, Is.EqualTo(1));
     }
 
     [Test]
-    public void TestPublishAsync_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
+    public void TestApplyAsync_WhenDispatcherIsUninitialized_ThenInvalidOperetionExceptionIsThrown()
     {
         string item = "item";
 
@@ -195,12 +195,12 @@ public class ScopeTest
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<InvalidOperationException>()
                 .And.Message.EqualTo("Dispatcher is uninitialized."),
-            scope.PublishAsync
+            scope.ApplyAsync
         );
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
+    public async Task TestApplyAsync_WhenMultipleNestedScopesGiven_ThenItemsAreAddedToParentScope()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         _ = dispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<string>()));
@@ -216,24 +216,24 @@ public class ScopeTest
             {
                 nestedChildScopeFake.Add(item);
 
-                await nestedChildScopeFake.PublishAsync();
+                await nestedChildScopeFake.ApplyAsync();
             }
 
-            await childScopeFake.PublishAsync();
+            await childScopeFake.ApplyAsync();
         }
 
         using (ScopeFake childScopeFake = new())
         {
             childScopeFake.Add(item);
 
-            await childScopeFake.PublishAsync();
+            await childScopeFake.ApplyAsync();
         }
 
         Assert.That(parentScopeFake.Items.Count, Is.EqualTo(3));
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenPublishingWithoutParentScope_ThenItemsAreDispatched()
+    public async Task TestApplyAsync_WhenApplingWithoutParentScope_ThenItemsAreDispatched()
     {
         bool dispatched = false;
         Mock<IDispatcher<string>> dispatcherMock = new();
@@ -248,14 +248,14 @@ public class ScopeTest
         {
             scope.Add(item);
 
-            await scope.PublishAsync();
+            await scope.ApplyAsync();
         }
 
         Assert.That(dispatched, Is.True);
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenPublishing_ThenItemsAreCleared()
+    public async Task TestApplyAsync_WhenAppling_ThenItemsAreCleared()
     {
         Mock<IDispatcher<string>> dispatcherMock = new();
         ScopeHandlerFake.Instance.Dispatcher = dispatcherMock.Object;
@@ -266,7 +266,7 @@ public class ScopeTest
         {
             scope.Add(item);
 
-            await scope.PublishAsync();
+            await scope.ApplyAsync();
         }
 
         Assert.That(scope.Items, Is.Empty);

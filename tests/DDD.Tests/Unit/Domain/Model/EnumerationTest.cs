@@ -1,7 +1,7 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DDD.Tests.Unit.Domain.TestDoubles;
+using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -17,7 +17,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     FirstStringEnumerationFake.One,
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(1)");
             yield return new TestCaseData(
@@ -25,7 +25,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Two,
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(2)");
             yield return new TestCaseData(
@@ -33,7 +33,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Three,
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(3)");
             yield return new TestCaseData(
@@ -41,7 +41,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Zero,
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(4)");
             yield return new TestCaseData(
@@ -55,7 +55,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(7)");
             yield return new TestCaseData(
@@ -63,7 +63,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(8)");
             yield return new TestCaseData(
@@ -71,7 +71,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Zero,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(9)");
             yield return new TestCaseData(
@@ -79,7 +79,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     SecondStringEnumerationFake.Zero,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(10)");
             yield return new TestCaseData(
@@ -87,7 +87,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(11)");
             yield return new TestCaseData(
@@ -95,7 +95,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Null,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(12)");
             yield return new TestCaseData(
@@ -103,7 +103,7 @@ public class EnumerationTest
                 {
                     SecondStringEnumerationFake.Zero,
                     SecondStringEnumerationFake.Zero,
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(13)");
             yield return new TestCaseData(
@@ -111,7 +111,7 @@ public class EnumerationTest
                 {
                     SecondStringEnumerationFake.Zero,
                     SecondStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(14)");
         }
@@ -126,7 +126,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     FirstStringEnumerationFake.One,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(1)"
@@ -136,7 +136,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Two,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(2)"
@@ -146,7 +146,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Three,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(3)"
@@ -156,7 +156,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Zero,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)"
@@ -176,7 +176,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(7)"
@@ -186,7 +186,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(8)"
@@ -196,7 +196,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Zero,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(9)"
@@ -213,7 +213,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     FirstStringEnumerationFake.One,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(1)"
@@ -223,7 +223,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Two,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(2)"
@@ -233,7 +233,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(3)"
@@ -243,7 +243,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Zero,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)"
@@ -263,7 +263,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Three,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(7)"
@@ -273,7 +273,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Three,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(8)"
@@ -283,7 +283,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     FirstStringEnumerationFake.Zero,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(9)"
@@ -300,7 +300,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Zero,
                     FirstStringEnumerationFake.Zero,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -310,7 +310,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     FirstStringEnumerationFake.One,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -320,7 +320,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Two,
                     FirstStringEnumerationFake.Two,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -330,7 +330,7 @@ public class EnumerationTest
                 {
                     SecondStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Three,
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -340,7 +340,7 @@ public class EnumerationTest
                 {
                     SecondStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Two,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -350,7 +350,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.Three,
                     SecondStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -360,7 +360,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     SecondStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -370,7 +370,7 @@ public class EnumerationTest
                 {
                     FirstStringEnumerationFake.One,
                     FirstStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -380,7 +380,7 @@ public class EnumerationTest
                 {
                     SecondStringEnumerationFake.One,
                     SecondStringEnumerationFake.Three,
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
@@ -416,15 +416,14 @@ public class EnumerationTest
     [Test]
     public void TestGetValues_WhenGettingValues_ThenValuesAreReturned()
     {
-        IEnumerable<FirstStringEnumerationFake?> expectedValues =
-            new FirstStringEnumerationFake?[]
-            {
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Null
-            };
+        IEnumerable<FirstStringEnumerationFake?> expectedValues = new FirstStringEnumerationFake?[]
+        {
+            FirstStringEnumerationFake.One,
+            FirstStringEnumerationFake.Two,
+            FirstStringEnumerationFake.Three,
+            FirstStringEnumerationFake.Zero,
+            FirstStringEnumerationFake.Null,
+        };
 
         Assert.That(FirstStringEnumerationFake.GetValues(), Is.EquivalentTo(expectedValues));
     }
@@ -438,7 +437,7 @@ public class EnumerationTest
             nameof(FirstStringEnumerationFake.Two),
             nameof(FirstStringEnumerationFake.Three),
             nameof(FirstStringEnumerationFake.Zero),
-            nameof(FirstStringEnumerationFake.Null)
+            nameof(FirstStringEnumerationFake.Null),
         };
 
         Assert.That(FirstStringEnumerationFake.GetNames(), Is.EquivalentTo(expectedNames));
@@ -523,8 +522,10 @@ public class EnumerationTest
     }
 
     [Test]
-    public void TestToString_WhenConvertingNullValue_ThenNullIsReturned() => Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
+    public void TestToString_WhenConvertingNullValue_ThenNullIsReturned() =>
+        Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
 
     [Test]
-    public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() => Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
+    public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() =>
+        Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
 }
