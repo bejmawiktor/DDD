@@ -33,7 +33,7 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
         this.Items.Add(item);
     }
 
-    public void Publish()
+    protected internal void Apply()
     {
         if (this.ParentScope is null)
         {
@@ -59,7 +59,7 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
     private void AddRange(List<TItem> items) => this.Items.AddRange(items);
 
-    public Task PublishAsync()
+    protected internal Task ApplyAsync()
     {
         List<Task> tasks = [];
 

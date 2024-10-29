@@ -1,6 +1,6 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using System;
+using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
-using System;
 
 namespace DDD.Tests.Unit.Domain.Model;
 
@@ -19,5 +19,6 @@ public class ValidatedAggregateRootTest
     }
 
     [Test]
-    public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown() => Assert.DoesNotThrow(() => new ValidatedAggregateRootFake("1", 1));
+    public void TestConstructing_WhenValidatedObjectIsValid_ThenNoExceptionsAreThrown() =>
+        Assert.DoesNotThrow(() => new ValidatedAggregateRootFake("1", 1));
 }

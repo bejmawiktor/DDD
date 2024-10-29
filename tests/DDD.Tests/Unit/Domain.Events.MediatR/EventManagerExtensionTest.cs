@@ -1,9 +1,9 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using MediatR;
 using Moq;
 using NUnit.Framework;
-using System;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 

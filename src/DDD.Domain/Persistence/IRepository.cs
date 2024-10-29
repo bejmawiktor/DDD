@@ -1,6 +1,6 @@
-﻿using DDD.Domain.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DDD.Domain.Model;
 
 namespace DDD.Domain.Persistence;
 

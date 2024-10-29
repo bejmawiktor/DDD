@@ -1,9 +1,9 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using System.Threading.Tasks;
+using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
@@ -51,7 +51,7 @@ public class EventsScopeTest
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
-        using(eventsScope = new())
+        using (eventsScope = new())
         {
             eventsScope.Add(@event);
 
@@ -69,7 +69,7 @@ public class EventsScopeTest
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
@@ -105,11 +105,11 @@ public class EventsScopeTest
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
-            using(EventsScope nestedChildEventScope = new())
+            using (EventsScope nestedChildEventScope = new())
             {
                 nestedChildEventScope.Add(@event);
 
@@ -119,7 +119,7 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
@@ -141,7 +141,7 @@ public class EventsScopeTest
         EventStub @event = new();
         EventsScope? eventsScope = null;
 
-        using(eventsScope = new EventsScope())
+        using (eventsScope = new EventsScope())
         {
             eventsScope.Add(@event);
 
@@ -159,7 +159,7 @@ public class EventsScopeTest
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
-        using(eventsScope = new EventsScope())
+        using (eventsScope = new EventsScope())
         {
             eventsScope.Add(@event);
 
@@ -179,7 +179,7 @@ public class EventsScopeTest
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
@@ -215,11 +215,11 @@ public class EventsScopeTest
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
-            using(EventsScope nestedChildEventScope = new())
+            using (EventsScope nestedChildEventScope = new())
             {
                 nestedChildEventScope.Add(@event);
 
@@ -229,7 +229,7 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        using(EventsScope childEventScope = new())
+        using (EventsScope childEventScope = new())
         {
             childEventScope.Add(@event);
 
@@ -251,7 +251,7 @@ public class EventsScopeTest
         EventStub @event = new();
         EventsScope? eventsScope = null;
 
-        using(eventsScope = new EventsScope())
+        using (eventsScope = new EventsScope())
         {
             eventsScope.Add(@event);
 
@@ -270,7 +270,7 @@ public class EventsScopeTest
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
 
-        using(eventsScope = new EventsScope())
+        using (eventsScope = new EventsScope())
         {
             eventsScope.Add(@event);
 
@@ -287,7 +287,7 @@ public class EventsScopeTest
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
 
-        using(eventsScope = new EventsScope())
+        using (eventsScope = new EventsScope())
         {
             eventsScope.Add(@event);
 
@@ -300,9 +300,7 @@ public class EventsScopeTest
     [Test]
     public void TestDispose_WhenDisposingCurrentScope_ThenCurrentScopeIsNull()
     {
-        using(EventsScope eventsScope = new())
-        {
-        }
+        using (EventsScope eventsScope = new()) { }
 
         Assert.That(EventManager.CurrentScope, Is.Null);
     }
@@ -339,7 +337,7 @@ public class EventsScopeTest
 
         try
         {
-            using(parentEventScope = new EventsScope())
+            using (parentEventScope = new EventsScope())
             {
                 using EventsScope nestedChildEventScope = new();
                 nestedChildEventScope.Add(@event);
@@ -347,7 +345,7 @@ public class EventsScopeTest
                 parentEventScope.Dispose();
             }
         }
-        catch(InvalidOperationException) { }
+        catch (InvalidOperationException) { }
 
         Assert.That(parentEventScope?.Items, Is.Empty);
     }

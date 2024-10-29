@@ -20,7 +20,7 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
 
     public static TScopeHandler Instance => instance.Value;
 
-    public void Notify(TItem item)
+    protected internal void Handle(TItem item)
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {
@@ -37,7 +37,7 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
         }
     }
 
-    public Task NotifyAsync(TItem item)
+    protected internal Task HandleAsync(TItem item)
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {
