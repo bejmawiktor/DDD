@@ -16,9 +16,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DDD.Application\DDD.Application.csproj" />
-    <ProjectReference Include="..\..\src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj" />
-    <ProjectReference Include="..\..\src\DDD.Domain\DDD.Domain.csproj" />
+    <ProjectReference Include="..\..\src\DDD.Application\DDD.Application.csproj">
+      <Private></Private>
+      <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly></ReferenceOutputAssembly>
+      <EmbedInteropTypes></EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj">
+      <Private></Private>
+      <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly></ReferenceOutputAssembly>
+      <EmbedInteropTypes></EmbedInteropTypes>
+      <ExcludeAssets></ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DDD.Domain\DDD.Domain.csproj">
+      <Private></Private>
+      <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly></ReferenceOutputAssembly>
+      <EmbedInteropTypes></EmbedInteropTypes>
+    </ProjectReference>
   </ItemGroup>
 
   <PropertyGroup Label="FineCodeCoverage">

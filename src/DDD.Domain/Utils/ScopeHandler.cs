@@ -20,7 +20,8 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
 
     public static TScopeHandler Instance => instance.Value;
 
-    protected internal void Handle(TItem item)
+    protected internal void Handle<TSpecificItem>(TSpecificItem item)
+        where TSpecificItem : TItem
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {
@@ -37,7 +38,8 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
         }
     }
 
-    protected internal Task HandleAsync(TItem item)
+    protected internal Task HandleAsync<TSpecificItem>(TSpecificItem item)
+        where TSpecificItem : TItem
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
         {

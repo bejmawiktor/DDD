@@ -1,8 +1,9 @@
-﻿using DDD.Domain.Events.MediatR;
+﻿using DDD.Domain.Events;
+using DDD.Domain.Events.MediatR;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 
-public class EventStub : IEventNotification
+public class EventStub : DDD.Domain.Events.IEvent
 {
     public bool WasHandled { get; set; }
 }
