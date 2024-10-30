@@ -12,8 +12,9 @@ internal class EventDispatcher : IEventDispatcher
     }
 
     public void Dispatch<TEvent>(TEvent @event)
-        where TEvent : IEvent => this.Mediator.Publish(@event).GetAwaiter().GetResult();
+        where TEvent : IEvent =>
+        this.Mediator.Publish(new EventNotification<TEvent>(@event)).GetAwaiter().GetResult();
 
     public Task DispatchAsync<TEvent>(TEvent @event)
-        where TEvent : IEvent => this.Mediator.Publish(@event);
+        where TEvent : IEvent => this.Mediator.Publish(new EventNotification<TEvent>(@event));
 }
