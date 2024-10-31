@@ -1,11 +1,11 @@
-﻿using DDD.Domain.Events;
+﻿using System;
+using System.Threading.Tasks;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
@@ -19,8 +19,7 @@ internal class EventDispatcherTest
             .AddMediatR(cfg =>
             {
                 _ = cfg.RegisterServicesFromAssembly(typeof(EventDispatcherTest).Assembly);
-            }
-            )
+            })
             .BuildServiceProvider(false);
     }
 
@@ -42,7 +41,9 @@ internal class EventDispatcherTest
     public void TestDispatch_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(this.ServiceProvider.GetRequiredService<IMediator>());
+        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+            this.ServiceProvider.GetRequiredService<IMediator>()
+        );
 
         EventManager.Instance.Notify(eventStub);
 
@@ -53,22 +54,25 @@ internal class EventDispatcherTest
     public async Task TestDispatchAsync_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(this.ServiceProvider.GetRequiredService<IMediator>());
+        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+            this.ServiceProvider.GetRequiredService<IMediator>()
+        );
 
         await EventManager.Instance.NotifyAsync(eventStub);
 
         Assert.That(eventStub.WasHandled, Is.True);
     }
 
-
     [Test]
     public void TestDispatch_WhenEventIsAppliedWithScope_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(this.ServiceProvider.GetRequiredService<IMediator>());
-        
+        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+            this.ServiceProvider.GetRequiredService<IMediator>()
+        );
+
         using EventsScope eventsScope = new();
-        
+
         EventManager.Instance.Notify(eventStub);
 
         eventsScope.Publish();
@@ -80,8 +84,10 @@ internal class EventDispatcherTest
     public async Task TestDispatchAsync_WhenEventIsAppliedWithScope_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(this.ServiceProvider.GetRequiredService<IMediator>());
-        
+        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+            this.ServiceProvider.GetRequiredService<IMediator>()
+        );
+
         using EventsScope eventsScope = new();
 
         await EventManager.Instance.NotifyAsync(eventStub);
