@@ -1,7 +1,7 @@
 ﻿using System;
 using DDD.Domain.Utils;
 
-namespace DDD.Domain.Validator;
+namespace DDD.Domain.Validation;
 
 internal sealed class ValidatorHandler : ScopeHandler<ValidatorScope, Exception, ValidatorHandler>
 {

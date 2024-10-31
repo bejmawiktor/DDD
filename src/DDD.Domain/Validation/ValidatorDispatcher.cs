@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DDD.Domain.Utils;
 
-namespace DDD.Domain.Validator;
+namespace DDD.Domain.Validation;
 
 internal sealed class ValidatorDispatcher : IDispatcher<Exception>
 {
