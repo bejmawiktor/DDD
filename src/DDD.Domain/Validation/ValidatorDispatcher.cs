@@ -4,11 +4,12 @@ using DDD.Domain.Utils;
 
 namespace DDD.Domain.Validation;
 
-internal sealed class ValidatorDispatcher : IDispatcher<Exception>
+internal sealed class ValidatorDispatcher<TExceptionBase> : IDispatcher<TExceptionBase>
+    where TExceptionBase : Exception
 {
     public void Dispatch<TException>(TException exception)
-        where TException : Exception => throw exception;
+        where TException : TExceptionBase => throw exception;
 
     public Task DispatchAsync<TException>(TException exception)
-        where TException : Exception => Task.FromException(exception);
+        where TException : TExceptionBase => Task.FromException(exception);
 }

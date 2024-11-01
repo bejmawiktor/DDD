@@ -3,67 +3,72 @@ using System.Threading.Tasks;
 
 namespace DDD.Domain.Validation;
 
-public static class Validator
+public static class Validator<TExceptionBase>
+    where TExceptionBase : Exception
 {
     public static void Throw<TException>(TException exception)
-        where TException : Exception
+        where TException : TExceptionBase
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        ValidatorHandler.Instance.Handle(exception);
+        ValidatorHandler<TExceptionBase>.Instance.Handle(exception);
     }
 
-    public static ValidationResult TryMany(Action validationAction)
+    public static ValidationResult<TExceptionBase> TryMany(Action validationAction)
     {
         ArgumentNullException.ThrowIfNull(validationAction);
 
-        using ValidatorScope scope = new();
+        using ValidatorScope<TExceptionBase> scope = new();
 
         validationAction();
 
         return scope.Items.Count > 0
-            ? new ValidationResult([.. scope.Items])
-            : new ValidationResult();
+            ? new ValidationResult<TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TExceptionBase>();
     }
 
-    public static ValidationResult<TResult> TryMany<TResult>(Func<TResult> validationFunc)
+    public static ValidationResult<TResult, TExceptionBase> TryMany<TResult>(
+        Func<TResult> validationFunc
+    )
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope scope = new();
+        using ValidatorScope<TExceptionBase> scope = new();
 
         TResult result = validationFunc();
 
         return scope.Items.Count > 0
-            ? new ValidationResult<TResult>([.. scope.Items])
-            : new ValidationResult<TResult>(result);
+            ? new ValidationResult<TResult, TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TResult, TExceptionBase>(result);
     }
 
-    public static async Task<ValidationResult> TryManyAsync(Func<Task> validationFunc)
+    public static async Task<ValidationResult<TExceptionBase>> TryManyAsync(
+        Func<Task> validationFunc
+    )
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope scope = new();
+        using ValidatorScope<TExceptionBase> scope = new();
 
         await validationFunc();
 
         return scope.Items.Count > 0
-            ? new ValidationResult([.. scope.Items])
-            : new ValidationResult();
+            ? new ValidationResult<TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TExceptionBase>();
     }
 
-    public static async Task<ValidationResult<TResult>> TryManyAsync<TResult>(
+    public static async Task<ValidationResult<TResult, TExceptionBase>> TryManyAsync<TResult>(
         Func<Task<TResult>> validationFunc
     )
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope scope = new();
+        using ValidatorScope<TExceptionBase> scope = new();
 
         TResult result = await validationFunc();
 
         return scope.Items.Count > 0
-            ? new ValidationResult<TResult>([.. scope.Items])
-            : new ValidationResult<TResult>(result);
+            ? new ValidationResult<TResult, TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TResult, TExceptionBase>(result);
     }
 }

@@ -9,21 +9,25 @@ public struct ValidationSuccess { }
 
 public struct ValidationFailure { }
 
-public class ValidationResult
-    : ValueObject,
-        IEquatable<ValidationSuccess>,
-        IEquatable<ValidationFailure>
+public abstract class ValidationResult : ValueObject
 {
     public static ValidationSuccess Success { get; } = new ValidationSuccess();
     public static ValidationFailure Failure { get; } = new ValidationFailure();
+}
 
-    public IEnumerable<Exception>? Exceptions { get; }
+public class ValidationResult<TException>
+    : ValidationResult,
+        IEquatable<ValidationSuccess>,
+        IEquatable<ValidationFailure>
+    where TException : Exception
+{
+    public IEnumerable<TException>? Exceptions { get; }
 
     protected bool IsSuccess => this.Exceptions is null;
 
-    internal ValidationResult(IEnumerable<Exception> exceptions)
+    internal ValidationResult(IEnumerable<TException> exceptions)
     {
-        ValidationResult.ValidateExceptions(exceptions);
+        ValidationResult<TException>.ValidateExceptions(exceptions);
 
         this.Exceptions = exceptions;
     }
@@ -47,26 +51,35 @@ public class ValidationResult
 
     public bool Equals(ValidationSuccess other) => this.IsSuccess;
 
-    public static bool operator ==(ValidationResult validationResult, ValidationFailure other) =>
-        validationResult.Equals(other);
+    public static bool operator ==(
+        ValidationResult<TException> validationResult,
+        ValidationFailure other
+    ) => validationResult.Equals(other);
 
-    public static bool operator !=(ValidationResult validationResult, ValidationFailure other) =>
-        !(validationResult == other);
+    public static bool operator !=(
+        ValidationResult<TException> validationResult,
+        ValidationFailure other
+    ) => !(validationResult == other);
 
     public bool Equals(ValidationFailure other) => !this.IsSuccess;
 
-    public static bool operator ==(ValidationResult validationResult, ValidationSuccess other) =>
-        validationResult.Equals(other);
+    public static bool operator ==(
+        ValidationResult<TException> validationResult,
+        ValidationSuccess other
+    ) => validationResult.Equals(other);
 
-    public static bool operator !=(ValidationResult validationResult, ValidationSuccess other) =>
-        !(validationResult == other);
+    public static bool operator !=(
+        ValidationResult<TException> validationResult,
+        ValidationSuccess other
+    ) => !(validationResult == other);
 
     public override bool Equals(object? obj) => base.Equals(obj);
 
     public override int GetHashCode() => base.GetHashCode();
 }
 
-public class ValidationResult<TResult> : ValidationResult
+public class ValidationResult<TResult, TException> : ValidationResult<TException>
+    where TException : Exception
 {
     public TResult? Result { get; }
 
@@ -76,10 +89,10 @@ public class ValidationResult<TResult> : ValidationResult
         this.Result = result;
     }
 
-    internal ValidationResult(IEnumerable<Exception> exceptions)
+    internal ValidationResult(IEnumerable<TException> exceptions)
         : base(exceptions) { }
 
-    public void Deconstruct(out TResult? result, out IEnumerable<Exception>? exceptions)
+    public void Deconstruct(out TResult? result, out IEnumerable<TException>? exceptions)
     {
         result = this.Result;
         exceptions = this.Exceptions;
@@ -87,7 +100,7 @@ public class ValidationResult<TResult> : ValidationResult
 
     public TMatchResult Match<TMatchResult>(
         Func<TResult, TMatchResult> onSuccess,
-        Func<IEnumerable<Exception>, TMatchResult> onFailure
+        Func<IEnumerable<TException>, TMatchResult> onFailure
     )
     {
         ArgumentNullException.ThrowIfNull(onSuccess);
