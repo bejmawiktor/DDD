@@ -3,7 +3,7 @@
 namespace DDD.Domain.Events.MediatR;
 
 public interface IEventHandler<TEvent> : INotificationHandler<EventNotification<TEvent>>
-    where TEvent : IEvent
+    where TEvent : notnull, IEvent
 {
     Task Handle(TEvent @event, CancellationToken cancellationToken);
 

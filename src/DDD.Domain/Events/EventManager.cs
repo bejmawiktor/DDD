@@ -10,8 +10,8 @@ public sealed class EventManager : ScopeHandler<EventsScope, IEvent, EventManage
     public EventManager() { }
 
     public void Notify<TEvent>(TEvent @event)
-        where TEvent : IEvent => base.Handle(@event);
+        where TEvent : notnull, IEvent => base.Handle(@event);
 
     public Task NotifyAsync<TEvent>(TEvent @event)
-        where TEvent : IEvent => base.HandleAsync(@event);
+        where TEvent : notnull, IEvent => base.HandleAsync(@event);
 }

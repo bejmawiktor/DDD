@@ -7,6 +7,7 @@ namespace DDD.Domain.Utils;
 public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : ScopeHandler<TScope, TItem, TScopeHandler>, new()
+    where TItem : notnull
 {
     private static readonly Lazy<TScopeHandler> instance = new(() => new TScopeHandler());
 
