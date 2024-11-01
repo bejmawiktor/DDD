@@ -13,7 +13,7 @@ public static class Validator
         ValidatorHandler.Instance.Handle(exception);
     }
 
-    public static ValidationResult ValidateMany(Action validationAction)
+    public static ValidationResult TryMany(Action validationAction)
     {
         ArgumentNullException.ThrowIfNull(validationAction);
 
@@ -26,7 +26,7 @@ public static class Validator
             : new ValidationResult();
     }
 
-    public static ValidationResult<TResult> ValidateMany<TResult>(Func<TResult> validationFunc)
+    public static ValidationResult<TResult> TryMany<TResult>(Func<TResult> validationFunc)
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
@@ -39,7 +39,7 @@ public static class Validator
             : new ValidationResult<TResult>(result);
     }
 
-    public static async Task<ValidationResult> ValidateManyAsync(Func<Task> validationFunc)
+    public static async Task<ValidationResult> TryManyAsync(Func<Task> validationFunc)
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
@@ -52,7 +52,7 @@ public static class Validator
             : new ValidationResult();
     }
 
-    public static async Task<ValidationResult<TResult>> ValidateManyAsync<TResult>(
+    public static async Task<ValidationResult<TResult>> TryManyAsync<TResult>(
         Func<Task<TResult>> validationFunc
     )
     {

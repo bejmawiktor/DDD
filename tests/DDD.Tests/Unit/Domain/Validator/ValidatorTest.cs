@@ -23,7 +23,7 @@ public class ValidatorTest
                     new Exception[] { new("exception"), new ArgumentNullException("argument") },
                 }
             ).SetName(
-                $"{nameof(TestValidateMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(1)"
+                $"{nameof(TestTryMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(1)"
             );
             yield return new TestCaseData(
                 new object[]
@@ -35,7 +35,7 @@ public class ValidatorTest
                     },
                 }
             ).SetName(
-                $"{nameof(TestValidateMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(2)"
+                $"{nameof(TestTryMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(2)"
             );
             yield return new TestCaseData(
                 new object[]
@@ -48,7 +48,7 @@ public class ValidatorTest
                     },
                 }
             ).SetName(
-                $"{nameof(TestValidateMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(3)"
+                $"{nameof(TestTryMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(3)"
             );
 
             yield return new TestCaseData(
@@ -57,7 +57,7 @@ public class ValidatorTest
                     new Exception[] { new InvalidOperationException("invalid operation") },
                 }
             ).SetName(
-                $"{nameof(TestValidateMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(4)"
+                $"{nameof(TestTryMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull)}(4)"
             );
         }
     }
@@ -82,7 +82,7 @@ public class ValidatorTest
     {
         Assert.DoesNotThrow(
             () =>
-                Validator.ValidateMany<object>(() =>
+                Validator.TryMany<object>(() =>
                 {
                     Validator.Throw(new InvalidOperationException("exception"));
                     return new object();
@@ -109,7 +109,7 @@ public class ValidatorTest
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("exception"),
             () =>
-                Validator.ValidateMany(() =>
+                Validator.TryMany(() =>
                 {
                     Validator.Throw<Exception>(null!);
 
@@ -119,33 +119,33 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateMany_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestTryMany_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("validationAction"),
-            () => Validator.ValidateMany((null as Action)!)
+            () => Validator.TryMany((null as Action)!)
         );
     }
 
     [Test]
-    public void TestValidateManyWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestTryManyWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("validationFunc"),
-            () => Validator.ValidateMany<object>((null as Func<object>)!)
+            () => Validator.TryMany<object>((null as Func<object>)!)
         );
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public void TestValidateMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public void TestTryMany_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
-        ValidationResult result = Validator.ValidateMany(() =>
+        ValidationResult result = Validator.TryMany(() =>
         {
             exceptions.ToList().ForEach(exception => Validator.Throw(exception));
         });
@@ -158,11 +158,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public void TestValidateManyWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public void TestTryManyWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
-        ValidationResult<object> result = Validator.ValidateMany(() =>
+        ValidationResult<object> result = Validator.TryMany(() =>
         {
             exceptions.ToList().ForEach(exception => Validator.Throw(exception));
 
@@ -178,11 +178,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public void TestValidateMany_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
+    public void TestTryMany_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
         object value
     )
     {
-        ValidationResult result = Validator.ValidateMany(() => { });
+        ValidationResult result = Validator.TryMany(() => { });
 
         Assert.Multiple(() =>
         {
@@ -192,11 +192,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public void TestValidateManyWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
+    public void TestTryManyWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
         object value
     )
     {
-        ValidationResult<object> result = Validator.ValidateMany(() => value);
+        ValidationResult<object> result = Validator.TryMany(() => value);
 
         Assert.Multiple(() =>
         {
@@ -207,33 +207,33 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateManyAsync_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestTryManyAsync_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("validationFunc"),
-            async () => await Validator.ValidateManyAsync((null as Func<Task>)!)
+            async () => await Validator.TryManyAsync((null as Func<Task>)!)
         );
     }
 
     [Test]
-    public void TestValidateManyAsyncWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestTryManyAsyncWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("validationFunc"),
-            async () => await Validator.ValidateManyAsync<object>((null as Func<Task<object>>)!)
+            async () => await Validator.TryManyAsync<object>((null as Func<Task<object>>)!)
         );
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public async Task TestValidateManyAsync_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public async Task TestTryManyAsync_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
-        ValidationResult result = await Validator.ValidateManyAsync(
+        ValidationResult result = await Validator.TryManyAsync(
             () =>
                 Task.Run(() =>
                 {
@@ -249,11 +249,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public async Task TestValidateManyAsyncWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public async Task TestTryManyAsyncWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
-        ValidationResult<object> result = await Validator.ValidateManyAsync(
+        ValidationResult<object> result = await Validator.TryManyAsync(
             () =>
                 Task.Run(() =>
                 {
@@ -272,11 +272,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public async Task TestValidateManyAsync_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
+    public async Task TestTryManyAsync_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
         object value
     )
     {
-        ValidationResult result = await Validator.ValidateManyAsync(() => Task.CompletedTask);
+        ValidationResult result = await Validator.TryManyAsync(() => Task.CompletedTask);
 
         Assert.Multiple(() =>
         {
@@ -286,11 +286,11 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public async Task TestValidateManyAsyncWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
+    public async Task TestTryManyAsyncWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
         object value
     )
     {
-        ValidationResult<object> result = await Validator.ValidateManyAsync(
+        ValidationResult<object> result = await Validator.TryManyAsync(
             () => Task.FromResult(value)
         );
 
