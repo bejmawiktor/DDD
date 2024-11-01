@@ -35,7 +35,7 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
 }
 
 public abstract class Entity<TIdentifier, TValidatedObject, TValidator> : Entity<TIdentifier>
-    where TIdentifier : IEquatable<TIdentifier>
+    where TIdentifier : notnull, IEquatable<TIdentifier>
     where TValidator : IValidator<TValidatedObject>, new()
 {
     protected TValidator Validator { get; }

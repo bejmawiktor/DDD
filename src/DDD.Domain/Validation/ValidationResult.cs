@@ -5,20 +5,20 @@ using DDD.Domain.Model;
 
 namespace DDD.Domain.Validation;
 
-public struct ValidationSuccess { }
-
-public struct ValidationFailure { }
-
 public abstract class ValidationResult : ValueObject
 {
-    public static ValidationSuccess Success { get; } = new ValidationSuccess();
-    public static ValidationFailure Failure { get; } = new ValidationFailure();
+    public struct ValidationSuccess { }
+
+    public struct ValidationFailure { }
+
+    public static ValidationSuccess Success { get; } = new();
+    public static ValidationFailure Failure { get; } = new();
 }
 
 public class ValidationResult<TException>
     : ValidationResult,
-        IEquatable<ValidationSuccess>,
-        IEquatable<ValidationFailure>
+        IEquatable<ValidationResult.ValidationSuccess>,
+        IEquatable<ValidationResult.ValidationFailure>
     where TException : Exception
 {
     public IEnumerable<TException>? Exceptions { get; }

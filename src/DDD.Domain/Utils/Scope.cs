@@ -7,6 +7,7 @@ namespace DDD.Domain.Utils;
 public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : ScopeHandler<TScope, TItem, TScopeHandler>, new()
+    where TItem : notnull
 {
     private bool IsDisposed { get; set; }
     protected internal List<TItem> Items { get; set; }
