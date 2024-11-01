@@ -11,14 +11,14 @@ public static class Validator<TExceptionBase>
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        ValidatorHandler<TExceptionBase>.Instance.Handle(exception);
+        ValidationHandler<TExceptionBase>.Instance.Handle(exception);
     }
 
     public static ValidationResult<TExceptionBase> TryMany(Action validationAction)
     {
         ArgumentNullException.ThrowIfNull(validationAction);
 
-        using ValidatorScope<TExceptionBase> scope = new();
+        using ValidationScope<TExceptionBase> scope = new();
 
         validationAction();
 
@@ -33,7 +33,7 @@ public static class Validator<TExceptionBase>
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope<TExceptionBase> scope = new();
+        using ValidationScope<TExceptionBase> scope = new();
 
         TResult result = validationFunc();
 
@@ -48,7 +48,7 @@ public static class Validator<TExceptionBase>
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope<TExceptionBase> scope = new();
+        using ValidationScope<TExceptionBase> scope = new();
 
         await validationFunc();
 
@@ -63,7 +63,7 @@ public static class Validator<TExceptionBase>
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
-        using ValidatorScope<TExceptionBase> scope = new();
+        using ValidationScope<TExceptionBase> scope = new();
 
         TResult result = await validationFunc();
 

@@ -4,7 +4,7 @@ using DDD.Domain.Utils;
 
 namespace DDD.Domain.Validation;
 
-internal sealed class ValidatorDispatcher<TExceptionBase> : IDispatcher<TExceptionBase>
+internal sealed class ValidationDispatcher<TExceptionBase> : IDispatcher<TExceptionBase>
     where TExceptionBase : Exception
 {
     public void Dispatch<TException>(TException exception)
