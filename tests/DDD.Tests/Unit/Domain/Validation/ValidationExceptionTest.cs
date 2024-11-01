@@ -2,7 +2,7 @@
 using DDD.Domain.Validation;
 using NUnit.Framework;
 
-namespace DDD.Tests.Unit.Domain.Validator;
+namespace DDD.Tests.Unit.Domain.Validation;
 
 [TestFixture]
 public class ValidationExceptionTest
