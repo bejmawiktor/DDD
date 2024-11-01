@@ -79,6 +79,23 @@ public class ValidationResult<TResult> : ValidationResult
     internal ValidationResult(IEnumerable<Exception> exceptions)
         : base(exceptions) { }
 
+    public void Deconstruct(out TResult? result, out IEnumerable<Exception>? exceptions)
+    {
+        result = this.Result;
+        exceptions = this.Exceptions;
+    }
+
+    public TMatchResult Match<TMatchResult>(
+        Func<TResult, TMatchResult> onSuccess,
+        Func<IEnumerable<Exception>, TMatchResult> onFailure
+    )
+    {
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onFailure);
+
+        return this.IsSuccess ? onSuccess(this.Result!) : onFailure(this.Exceptions!);
+    }
+
     protected override IEnumerable<object?> GetEqualityMembers()
     {
         yield return base.GetEqualityMembers();

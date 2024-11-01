@@ -170,4 +170,90 @@ public class ValidationResultTest
             Assert.That(validationResult != ValidationResult.Success, Is.False);
         });
     }
+
+    [Test]
+    public void TestDeconstruct_WhenExceptionGiven_ThenExceptionsAndNullResultAreReturned()
+    {
+        IEnumerable<Exception> testExceptions = [new Exception("My exception")];
+
+        var (result, exceptions) = new ValidationResult<string>(testExceptions);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exceptions, Is.EqualTo(exceptions));
+            Assert.That(result, Is.Null);
+        });
+    }
+
+    [Test]
+    public void TestDeconstruct_WhenResultGiven_ThenNullExceptionsAndResultAreReturned()
+    {
+        string testResult = "My result";
+
+        var (result, exceptions) = new ValidationResult<string>(testResult);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exceptions, Is.Null);
+            Assert.That(result, Is.EqualTo(testResult));
+        });
+    }
+
+    [Test]
+    public void TestMatch_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.Throws(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onSuccess"),
+            () =>
+                new ValidationResult<string>("test result").Match(
+                    null!,
+                    exceptions => exceptions.First().Message
+                )
+        );
+    }
+
+    [Test]
+    public void TestMatch_WhenNullOnFailureGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.Throws(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onFailure"),
+            () =>
+                new ValidationResult<string>([new Exception("example exception")]).Match(
+                    result => result,
+                    null!
+                )
+        );
+    }
+
+    [Test]
+    public void TestMatch_WhenResultGiven_ThenInvokeFailureFunc()
+    {
+        string testResult = "My result";
+        ValidationResult<string> validationResult = new(testResult);
+
+        string result = validationResult.Match(
+            result => result,
+            exceptions => exceptions.First().Message
+        );
+
+        Assert.That(result, Is.EqualTo("My result"));
+    }
+
+    [Test]
+    public void TestMatch_WhenExceptionsGiven_ThenInvokeFailureFunc()
+    {
+        IEnumerable<Exception> testExceptions = [new Exception("My exception")];
+        ValidationResult<string> validationResult = new(testExceptions);
+
+        string result = validationResult.Match(
+            result => result,
+            exceptions => exceptions.First().Message
+        );
+
+        Assert.That(result, Is.EqualTo("My exception"));
+    }
 }
