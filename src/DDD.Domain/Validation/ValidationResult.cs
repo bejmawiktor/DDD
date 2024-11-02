@@ -76,6 +76,17 @@ public class ValidationResult<TException>
     public override bool Equals(object? obj) => base.Equals(obj);
 
     public override int GetHashCode() => base.GetHashCode();
+
+    public TMatchResult Match<TMatchResult>(
+        Func<TMatchResult> onSuccess,
+        Func<IEnumerable<TException>, TMatchResult> onFailure
+    )
+    {
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onFailure);
+
+        return this.IsSuccess ? onSuccess() : onFailure(this.Exceptions!);
+    }
 }
 
 public class ValidationResult<TResult, TException> : ValidationResult<TException>
