@@ -140,7 +140,7 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateManyWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestValidateManyWithValue_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
@@ -151,7 +151,7 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateManyWithResult_WhenThrowingExceptionThatIsNotInBaseOfValidator_ThenThrowException()
+    public void TestValidateManyWithValue_WhenThrowingExceptionThatIsNotInBaseOfValidator_ThenThrowException()
     {
         string throwFunction()
         {
@@ -184,7 +184,7 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public void TestValidateManyWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public void TestValidateManyWithValue_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
@@ -199,7 +199,7 @@ public class ValidatorTest
         {
             Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
             Assert.That(result, Is.EqualTo(ValidationResult.Failure));
-            Assert.That(result.Result, Is.EqualTo(null));
+            Assert.That(result.Value, Is.EqualTo(null));
         });
     }
 
@@ -218,7 +218,7 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public void TestValidateManyWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
+    public void TestValidateManyWithValue_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSuccessfull(
         object value
     )
     {
@@ -226,7 +226,7 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(value, Is.EqualTo(result.Result));
+            Assert.That(value, Is.EqualTo(result.Value));
             Assert.That(result, Is.EqualTo(ValidationResult.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
@@ -258,7 +258,7 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateManyAsyncWithResult_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
+    public void TestValidateManyAsyncWithValue_WhenGivingNullInsteadOfValidationFunc_ThenThrowArgumentNullException()
     {
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<ArgumentNullException>()
@@ -269,7 +269,7 @@ public class ValidatorTest
     }
 
     [Test]
-    public void TestValidateManyAsyncWithResult_WhenThrowingExceptionThatIsNotInBaseOfValidator_ThenThrowException()
+    public void TestValidateManyAsyncWithValue_WhenThrowingExceptionThatIsNotInBaseOfValidator_ThenThrowException()
     {
         Task<string> throwFunction()
         {
@@ -305,7 +305,7 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(MultipleExceptionsTestCase))]
-    public async Task TestValidateManyAsyncWithResult_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
+    public async Task TestValidateManyAsyncWithValue_WhenGivingValidationFuncWithMultipleThrow_ThenReturnAllExceptionsAndValidationResultIsntSuccessFull(
         IEnumerable<Exception> exceptions
     )
     {
@@ -323,7 +323,7 @@ public class ValidatorTest
         {
             Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
             Assert.That(result, Is.EqualTo(ValidationResult.Failure));
-            Assert.That(result.Result, Is.EqualTo(null));
+            Assert.That(result.Value, Is.EqualTo(null));
         });
     }
 
@@ -344,7 +344,7 @@ public class ValidatorTest
     }
 
     [TestCaseSource(nameof(SuccessResultsTestCase))]
-    public async Task TestValidateManyAsyncWithResult_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
+    public async Task TestValidateManyAsyncWithValue_WhenGivingValidationFuncWithoutThrow_ThenReturnValueAndValidationResultIsSucessfull(
         object value
     )
     {
@@ -354,7 +354,7 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(value, Is.EqualTo(result.Result));
+            Assert.That(value, Is.EqualTo(result.Value));
             Assert.That(result, Is.EqualTo(ValidationResult.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
