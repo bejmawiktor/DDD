@@ -27,19 +27,19 @@ public static class Validator<TExceptionBase>
             : new ValidationResult<TExceptionBase>();
     }
 
-    public static ValidationResult<TResult, TExceptionBase> ValidateMany<TResult>(
-        Func<TResult> validationFunc
+    public static ValidationResult<TValue, TExceptionBase> ValidateMany<TValue>(
+        Func<TValue> validationFunc
     )
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
         using ValidationScope<TExceptionBase> scope = new();
 
-        TResult result = validationFunc();
+        TValue value = validationFunc();
 
         return scope.Items.Count > 0
-            ? new ValidationResult<TResult, TExceptionBase>([.. scope.Items])
-            : new ValidationResult<TResult, TExceptionBase>(result);
+            ? new ValidationResult<TValue, TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TValue, TExceptionBase>(value);
     }
 
     public static async Task<ValidationResult<TExceptionBase>> ValidateManyAsync(
@@ -57,18 +57,18 @@ public static class Validator<TExceptionBase>
             : new ValidationResult<TExceptionBase>();
     }
 
-    public static async Task<ValidationResult<TResult, TExceptionBase>> ValidateManyAsync<TResult>(
-        Func<Task<TResult>> validationFunc
+    public static async Task<ValidationResult<TValue, TExceptionBase>> ValidateManyAsync<TValue>(
+        Func<Task<TValue>> validationFunc
     )
     {
         ArgumentNullException.ThrowIfNull(validationFunc);
 
         using ValidationScope<TExceptionBase> scope = new();
 
-        TResult result = await validationFunc();
+        TValue value = await validationFunc();
 
         return scope.Items.Count > 0
-            ? new ValidationResult<TResult, TExceptionBase>([.. scope.Items])
-            : new ValidationResult<TResult, TExceptionBase>(result);
+            ? new ValidationResult<TValue, TExceptionBase>([.. scope.Items])
+            : new ValidationResult<TValue, TExceptionBase>(value);
     }
 }

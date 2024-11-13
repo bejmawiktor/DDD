@@ -89,40 +89,40 @@ public class ValidationResult<TException>
     }
 }
 
-public class ValidationResult<TResult, TException> : ValidationResult<TException>
+public class ValidationResult<TValue, TException> : ValidationResult<TException>
     where TException : Exception
 {
-    public TResult? Result { get; }
+    public TValue? Value { get; }
 
-    internal ValidationResult(TResult result)
+    internal ValidationResult(TValue value)
         : base()
     {
-        this.Result = result;
+        this.Value = value;
     }
 
     internal ValidationResult(IEnumerable<TException> exceptions)
         : base(exceptions) { }
 
-    public void Deconstruct(out TResult? result, out IEnumerable<TException>? exceptions)
+    public void Deconstruct(out TValue? value, out IEnumerable<TException>? exceptions)
     {
-        result = this.Result;
+        value = this.Value;
         exceptions = this.Exceptions;
     }
 
     public TMatchResult Match<TMatchResult>(
-        Func<TResult, TMatchResult> onSuccess,
+        Func<TValue, TMatchResult> onSuccess,
         Func<IEnumerable<TException>, TMatchResult> onFailure
     )
     {
         ArgumentNullException.ThrowIfNull(onSuccess);
         ArgumentNullException.ThrowIfNull(onFailure);
 
-        return this.IsSuccess ? onSuccess(this.Result!) : onFailure(this.Exceptions!);
+        return this.IsSuccess ? onSuccess(this.Value!) : onFailure(this.Exceptions!);
     }
 
     protected override IEnumerable<object?> GetEqualityMembers()
     {
         yield return base.GetEqualityMembers();
-        yield return this.Result;
+        yield return this.Value;
     }
 }

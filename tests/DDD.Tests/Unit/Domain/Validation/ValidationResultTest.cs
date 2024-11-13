@@ -20,7 +20,7 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestConstructingWithResult_WhenExceptionsGiven_ThenExceptionsAreSetAndResultIsNull()
+    public void TestConstructingWithValue_WhenExceptionsGiven_ThenExceptionsAreSetAndResultIsNull()
     {
         IEnumerable<Exception> exceptions = [new Exception("My exception")];
 
@@ -29,7 +29,7 @@ public class ValidationResultTest
         Assert.Multiple(() =>
         {
             Assert.That(validationResult.Exceptions, Is.EqualTo(exceptions));
-            Assert.That(validationResult.Result, Is.Null);
+            Assert.That(validationResult.Value, Is.Null);
         });
     }
 
@@ -45,7 +45,7 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestConstructingWithResult_WhenNullExceptionsGiven_ThenArgumentNullExceptionIsThrown()
+    public void TestConstructingWithValue_WhenNullExceptionsGiven_ThenArgumentNullExceptionIsThrown()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
@@ -67,7 +67,7 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestConstructingWithResult_WhenEmptyExceptionsGiven_ThenArgumentExceptionIsThrown()
+    public void TestConstructingWithValue_WhenEmptyExceptionsGiven_ThenArgumentExceptionIsThrown()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentException>()
@@ -78,21 +78,21 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestConstructingWithResult_WhenResultGiven_ThenResultIsSetAndExceptionsAreNull()
+    public void TestConstructingWithValue_WhenResultGiven_ThenResultIsSetAndExceptionsAreNull()
     {
-        string result = "my result";
+        string value = "my result";
 
-        ValidationResult<object, Exception> validationResult = new(result);
+        ValidationResult<object, Exception> validationResult = new(value);
 
         Assert.Multiple(() =>
         {
-            Assert.That(validationResult.Result, Is.EqualTo(result));
+            Assert.That(validationResult.Value, Is.EqualTo(value));
             Assert.That(validationResult.Exceptions, Is.Null);
         });
     }
 
     [Test]
-    public void TestConstructingWithResult_WhenExceptionsGiven_ThenExceptionsAreSet()
+    public void TestConstructingWithValue_WhenExceptionsGiven_ThenExceptionsAreSet()
     {
         IEnumerable<Exception> exceptions = [new Exception("My exception")];
 
@@ -136,7 +136,7 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestEqualsWithResult_WhenExceptionsAreSet_ThenComparingToFailureIsTrue()
+    public void TestEqualsWithValue_WhenExceptionsAreSet_ThenComparingToFailureIsTrue()
     {
         IEnumerable<Exception> exceptions = [new Exception("My exception")];
 
@@ -154,11 +154,11 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestEqualsWithResult_WhenResultIsSet_ThenComparingToSuccessIsTrue()
+    public void TestEqualsWithValue_WhenResultIsSet_ThenComparingToSuccessIsTrue()
     {
-        string result = "my result";
+        string value = "my result";
 
-        ValidationResult<object, Exception> validationResult = new(result);
+        ValidationResult<object, Exception> validationResult = new(value);
 
         Assert.Multiple(() =>
         {
@@ -176,7 +176,7 @@ public class ValidationResultTest
     {
         IEnumerable<Exception> testExceptions = [new Exception("My exception")];
 
-        (object? result, IEnumerable<Exception>? exceptions) = new ValidationResult<
+        (object? value, IEnumerable<Exception>? exceptions) = new ValidationResult<
             object,
             Exception
         >(testExceptions);
@@ -184,24 +184,24 @@ public class ValidationResultTest
         Assert.Multiple(() =>
         {
             Assert.That(exceptions, Is.EqualTo(exceptions));
-            Assert.That(result, Is.Null);
+            Assert.That(value, Is.Null);
         });
     }
 
     [Test]
     public void TestDeconstruct_WhenResultGiven_ThenNullExceptionsAndResultAreReturned()
     {
-        string testResult = "My result";
+        string testValue = "My result";
 
-        (object? result, IEnumerable<Exception>? exceptions) = new ValidationResult<
+        (object? value, IEnumerable<Exception>? exceptions) = new ValidationResult<
             object,
             Exception
-        >(testResult);
+        >(testValue);
 
         Assert.Multiple(() =>
         {
             Assert.That(exceptions, Is.Null);
-            Assert.That(result, Is.EqualTo(testResult));
+            Assert.That(value, Is.EqualTo(testValue));
         });
     }
 
@@ -238,15 +238,15 @@ public class ValidationResultTest
     [Test]
     public void TestMatch_WhenResultGiven_ThenInvokeFailureFunc()
     {
-        string onSuccessResult = "Success";
+        string onSuccessValue = "Success";
         ValidationResult<Exception> validationResult = new();
 
-        string result = validationResult.Match(
-            () => onSuccessResult,
+        string value = validationResult.Match(
+            () => onSuccessValue,
             exceptions => exceptions.First().Message
         );
 
-        Assert.That(result, Is.EqualTo(onSuccessResult));
+        Assert.That(value, Is.EqualTo(onSuccessValue));
     }
 
     [Test]
@@ -255,16 +255,16 @@ public class ValidationResultTest
         IEnumerable<Exception> testExceptions = [new Exception("My exception")];
         ValidationResult<Exception> validationResult = new(testExceptions);
 
-        string result = validationResult.Match(
+        string value = validationResult.Match(
             () => "Success",
             exceptions => exceptions.First().Message
         );
 
-        Assert.That(result, Is.EqualTo("My exception"));
+        Assert.That(value, Is.EqualTo("My exception"));
     }
 
     [Test]
-    public void TestMatchWithResult_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
+    public void TestMatchWithValue_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
@@ -279,7 +279,7 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestMatchWithResult_WhenNullOnFailureGiven_ThenArgumentNullExceptionIsThrown()
+    public void TestMatchWithValue_WhenNullOnFailureGiven_ThenArgumentNullExceptionIsThrown()
     {
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
@@ -287,34 +287,34 @@ public class ValidationResultTest
                 .EqualTo("onFailure"),
             () =>
                 new ValidationResult<object, Exception>([new Exception("example exception")]).Match(
-                    result => result,
+                    value => value,
                     null!
                 )
         );
     }
 
     [Test]
-    public void TestMatchWithResult_WhenResultGiven_ThenInvokeFailureFunc()
+    public void TestMatchWithValue_WhenResultGiven_ThenInvokeFailureFunc()
     {
-        string testResult = "My result";
-        ValidationResult<string, Exception> validationResult = new(testResult);
+        string testValue = "My result";
+        ValidationResult<string, Exception> validationResult = new(testValue);
 
-        string result = validationResult.Match(
-            result => result,
+        string value = validationResult.Match(
+            value => value,
             exceptions => exceptions.First().Message
         );
 
-        Assert.That(result, Is.EqualTo("My result"));
+        Assert.That(value, Is.EqualTo(testValue));
     }
 
     [Test]
-    public void TestMatchWithResult_WhenExceptionsGiven_ThenInvokeFailureFunc()
+    public void TestMatchWithValue_WhenExceptionsGiven_ThenInvokeFailureFunc()
     {
         IEnumerable<Exception> testExceptions = [new Exception("My exception")];
         ValidationResult<string, Exception> validationResult = new(testExceptions);
 
         string result = validationResult.Match(
-            result => result,
+            value => value,
             exceptions => exceptions.First().Message
         );
 
