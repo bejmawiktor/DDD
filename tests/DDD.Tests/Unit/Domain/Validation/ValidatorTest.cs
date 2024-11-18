@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DDD.Domain.Utils;
 using DDD.Domain.Validation;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
@@ -178,8 +179,8 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
-            Assert.That(result, Is.EqualTo(ValidationResult.Failure));
+            Assert.That(result.Exceptions, Is.EquivalentTo(exceptions));
+            Assert.That(result, Is.EqualTo(Result.Failure));
         });
     }
 
@@ -197,8 +198,8 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
-            Assert.That(result, Is.EqualTo(ValidationResult.Failure));
+            Assert.That(result.Exceptions, Is.EquivalentTo(exceptions!));
+            Assert.That(result, Is.EqualTo(Result.Failure));
             Assert.That(result.Value, Is.EqualTo(null));
         });
     }
@@ -212,7 +213,7 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result, Is.EqualTo(ValidationResult.Success));
+            Assert.That(result, Is.EqualTo(Result.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
     }
@@ -227,7 +228,7 @@ public class ValidatorTest
         Assert.Multiple(() =>
         {
             Assert.That(value, Is.EqualTo(result.Value));
-            Assert.That(result, Is.EqualTo(ValidationResult.Success));
+            Assert.That(result, Is.EqualTo(Result.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
     }
@@ -299,8 +300,8 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
-            Assert.That(result, Is.EqualTo(ValidationResult.Failure));
+            Assert.That(result.Exceptions, Is.EquivalentTo(exceptions));
+            Assert.That(result, Is.EqualTo(Result.Failure));
         });
     }
 
@@ -321,8 +322,8 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Exceptions, Is.EquivalentTo(result.Exceptions!));
-            Assert.That(result, Is.EqualTo(ValidationResult.Failure));
+            Assert.That(result.Exceptions, Is.EquivalentTo(exceptions));
+            Assert.That(result, Is.EqualTo(Result.Failure));
             Assert.That(result.Value, Is.EqualTo(null));
         });
     }
@@ -338,7 +339,7 @@ public class ValidatorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result, Is.EqualTo(ValidationResult.Success));
+            Assert.That(result, Is.EqualTo(Result.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
     }
@@ -355,7 +356,7 @@ public class ValidatorTest
         Assert.Multiple(() =>
         {
             Assert.That(value, Is.EqualTo(result.Value));
-            Assert.That(result, Is.EqualTo(ValidationResult.Success));
+            Assert.That(result, Is.EqualTo(Result.Success));
             Assert.That(result.Exceptions, Is.Null);
         });
     }

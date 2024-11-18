@@ -1,81 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using DDD.Domain.Model;
+using DDD.Domain.Utils;
 
 namespace DDD.Domain.Validation;
 
-public abstract class ValidationResult : ValueObject
-{
-    public struct ValidationSuccess { }
-
-    public struct ValidationFailure { }
-
-    public static ValidationSuccess Success { get; } = new();
-    public static ValidationFailure Failure { get; } = new();
-}
-
-public class ValidationResult<TException>
-    : ValidationResult,
-        IEquatable<ValidationResult.ValidationSuccess>,
-        IEquatable<ValidationResult.ValidationFailure>
+public class ValidationResult<TException> : Result<ValidationError<TException>>
     where TException : Exception
 {
-    public IEnumerable<TException>? Exceptions { get; }
-
-    protected bool IsSuccess => this.Exceptions is null;
+    public IEnumerable<TException>? Exceptions => this.Error?.Reasons;
 
     internal ValidationResult(IEnumerable<TException> exceptions)
-    {
-        ValidationResult<TException>.ValidateExceptions(exceptions);
-
-        this.Exceptions = exceptions;
-    }
+        : base(new ValidationError<TException>(exceptions)) { }
 
     internal ValidationResult() { }
-
-    private static void ValidateExceptions(IEnumerable<Exception> exceptions)
-    {
-        ArgumentNullException.ThrowIfNull(exceptions);
-
-        if (!exceptions.Any())
-        {
-            throw new ArgumentException("Empty exceptions given.");
-        }
-    }
-
-    protected override IEnumerable<object?> GetEqualityMembers()
-    {
-        yield return this.Exceptions;
-    }
-
-    public bool Equals(ValidationSuccess other) => this.IsSuccess;
-
-    public static bool operator ==(
-        ValidationResult<TException> validationResult,
-        ValidationFailure other
-    ) => validationResult.Equals(other);
-
-    public static bool operator !=(
-        ValidationResult<TException> validationResult,
-        ValidationFailure other
-    ) => !(validationResult == other);
-
-    public bool Equals(ValidationFailure other) => !this.IsSuccess;
-
-    public static bool operator ==(
-        ValidationResult<TException> validationResult,
-        ValidationSuccess other
-    ) => validationResult.Equals(other);
-
-    public static bool operator !=(
-        ValidationResult<TException> validationResult,
-        ValidationSuccess other
-    ) => !(validationResult == other);
-
-    public override bool Equals(object? obj) => base.Equals(obj);
-
-    public override int GetHashCode() => base.GetHashCode();
 
     public TMatchResult Match<TMatchResult>(
         Func<TMatchResult> onSuccess,
@@ -85,28 +22,25 @@ public class ValidationResult<TException>
         ArgumentNullException.ThrowIfNull(onSuccess);
         ArgumentNullException.ThrowIfNull(onFailure);
 
-        return this.IsSuccess ? onSuccess() : onFailure(this.Exceptions!);
+        return this.IsSuccess ? onSuccess() : onFailure(this.Error?.Reasons!);
     }
 }
 
-public class ValidationResult<TValue, TException> : ValidationResult<TException>
+public class ValidationResult<TValue, TException> : Result<TValue, ValidationError<TException>>
     where TException : Exception
 {
-    public TValue? Value { get; }
+    public IEnumerable<TException>? Exceptions => this.Error?.Reasons;
 
     internal ValidationResult(TValue value)
-        : base()
-    {
-        this.Value = value;
-    }
+        : base(value) { }
 
     internal ValidationResult(IEnumerable<TException> exceptions)
-        : base(exceptions) { }
+        : base(new ValidationError<TException>(exceptions)) { }
 
     public void Deconstruct(out TValue? value, out IEnumerable<TException>? exceptions)
     {
         value = this.Value;
-        exceptions = this.Exceptions;
+        exceptions = this.Error?.Reasons;
     }
 
     public TMatchResult Match<TMatchResult>(
@@ -117,7 +51,7 @@ public class ValidationResult<TValue, TException> : ValidationResult<TException>
         ArgumentNullException.ThrowIfNull(onSuccess);
         ArgumentNullException.ThrowIfNull(onFailure);
 
-        return this.IsSuccess ? onSuccess(this.Value!) : onFailure(this.Exceptions!);
+        return this.IsSuccess ? onSuccess(this.Value!) : onFailure(this.Error?.Reasons!);
     }
 
     protected override IEnumerable<object?> GetEqualityMembers()

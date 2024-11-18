@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 
 namespace DDD.Domain.Validation;
 
-public static class Validator<TExceptionBase>
+public class Validator<TExceptionBase>
     where TExceptionBase : Exception
 {
+    protected Validator() { }
+
     public static void Throw<TException>(TException exception)
         where TException : TExceptionBase
     {

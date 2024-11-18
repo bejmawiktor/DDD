@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace DDD.Tests.Unit.Domain.Validation;
 
 [TestFixture]
-public class ValidationResultTest
+public class ResultTest
 {
     [Test]
     public void TestConstructing_WhenExceptionsGiven_ThenExceptionsAreSetAndResultIsNull()
@@ -102,89 +102,18 @@ public class ValidationResultTest
     }
 
     [Test]
-    public void TestEquals_WhenExceptionsAreSet_ThenComparingToFailureIsTrue()
-    {
-        IEnumerable<Exception> exceptions = [new Exception("My exception")];
-
-        ValidationResult<Exception> validationResult = new(exceptions);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(validationResult, Is.EqualTo(ValidationResult.Failure));
-            Assert.That(validationResult == ValidationResult.Failure, Is.True);
-            Assert.That(validationResult, Is.Not.EqualTo(ValidationResult.Success));
-            Assert.That(validationResult == ValidationResult.Success, Is.False);
-            Assert.That(validationResult != ValidationResult.Failure, Is.False);
-            Assert.That(validationResult != ValidationResult.Success, Is.True);
-        });
-    }
-
-    [Test]
-    public void TestEquals_WhenExceptionsAreNotSet_ThenComparingToSuccessIsTrue()
-    {
-        ValidationResult<Exception> validationResult = new();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(validationResult, Is.EqualTo(ValidationResult.Success));
-            Assert.That(validationResult == ValidationResult.Success, Is.True);
-            Assert.That(validationResult, Is.Not.EqualTo(ValidationResult.Failure));
-            Assert.That(validationResult == ValidationResult.Failure, Is.False);
-            Assert.That(validationResult != ValidationResult.Success, Is.False);
-            Assert.That(validationResult != ValidationResult.Failure, Is.True);
-        });
-    }
-
-    [Test]
-    public void TestEqualsWithValue_WhenExceptionsAreSet_ThenComparingToFailureIsTrue()
-    {
-        IEnumerable<Exception> exceptions = [new Exception("My exception")];
-
-        ValidationResult<object, Exception> validationResult = new(exceptions);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(validationResult, Is.EqualTo(ValidationResult.Failure));
-            Assert.That(validationResult == ValidationResult.Failure, Is.True);
-            Assert.That(validationResult, Is.Not.EqualTo(ValidationResult.Success));
-            Assert.That(validationResult == ValidationResult.Success, Is.False);
-            Assert.That(validationResult != ValidationResult.Failure, Is.False);
-            Assert.That(validationResult != ValidationResult.Success, Is.True);
-        });
-    }
-
-    [Test]
-    public void TestEqualsWithValue_WhenResultIsSet_ThenComparingToSuccessIsTrue()
-    {
-        string value = "my result";
-
-        ValidationResult<object, Exception> validationResult = new(value);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(validationResult, Is.EqualTo(ValidationResult.Success));
-            Assert.That(validationResult == ValidationResult.Success, Is.True);
-            Assert.That(validationResult, Is.Not.EqualTo(ValidationResult.Failure));
-            Assert.That(validationResult == ValidationResult.Failure, Is.False);
-            Assert.That(validationResult != ValidationResult.Failure, Is.True);
-            Assert.That(validationResult != ValidationResult.Success, Is.False);
-        });
-    }
-
-    [Test]
     public void TestDeconstruct_WhenExceptionGiven_ThenExceptionsAndNullResultAreReturned()
     {
         IEnumerable<Exception> testExceptions = [new Exception("My exception")];
 
-        (object? value, IEnumerable<Exception>? exceptions) = new ValidationResult<
-            object,
-            Exception
-        >(testExceptions);
+        (int value, IEnumerable<Exception>? exceptions) = new ValidationResult<int, Exception>(
+            testExceptions
+        );
 
         Assert.Multiple(() =>
         {
             Assert.That(exceptions, Is.EqualTo(exceptions));
-            Assert.That(value, Is.Null);
+            Assert.That(value, Is.Zero);
         });
     }
 
