@@ -23,9 +23,8 @@ public class ValidationException : Exception
     }
 
     public ValidationException(string fieldName, string message)
-        : base(message)
+        : this(message)
     {
-        ValidationException.ValidateMessage(message);
         ValidationException.ValidateFieldName(fieldName);
 
         this.FieldName = fieldName;

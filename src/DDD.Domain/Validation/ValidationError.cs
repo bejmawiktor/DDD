@@ -53,3 +53,12 @@ public class ValidationError<TException> : Error<TException>, IValidationError<T
             """;
     }
 }
+
+public class ValidationError : ValidationError<ValidationException>
+{
+    public ValidationError(string message)
+        : base(message) { }
+
+    public ValidationError(IEnumerable<ValidationException> exceptions)
+        : base(exceptions) { }
+}

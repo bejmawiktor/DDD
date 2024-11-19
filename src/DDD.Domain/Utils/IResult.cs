@@ -2,7 +2,7 @@
 
 namespace DDD.Domain.Utils;
 
-public interface IResult<TError>
+public interface IResult<out TError>
     : IEquatable<Result.SuccessResult>,
         IEquatable<Result.FailureResult>
     where TError : IError
@@ -12,7 +12,7 @@ public interface IResult<TError>
     bool IsFailure { get; }
 }
 
-public interface IResult<TValue, TError> : IResult<TError>
+public interface IResult<out TValue, out TError> : IResult<TError>
     where TError : IError
 {
     TValue? Value { get; }
