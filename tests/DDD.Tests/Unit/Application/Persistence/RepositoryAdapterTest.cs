@@ -11,7 +11,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestGet_WhenIdentifierGiven_ThenAggregateRootIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -23,7 +23,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestGet_WhenPaginationGiven_ThenAggregateRootsAreReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -35,7 +35,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestGet_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -58,7 +58,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestAdd_WhenAggregateRootDtoGiven_ThenAggregateRootIsSet()
     {
-        AggregateRootDtoStubRepository dtoRepository = new(new List<AggregateRootDtoStub>());
+        AggregateRootDtoStubRepository dtoRepository = new([]);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
         repository.Add(new AggregateRootStub("1"));
@@ -69,7 +69,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestRemove_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 
@@ -81,7 +81,7 @@ public class RepositoryAdapterTest
     [Test]
     public void TestUpdate_WhenAggregateRootDtoGiven_ThenAggregateRootIsUpdated()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAggregateRootStubRepository repository = new RepositoryAdapter(dtoRepository);
 

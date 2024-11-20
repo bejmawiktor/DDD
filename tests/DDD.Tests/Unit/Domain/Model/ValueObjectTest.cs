@@ -15,7 +15,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AA"),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(1)");
             yield return new TestCaseData(
@@ -23,7 +23,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, "AAB"),
                     new FirstValueObjectFake(2, "AAB"),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(2)");
             yield return new TestCaseData(
@@ -31,7 +31,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, null),
                     new FirstValueObjectFake(2, null),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(4)");
             yield return new TestCaseData(
@@ -39,7 +39,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(5)");
             yield return new TestCaseData(
@@ -47,7 +47,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     new ThirdValueObjectFake(2, 3, "AABC"),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(6)");
             yield return new TestCaseData(
@@ -55,7 +55,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, null),
                     new ThirdValueObjectFake(1, 3.1, null),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
             yield return new TestCaseData(
@@ -63,7 +63,7 @@ public class ValueObjectTest
                 {
                     new FourthValueObjectFake(1, 3.1, null, true),
                     new FourthValueObjectFake(1, 3.1, null, true),
-                    true
+                    true,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
             yield return new TestCaseData(
@@ -71,7 +71,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(2, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
             yield return new TestCaseData(
@@ -82,7 +82,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AB"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(11)");
             yield return new TestCaseData(
@@ -90,7 +90,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(2, null),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(12)");
             yield return new TestCaseData(
@@ -98,7 +98,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new ThirdValueObjectFake(1, 0, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(13)");
             yield return new TestCaseData(
@@ -106,7 +106,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(2, 0, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(14)");
             yield return new TestCaseData(
@@ -114,7 +114,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(1, 0, "AB"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(15)");
             yield return new TestCaseData(
@@ -122,7 +122,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(2, 1, null),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(16)");
             yield return new TestCaseData(
@@ -130,7 +130,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new ThirdValueObjectFake(1, 0, null),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(17)");
             yield return new TestCaseData(
@@ -138,7 +138,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, null),
                     new ThirdValueObjectFake(1, 0, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(18)");
             yield return new TestCaseData(
@@ -146,7 +146,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 0, "AA"),
                     new FirstValueObjectFake(1, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(19)");
             yield return new TestCaseData(
@@ -154,7 +154,7 @@ public class ValueObjectTest
                 {
                     new FourthValueObjectFake(1, 0, "AA", false),
                     new FourthValueObjectFake(1, 0, "AA", true),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(20)");
             yield return new TestCaseData(
@@ -162,7 +162,7 @@ public class ValueObjectTest
                 {
                     new FourthValueObjectFake(1, 0, "AA", true),
                     new FourthValueObjectFake(1, 0, "AA", false),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(21)");
             yield return new TestCaseData(
@@ -170,7 +170,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new SecondValueObjectFake(1, "AA"),
-                    false
+                    false,
                 }
             ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(22)");
         }
@@ -185,7 +185,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(1)"
@@ -195,7 +195,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(2)"
@@ -205,7 +205,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(3)"
@@ -215,7 +215,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(4)"
@@ -225,7 +225,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.2, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(5)"
@@ -235,7 +235,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(3, 3.5, "AAC"),
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(6)"
@@ -245,7 +245,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(3, 3.4, "AAD"),
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)"
@@ -275,7 +275,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(1)"
@@ -285,7 +285,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(2)"
@@ -295,7 +295,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(3)"
@@ -305,7 +305,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
                     new ThirdValueObjectFake(2, 3.1, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(4)"
@@ -315,7 +315,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.2, "AAB"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(5)"
@@ -325,7 +325,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(3, 3.5, "AAC"),
                     new ThirdValueObjectFake(2, 3.4, "AAC"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(6)"
@@ -335,7 +335,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(3, 3.4, "AAD"),
                     new ThirdValueObjectFake(2, 3.5, "AAC"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)"
@@ -365,7 +365,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AA"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -375,7 +375,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, "AAB"),
                     new FirstValueObjectFake(2, "AAB"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -385,7 +385,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, null),
                     new FirstValueObjectFake(2, null),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -395,7 +395,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -405,7 +405,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     new ThirdValueObjectFake(2, 3, "AABC"),
-                    true
+                    true,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -415,7 +415,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(1, "AA"),
                     new FirstValueObjectFake(1, "AC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -425,7 +425,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(3, "AAB"),
                     new FirstValueObjectFake(2, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -435,7 +435,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, null),
                     new FirstValueObjectFake(2, "AS"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -445,7 +445,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(1, 3.2, "AAB"),
                     new ThirdValueObjectFake(1, 3.1, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -455,7 +455,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     new ThirdValueObjectFake(2, 33, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -465,7 +465,7 @@ public class ValueObjectTest
                 {
                     new ThirdValueObjectFake(2, 3, "AABC"),
                     new FirstValueObjectFake(2, "AAB"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
@@ -475,7 +475,7 @@ public class ValueObjectTest
                 {
                     new FirstValueObjectFake(2, null),
                     new ThirdValueObjectFake(2, 3, "AABC"),
-                    false
+                    false,
                 }
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"

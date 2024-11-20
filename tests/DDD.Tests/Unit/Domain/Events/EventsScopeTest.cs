@@ -14,7 +14,7 @@ public class EventsScopeTest
     public void ClearEventManager()
     {
         EventManager.CurrentScope = null;
-        EventManager.Instance.EventDispatcher = null;
+        EventManager.Instance.Dispatcher = null;
     }
 
     [Test]
@@ -22,7 +22,7 @@ public class EventsScopeTest
     {
         EventsScope eventScope = new();
 
-        Assert.That(eventScope.Events, Is.Empty);
+        Assert.That(eventScope.Items, Is.Empty);
     }
 
     [Test]
@@ -40,8 +40,8 @@ public class EventsScopeTest
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("@event"),
-            () => eventScope.Add((IEvent?)null!)
+                .EqualTo("item"),
+            () => eventScope.Add(null!)
         );
     }
 
@@ -55,7 +55,7 @@ public class EventsScopeTest
         {
             eventsScope.Add(@event);
 
-            Assert.That(eventsScope.Events.Contains(@event));
+            Assert.That(eventsScope.Items.Contains(@event));
         }
     }
 
@@ -66,7 +66,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -76,7 +76,7 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
+        Assert.That(parentEventScope.Items.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -90,7 +90,7 @@ public class EventsScopeTest
 
         _ = Assert.Throws(
             Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("Event dispatcher is uninitialized."),
+                .And.Message.EqualTo("Dispatcher is uninitialized."),
             eventScope.Publish
         );
     }
@@ -102,7 +102,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -126,7 +126,7 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(3));
+        Assert.That(parentEventScope.Items.Count, Is.EqualTo(3));
     }
 
     [Test]
@@ -137,7 +137,7 @@ public class EventsScopeTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<EventStub>()))
             .Callback(() => dispatched = true);
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         EventStub @event = new();
         EventsScope? eventsScope = null;
 
@@ -156,7 +156,7 @@ public class EventsScopeTest
     {
         Mock<IEvent> eventMock = new();
         Mock<IEventDispatcher> eventDispatcherMock = new();
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
         using (eventsScope = new EventsScope())
@@ -166,7 +166,7 @@ public class EventsScopeTest
             eventsScope.Publish();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
+        Assert.That(eventsScope.Items, Is.Empty);
     }
 
     [Test]
@@ -176,7 +176,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -186,7 +186,7 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(1));
+        Assert.That(parentEventScope.Items.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -200,7 +200,7 @@ public class EventsScopeTest
 
         _ = Assert.ThrowsAsync(
             Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("Event dispatcher is uninitialized."),
+                .And.Message.EqualTo("Dispatcher is uninitialized."),
             eventScope.PublishAsync
         );
     }
@@ -212,7 +212,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.DispatchAsync(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using (EventsScope childEventScope = new())
@@ -236,7 +236,7 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        Assert.That(parentEventScope.Events.Count, Is.EqualTo(3));
+        Assert.That(parentEventScope.Items.Count, Is.EqualTo(3));
     }
 
     [Test]
@@ -247,7 +247,7 @@ public class EventsScopeTest
         _ = eventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
             .Callback(() => dispatched = true);
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         EventStub @event = new();
         EventsScope? eventsScope = null;
 
@@ -266,7 +266,7 @@ public class EventsScopeTest
     {
         Mock<IEvent> eventMock = new();
         Mock<IEventDispatcher> eventDispatcherMock = new();
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         IEvent @event = eventMock.Object;
         EventsScope? eventsScope;
 
@@ -277,7 +277,7 @@ public class EventsScopeTest
             await eventsScope.PublishAsync();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
+        Assert.That(eventsScope.Items, Is.Empty);
     }
 
     [Test]
@@ -294,7 +294,7 @@ public class EventsScopeTest
             eventsScope.Clear();
         }
 
-        Assert.That(eventsScope.Events, Is.Empty);
+        Assert.That(eventsScope.Items, Is.Empty);
     }
 
     [Test]
@@ -312,7 +312,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope parentEventScope = new();
         using EventsScope nestedChildEventScope = new();
@@ -320,7 +320,7 @@ public class EventsScopeTest
 
         _ = Assert.Throws(
             Is.InstanceOf<InvalidOperationException>()
-                .And.Message.EqualTo("EventsScope nested incorrectly."),
+                .And.Message.EqualTo("Scope nested incorrectly."),
             parentEventScope.Dispose
         );
     }
@@ -332,7 +332,7 @@ public class EventsScopeTest
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock.Setup(e => e.Dispatch(It.IsAny<IEvent>()));
         IEvent @event = eventMock.Object;
-        EventManager.Instance.EventDispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
         EventsScope? parentEventScope = null;
 
         try
@@ -347,6 +347,6 @@ public class EventsScopeTest
         }
         catch (InvalidOperationException) { }
 
-        Assert.That(parentEventScope?.Events, Is.Empty);
+        Assert.That(parentEventScope?.Items, Is.Empty);
     }
 }

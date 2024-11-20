@@ -12,34 +12,50 @@ public class EntityTest
         get
         {
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new IntIdEntityStub(1), true }
+                new IntIdEntityStub(1),
+                new IntIdEntityStub(1),
+                true
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(1)");
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(123), new IntIdEntityStub(123), true }
+                new IntIdEntityStub(123),
+                new IntIdEntityStub(123),
+                true
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(2)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("1"), true }
+                new StringEntityStub("1"),
+                new StringEntityStub("1"),
+                true
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(3)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("123"), new StringEntityStub("123"), true }
+                new StringEntityStub("123"),
+                new StringEntityStub("123"),
+                true
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(4)");
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new IntIdEntityStub(2), false }
+                new IntIdEntityStub(1),
+                new IntIdEntityStub(2),
+                false
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(5)");
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new StringEntityStub("1"), false }
+                new IntIdEntityStub(1),
+                new StringEntityStub("1"),
+                false
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(6)");
+            yield return new TestCaseData(new IntIdEntityStub(1), null, false).SetName(
+                $"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(7)"
+            );
             yield return new TestCaseData(
-                new object?[] { new IntIdEntityStub(1), null, false }
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(7)");
-            yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("12"), false, }
+                new StringEntityStub("1"),
+                new StringEntityStub("12"),
+                false
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(8)");
+            yield return new TestCaseData(new StringEntityStub("1"), null, false).SetName(
+                $"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(9)"
+            );
             yield return new TestCaseData(
-                new object?[] { new StringEntityStub("1"), null, false, }
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(9)");
-            yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new OtherStringEntityStub("1"), false, }
+                new StringEntityStub("1"),
+                new OtherStringEntityStub("1"),
+                false
             ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(10)");
         }
     }
@@ -49,21 +65,27 @@ public class EntityTest
         get
         {
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("1"), true }
+                new StringEntityStub("1"),
+                new StringEntityStub("1"),
+                true
             ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(1)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("123"), new StringEntityStub("123"), true }
+                new StringEntityStub("123"),
+                new StringEntityStub("123"),
+                true
             ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(2)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("12"), false, }
+                new StringEntityStub("1"),
+                new StringEntityStub("12"),
+                false
             ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-            yield return new TestCaseData(
-                new object?[] { new StringEntityStub("1"), null, false, }
-            ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)");
-            yield return new TestCaseData(
-                new object?[] { null, new StringEntityStub("1"), false, }
-            ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)");
-            yield return new TestCaseData(new object?[] { null, null, true, }).SetName(
+            yield return new TestCaseData(new StringEntityStub("1"), null, false).SetName(
+                $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)"
+            );
+            yield return new TestCaseData(null, new StringEntityStub("1"), false).SetName(
+                $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)"
+            );
+            yield return new TestCaseData(null, null, true).SetName(
                 $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(6)"
             );
         }
@@ -74,21 +96,27 @@ public class EntityTest
         get
         {
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("1"), false }
+                new StringEntityStub("1"),
+                new StringEntityStub("1"),
+                false
             ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(1)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("123"), new StringEntityStub("123"), false }
+                new StringEntityStub("123"),
+                new StringEntityStub("123"),
+                false
             ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(2)");
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("12"), true, }
+                new StringEntityStub("1"),
+                new StringEntityStub("12"),
+                true
             ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-            yield return new TestCaseData(
-                new object?[] { new StringEntityStub("1"), null, true, }
-            ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)");
-            yield return new TestCaseData(
-                new object?[] { null, new StringEntityStub("1"), true, }
-            ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)");
-            yield return new TestCaseData(new object?[] { null, null, false, }).SetName(
+            yield return new TestCaseData(new StringEntityStub("1"), null, true).SetName(
+                $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)"
+            );
+            yield return new TestCaseData(null, new StringEntityStub("1"), true).SetName(
+                $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)"
+            );
+            yield return new TestCaseData(null, null, false).SetName(
                 $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(6)"
             );
         }
@@ -99,48 +127,58 @@ public class EntityTest
         get
         {
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new IntIdEntityStub(1), true }
+                new IntIdEntityStub(1),
+                new IntIdEntityStub(1),
+                true
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(1)"
             );
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(123), new IntIdEntityStub(123), true }
+                new IntIdEntityStub(123),
+                new IntIdEntityStub(123),
+                true
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(2)"
             );
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("1"), true }
+                new StringEntityStub("1"),
+                new StringEntityStub("1"),
+                true
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(3)"
             );
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("123"), new StringEntityStub("123"), true }
+                new StringEntityStub("123"),
+                new StringEntityStub("123"),
+                true
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(4)"
             );
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new IntIdEntityStub(2), false }
+                new IntIdEntityStub(1),
+                new IntIdEntityStub(2),
+                false
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(5)"
             );
             yield return new TestCaseData(
-                new object[] { new IntIdEntityStub(1), new StringEntityStub("1"), false }
+                new IntIdEntityStub(1),
+                new StringEntityStub("1"),
+                false
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(6)"
             );
             yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), new StringEntityStub("12"), false, }
+                new StringEntityStub("1"),
+                new StringEntityStub("12"),
+                false
             ).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(7)"
             );
-            yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), "1", false, }
-            ).SetName(
+            yield return new TestCaseData(new StringEntityStub("1"), "1", false).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(8)"
             );
-            yield return new TestCaseData(
-                new object[] { new StringEntityStub("1"), 2, false, }
-            ).SetName(
+            yield return new TestCaseData(new StringEntityStub("1"), 2, false).SetName(
                 $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(9)"
             );
         }

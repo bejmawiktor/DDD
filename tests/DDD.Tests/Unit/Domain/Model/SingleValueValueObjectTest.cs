@@ -15,7 +15,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("1"),
                 new SingleValueValueObjectFake("1"),
-                true
+                true,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(1)");
         yield return new TestCaseData(
@@ -23,7 +23,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("3"),
                 new SingleValueValueObjectFake("3"),
-                true
+                true,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(2)");
         yield return new TestCaseData(
@@ -31,7 +31,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("2"),
                 new SingleValueValueObjectFake("2"),
-                true
+                true,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(3)");
         yield return new TestCaseData(
@@ -39,7 +39,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("1"),
                 new SingleValueValueObjectFake("2"),
-                false
+                false,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(4)");
         yield return new TestCaseData(
@@ -47,7 +47,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("34"),
                 new SingleValueValueObjectFake("3"),
-                false
+                false,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(5)");
         yield return new TestCaseData(
@@ -55,7 +55,7 @@ public class SingleValueValueObjectTest
             {
                 new SingleValueValueObjectFake("5"),
                 new SingleValueValueObjectFake("2"),
-                false
+                false,
             }
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(6)");
         yield return new TestCaseData(

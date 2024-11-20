@@ -7,5 +7,5 @@ public static class EventManagerExtension
     public static void UseMediatREventDispatcher(
         this EventManager eventManger,
         IMediator mediator
-    ) => eventManger.EventDispatcher = new EventDispatcher(mediator);
+    ) => eventManger.Dispatcher = new EventDispatcher(mediator);
 }

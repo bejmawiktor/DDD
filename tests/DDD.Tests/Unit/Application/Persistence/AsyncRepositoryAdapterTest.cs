@@ -12,7 +12,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestGetAsync_WhenIdentifierGiven_ThenAggregateRootIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -24,7 +24,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestGetAsync_WhenPaginationGiven_ThenAggregateRootsAreReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -38,7 +38,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestGetAsync_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -63,7 +63,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestAddAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsSet()
     {
-        AsyncAggregateRootDtoStubRepository dtoRepository = new(new List<AggregateRootDtoStub>());
+        AsyncAggregateRootDtoStubRepository dtoRepository = new([]);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
         await repository.AddAsync(new AggregateRootStub("1"));
@@ -74,7 +74,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestRemoveAsync_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -86,7 +86,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestUpdateAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsUpdated()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = new() { new AggregateRootDtoStub("1") };
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
