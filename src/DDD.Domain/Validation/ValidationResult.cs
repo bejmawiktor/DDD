@@ -9,10 +9,10 @@ public class ValidationResult<TException> : Result<ValidationError<TException>>
 {
     public IEnumerable<TException>? Exceptions => this.Error?.Reasons;
 
-    internal ValidationResult(IEnumerable<TException> exceptions)
+    public ValidationResult(IEnumerable<TException> exceptions)
         : base(new ValidationError<TException>(exceptions)) { }
 
-    internal ValidationResult() { }
+    public ValidationResult() { }
 }
 
 public class ValidationResult<TValue, TException> : Result<TValue, ValidationError<TException>>
