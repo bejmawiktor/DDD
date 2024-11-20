@@ -20,10 +20,10 @@ public class ValidationResult<TValue, TException> : Result<TValue, ValidationErr
 {
     public IEnumerable<TException>? Exceptions => this.Error?.Reasons;
 
-    internal ValidationResult(TValue value)
+    public ValidationResult(TValue value)
         : base(value) { }
 
-    internal ValidationResult(IEnumerable<TException> exceptions)
+    public ValidationResult(IEnumerable<TException> exceptions)
         : base(new ValidationError<TException>(exceptions)) { }
 
     protected override IEnumerable<object?> GetEqualityMembers()
