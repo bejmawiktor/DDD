@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DDD.Domain.Model;
 
 namespace DDD.Domain.Utils;
@@ -66,6 +67,17 @@ public class Result<TError> : ValueObject, IResult<TError>
         return this.IsSuccess ? onSuccess() : onFailure(this.Error!);
     }
 
+    public async Task<TMatchResult> MatchAsync<TMatchResult>(
+        Func<Task<TMatchResult>> onSuccess,
+        Func<TError, Task<TMatchResult>> onFailure
+    )
+    {
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onFailure);
+
+        return this.IsSuccess ? await onSuccess() : await onFailure(this.Error!);
+    }
+
     public override bool Equals(object? obj) => base.Equals(obj);
 
     protected override IEnumerable<object?> GetEqualityMembers()
@@ -118,5 +130,16 @@ public class Result<TValue, TError> : Result<TError>, IResult<TValue, TError>
         ArgumentNullException.ThrowIfNull(onFailure);
 
         return this.IsSuccess ? onSuccess(this.Value!) : onFailure(this.Error!);
+    }
+
+    public async Task<TMatchResult> MatchAsync<TMatchResult>(
+        Func<TValue, Task<TMatchResult>> onSuccess,
+        Func<TError, Task<TMatchResult>> onFailure
+    )
+    {
+        ArgumentNullException.ThrowIfNull(onSuccess);
+        ArgumentNullException.ThrowIfNull(onFailure);
+
+        return this.IsSuccess ? await onSuccess(this.Value!) : await onFailure(this.Error!);
     }
 }

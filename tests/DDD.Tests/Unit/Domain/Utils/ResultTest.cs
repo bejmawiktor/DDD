@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using DDD.Domain.Utils;
 using NUnit.Framework;
 
@@ -262,6 +263,36 @@ public class ResultTest
     }
 
     [Test]
+    public void TestMatchAsync_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.ThrowsAsync(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onSuccess"),
+            async () =>
+                await new Result<Error<Exception>>().MatchAsync(
+                    null!,
+                    error => Task.FromResult(error.Message)
+                )
+        );
+    }
+
+    [Test]
+    public void TestMatchAsync_WhenNullOnFailureGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.ThrowsAsync(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onFailure"),
+            async () =>
+                await new Result<Error<Exception>>(new Error<Exception>("my error")).Match(
+                    () => Task.FromResult(true),
+                    null!
+                )
+        );
+    }
+
+    [Test]
     public void TestMatch_WhenValueGiven_ThenInvokeFailureFunc()
     {
         string onSuccessValue = "Success";
@@ -284,6 +315,34 @@ public class ResultTest
     }
 
     [Test]
+    public async Task TestMatchAsync_WhenValueGiven_ThenInvokeFailureFunc()
+    {
+        string onSuccessValue = "Success";
+        Result<Error<Exception>> result = new();
+
+        string value = await result.MatchAsync(
+            () => Task.FromResult(onSuccessValue),
+            error => Task.FromResult(error.Message)
+        );
+
+        Assert.That(value, Is.EqualTo(onSuccessValue));
+    }
+
+    [Test]
+    public async Task TestMatchAsync_WhenErrorGiven_ThenInvokeFailureFunc()
+    {
+        Error<Exception> error = new("My error");
+        Result<Error<Exception>> result = new(error);
+
+        string value = await result.MatchAsync(
+            () => Task.FromResult("Success"),
+            error => Task.FromResult(error.Message)
+        );
+
+        Assert.That(value, Is.EqualTo("My error"));
+    }
+
+    [Test]
     public void TestMatchWithValue_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
     {
         _ = Assert.Throws(
@@ -292,7 +351,7 @@ public class ResultTest
                 .EqualTo("onSuccess"),
             () =>
                 new Result<string, Error<Exception>>("test result").Match(
-                    null!,
+                    (null as Func<string, string>)!,
                     error => error.Message
                 )
         );
@@ -314,6 +373,35 @@ public class ResultTest
     }
 
     [Test]
+    public void TestMatchWithValueAsync_WhenNullOnSuccessGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.ThrowsAsync(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onSuccess"),
+            async () =>
+                await new Result<string, Error<Exception>>("test result").MatchAsync(
+                    (null as Func<string, Task<string>>)!,
+                    error => Task.FromResult(error.Message)
+                )
+        );
+    }
+
+    [Test]
+    public void TestMatchWithValueAsync_WhenNullOnFailureGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        _ = Assert.ThrowsAsync(
+            Is.InstanceOf<ArgumentNullException>()
+                .And.Property(nameof(ArgumentNullException.ParamName))
+                .EqualTo("onFailure"),
+            async () =>
+                await new Result<string, Error<Exception>>(
+                    new Error<Exception>("my error")
+                ).MatchAsync(value => Task.FromResult(value), null!)
+        );
+    }
+
+    [Test]
     public void TestMatchWithValue_WhenValueGiven_ThenInvokeFailureFunc()
     {
         string testValue = "My result";
@@ -325,12 +413,40 @@ public class ResultTest
     }
 
     [Test]
-    public void TestMatchWithValue_WhenExceptionsGiven_ThenInvokeFailureFunc()
+    public void TestMatchWithValue_WhenErrorGiven_ThenInvokeFailureFunc()
     {
         Error<Exception> error = new("My error");
         Result<string, Error<Exception>> result = new(error);
 
         string matchValue = result.Match(value => value, error => error.Message);
+
+        Assert.That(matchValue, Is.EqualTo("My error"));
+    }
+
+    [Test]
+    public async Task TestMatchWithValueAsync_WhenValueGiven_ThenInvokeFailureFunc()
+    {
+        string testValue = "My result";
+        Result<string, Error<Exception>> result = new(testValue);
+
+        string matchValue = await result.MatchAsync(
+            value => Task.FromResult(value),
+            error => Task.FromResult(error.Message)
+        );
+
+        Assert.That(matchValue, Is.EqualTo(testValue));
+    }
+
+    [Test]
+    public async Task TestMatchWithValueAsync_WhenErrorGiven_ThenInvokeFailureFunc()
+    {
+        Error<Exception> error = new("My error");
+        Result<string, Error<Exception>> result = new(error);
+
+        string matchValue = await result.MatchAsync(
+            value => Task.FromResult(value),
+            error => Task.FromResult(error.Message)
+        );
 
         Assert.That(matchValue, Is.EqualTo("My error"));
     }
