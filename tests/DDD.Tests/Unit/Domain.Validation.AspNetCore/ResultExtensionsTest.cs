@@ -492,7 +492,7 @@ public class ResultExtensionsTest
     [TestCaseSource(nameof(ErrorWithReasonsTestData))]
     public void TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        IError<Exception> error,
+        Error<Exception> error,
         ObjectResult expectedActionResult
     )
     {
@@ -508,7 +508,7 @@ public class ResultExtensionsTest
         _ = httpContextMock
             .Setup(httpContext => httpContext.TraceIdentifier)
             .Returns(traceId.ToString());
-        Result<IError<Exception>> result = new(error);
+        Result<Error<Exception>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
         ObjectResult? actionResult =
@@ -637,7 +637,7 @@ public class ResultExtensionsTest
     [TestCaseSource(nameof(ErrorWithReasonsTestData))]
     public void TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        IError<Exception> error,
+        Error<Exception> error,
         ObjectResult expectedActionResult
     )
     {
@@ -653,7 +653,7 @@ public class ResultExtensionsTest
         _ = httpContextMock
             .Setup(httpContext => httpContext.TraceIdentifier)
             .Returns(traceId.ToString());
-        Result<object, IError<Exception>> result = new(error);
+        Result<object, Error<Exception>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
         ObjectResult? actionResult =

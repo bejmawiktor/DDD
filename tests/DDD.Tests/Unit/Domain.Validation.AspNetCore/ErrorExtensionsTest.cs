@@ -403,7 +403,7 @@ public class ErrorExtensionsTest
     [TestCaseSource(nameof(ErrorWithReasonsTestData))]
     public void TestToProblemDetails_WhenErrorWithReasonsGiven_ThenProblemDetailsIsReturned(
         string? path,
-        IError<Exception> error,
+        Error<Exception> error,
         ProblemDetails expectedProblemDetails
     )
     {

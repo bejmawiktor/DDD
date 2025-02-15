@@ -15,23 +15,9 @@ public static class ResultExtensions
     {
         if (result.Error is not null)
         {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
-
-            return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
-        }
-
-        return new OkResult();
-    }
-
-    public static IActionResult ToActionResult<TException>(
-        this IResult<IError<TException>> result,
-        HttpContext? httpContext = null
-    )
-        where TException : Exception
-    {
-        if (result.Error is not null)
-        {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
+            ProblemDetails problemDetails = result.Error is IError<Exception> error
+                ? error.ToProblemDetails(httpContext)
+                : result.Error.ToProblemDetails(httpContext);
 
             return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
         }
@@ -48,37 +34,15 @@ public static class ResultExtensions
     {
         if (result.Error is not null)
         {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
+            ProblemDetails problemDetails = result.Error is IError<Exception> error
+                ? error.ToProblemDetails(httpContext)
+                : result.Error.ToProblemDetails(httpContext);
 
             return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
         }
 
-        MediaTypeCollection mediaTypeCollection = new();
-        (mediaTypes ?? ["application/json"])
-            .ToList()
-            .ForEach(mediaType => mediaTypeCollection.Add(mediaType));
-
-        return new OkObjectResult(result.Value) { ContentTypes = mediaTypeCollection };
-    }
-
-    public static IActionResult ToActionResult<TValue, TException>(
-        this IResult<TValue, IError<TException>> result,
-        HttpContext? httpContext = null,
-        string[]? mediaTypes = null
-    )
-        where TException : Exception
-    {
-        if (result.Error is not null)
-        {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
-
-            return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
-        }
-
-        MediaTypeCollection mediaTypeCollection = new();
-        (mediaTypes ?? ["application/json"])
-            .ToList()
-            .ForEach(mediaType => mediaTypeCollection.Add(mediaType));
+        MediaTypeCollection mediaTypeCollection = [];
+        (mediaTypes ?? ["application/json"]).ToList().ForEach(mediaTypeCollection.Add);
 
         return new OkObjectResult(result.Value) { ContentTypes = mediaTypeCollection };
     }
