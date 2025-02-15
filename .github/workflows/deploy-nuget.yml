@@ -53,10 +53,10 @@ jobs:
           value: ${{ needs.get-version.outputs.version }}
           index_of_str: "v"
 
-      - name: Setup .NET Core SDK 6.x
+      - name: Setup .NET Core SDK 8.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.x'
+          dotnet-version: '8.x'
           
       - name: Install dependencies
         run: dotnet restore
