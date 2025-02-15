@@ -14,6 +14,8 @@ env:
   APPLICATION_PACKAGE_NAME: 'DDD.Application'
   EVENTS_MEDIATR_PROJECT_PATH: 'src/DDD.Domain.Events.MediatR/DDD.Domain.Events.MediatR.csproj'
   EVENTS_MEDIATR_PACKAGE_NAME: 'DDD.Domain.Events.MediatR'
+  VALIDATION_ASPNETCORE_PROJECT_PATH: 'src/DDD.Domain.Validation.AspNetCore/DDD.Domain.Validation.AspNetCore.csproj'
+  VALIDATION_ASPNETCORE_PACKAGE_NAME: 'DDD.Domain.Validation.AspNetCore'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json'
 
@@ -72,6 +74,9 @@ jobs:
       
       - name: Pack MediatR events project
         run: dotnet pack ${{ env.EVENTS_MEDIATR_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
+      
+      - name: Pack AspNetCore validation project
+        run: dotnet pack ${{ env.VALIDATION_ASPNETCORE_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Push packages
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_AUTHENTICATION_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
