@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 namespace DDD.Domain.Utils;
 
 public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
+    : IScopeContainer<TScope, TScopeHandler>
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : ScopeHandler<TScope, TItem, TScopeHandler>, new()
     where TItem : notnull
@@ -19,9 +20,15 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
         internal set => ScopeHandler<TScope, TItem, TScopeHandler>.localEventsScope.Value = value;
     }
 
+    static TScope? IScopeContainer<TScope, TScopeHandler>.CurrentScope
+    {
+        get => ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope;
+        set => ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope = value;
+    }
+
     public static TScopeHandler Instance => instance.Value;
 
-    protected internal void Handle<TSpecificItem>(TSpecificItem item)
+    protected internal virtual void Handle<TSpecificItem>(TSpecificItem item)
         where TSpecificItem : TItem
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
@@ -39,7 +46,7 @@ public abstract class ScopeHandler<TScope, TItem, TScopeHandler>
         }
     }
 
-    protected internal Task HandleAsync<TSpecificItem>(TSpecificItem item)
+    protected internal virtual Task HandleAsync<TSpecificItem>(TSpecificItem item)
         where TSpecificItem : TItem
     {
         if (ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope is null)
