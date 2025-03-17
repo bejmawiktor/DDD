@@ -13,7 +13,9 @@ public class Validator<TExceptionBase>
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        ValidationHandler<TExceptionBase>.Instance.Handle(exception);
+        TException convertedException = ValidationContextHandler<TException>.Convert(exception);
+
+        ValidationHandler<TExceptionBase>.Instance.Handle(convertedException);
     }
 
     public static ValidationResult<TExceptionBase> ValidateMany(Action validationAction)

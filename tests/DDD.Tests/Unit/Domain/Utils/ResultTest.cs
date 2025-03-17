@@ -351,7 +351,7 @@ public class ResultTest
                 .EqualTo("onSuccess"),
             () =>
                 new Result<string, Error<Exception>>("test result").Match(
-                    (null as Func<string, string>)!,
+                    null!,
                     error => error.Message
                 )
         );
@@ -381,7 +381,7 @@ public class ResultTest
                 .EqualTo("onSuccess"),
             async () =>
                 await new Result<string, Error<Exception>>("test result").MatchAsync(
-                    (null as Func<string, Task<string>>)!,
+                    null!,
                     error => Task.FromResult(error.Message)
                 )
         );

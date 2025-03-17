@@ -4,27 +4,17 @@ using System.Threading.Tasks;
 
 namespace DDD.Domain.Utils;
 
-public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
+public abstract class Scope<TItem, TScope, TScopeHandler> : DisposableScope<TScope, TScopeHandler>
     where TScope : Scope<TItem, TScope, TScopeHandler>
     where TScopeHandler : ScopeHandler<TScope, TItem, TScopeHandler>, new()
     where TItem : notnull
 {
-    private bool IsDisposed { get; set; }
     protected internal List<TItem> Items { get; set; }
-    private TScope? ParentScope { get; }
-    private int NestedScopesCounter { get; set; }
 
     protected Scope()
+        : base()
     {
         this.Items = [];
-        this.ParentScope = ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope;
-
-        if (this.ParentScope is not null)
-        {
-            this.ParentScope.NestedScopesCounter++;
-        }
-
-        ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope = this as TScope;
     }
 
     public void Add(TItem item)
@@ -33,6 +23,8 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
 
         this.Items.Add(item);
     }
+
+    public override void Clear() => this.Items.Clear();
 
     protected internal void Apply()
     {
@@ -88,47 +80,5 @@ public abstract class Scope<TItem, TScope, TScopeHandler> : IDisposable
         this.Clear();
 
         return Task.WhenAll(tasks);
-    }
-
-    public void Clear() => this.Items.Clear();
-
-    public void Dispose()
-    {
-        this.Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!this.IsDisposed)
-        {
-            if (this.ParentScope is not null)
-            {
-                this.ParentScope.NestedScopesCounter--;
-            }
-
-            if (this.NestedScopesCounter > 0)
-            {
-                this.Clear();
-                throw new InvalidOperationException("Scope nested incorrectly.");
-            }
-
-            if (disposing)
-            {
-                this.Clear();
-            }
-
-            if (ReferenceEquals(this, ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope))
-            {
-                ScopeHandler<TScope, TItem, TScopeHandler>.CurrentScope = this.ParentScope;
-            }
-        }
-
-        this.IsDisposed = true;
-    }
-
-    ~Scope()
-    {
-        this.Dispose(false);
     }
 }
