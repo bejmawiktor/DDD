@@ -360,4 +360,54 @@ public class ValidatorTest
             Assert.That(result.Exceptions, Is.Null);
         });
     }
+
+    [Test]
+    public void TestHasFailed_WhenGivingValidationFuncWithThrow_ThenValidationFailed()
+    {
+        _ = Validator<Exception>.ValidateMany(() =>
+        {
+            Assert.That(Validator<Exception>.HasFailed, Is.False);
+
+            Validator<Exception>.Throw(new Exception("exception"));
+
+            Assert.That(Validator<Exception>.HasFailed, Is.True);
+        });
+
+        _ = Validator<Exception>.ValidateMany(() =>
+        {
+            Assert.That(Validator<Exception>.HasFailed, Is.False);
+
+            Validator<Exception>.Throw(new Exception("exception"));
+
+            Assert.That(Validator<Exception>.HasFailed, Is.True);
+
+            return "result";
+        });
+    }
+
+    [Test]
+    public async Task TestHasFailed_WhenGivingAsyncValidationFuncWithThrow_ThenValidationFailed()
+    {
+        _ = await Validator<Exception>.ValidateManyAsync(async () =>
+        {
+            Assert.That(Validator<Exception>.HasFailed, Is.False);
+
+            Validator<Exception>.Throw(new Exception("exception"));
+
+            Assert.That(Validator<Exception>.HasFailed, Is.True);
+
+            await Task.CompletedTask;
+        });
+
+        _ = await Validator<Exception>.ValidateManyAsync(async () =>
+        {
+            Assert.That(Validator<Exception>.HasFailed, Is.False);
+
+            Validator<Exception>.Throw(new Exception("exception"));
+
+            Assert.That(Validator<Exception>.HasFailed, Is.True);
+
+            _ = await Task.FromResult("result");
+        });
+    }
 }

@@ -6,6 +6,8 @@ namespace DDD.Domain.Validation;
 public class Validator<TExceptionBase>
     where TExceptionBase : Exception
 {
+    public static bool HasFailed => ValidationHandler<TExceptionBase>.CurrentScope?.Items.Count > 0;
+
     protected Validator() { }
 
     public static void Throw<TException>(TException exception)
