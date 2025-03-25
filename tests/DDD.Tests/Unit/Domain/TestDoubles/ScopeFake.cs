@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DDD.Domain.Utils;
+using Utils.Disposable;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 

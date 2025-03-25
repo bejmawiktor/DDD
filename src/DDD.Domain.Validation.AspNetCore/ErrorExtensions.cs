@@ -1,17 +1,24 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using DDD.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Utils.Functional;
+using Utils.Validation;
 
 namespace DDD.Domain.Validation.AspNetCore;
 
 public static class ErrorExtensions
 {
-    public static ProblemDetails ToProblemDetails(
-        this IError error,
+    public static ProblemDetails ToProblemDetails<TError>(
+        this TError error,
         HttpContext? httpContext = null
     )
+        where TError : IError
+    {
+        return ErrorExtensions.CreateProblemDetails((dynamic)error, httpContext);
+    }
+
+    private static ProblemDetails CreateProblemDetails(IError error, HttpContext? httpContext)
     {
         ProblemDetails problemDetails =
             new()
@@ -26,23 +33,18 @@ public static class ErrorExtensions
         return problemDetails;
     }
 
-    public static ProblemDetails ToProblemDetails<TException>(
-        this IError<TException> error,
+    private static ProblemDetails CreateProblemDetails<TAggregateError, TError>(
+        this IAggregateError<TAggregateError, TError> error,
         HttpContext? httpContext
     )
-        where TException : Exception
+        where TAggregateError : IAggregateError<TAggregateError, TError>
+        where TError : IError
     {
         IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors = error
-            .Reasons.Select(exception =>
-                exception is ValidationException validationException
-                    ? (
-                        new
-                        {
-                            FieldName = validationException.FieldName ?? "",
-                            validationException.Message,
-                        }
-                    )
-                    : (new { FieldName = "", exception.Message })
+            .Errors.Select(error =>
+                error is ValidationError validationError
+                    ? (new { FieldName = validationError.FieldName ?? "", validationError.Message })
+                    : (new { FieldName = "", error.Message })
             )
             .GroupBy(
                 error => error.FieldName,
@@ -51,10 +53,7 @@ public static class ErrorExtensions
                     new KeyValuePair<string, string[]>(fieldName, messages.ToArray())
             );
 
-        if (
-            error.Reasons.OfType<NotFoundException>().Count() == error.Reasons.Count()
-            && error.Reasons.Count() == 1
-        )
+        if (error.Errors.OfType<NotFoundError>().Count() == 1 && error.Errors.Count() == 1)
         {
             ProblemDetails problemDetails =
                 new()
