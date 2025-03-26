@@ -1,5 +1,4 @@
-﻿using System.Buffers.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Utils.Disposable;
 
 namespace DDD.Domain.Events;

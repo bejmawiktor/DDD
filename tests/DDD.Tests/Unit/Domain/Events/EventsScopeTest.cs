@@ -42,7 +42,7 @@ public class EventsScopeTest
     public void TestPublish_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
     {
         Mock<IEvent> eventMock = new();
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
@@ -62,6 +62,7 @@ public class EventsScopeTest
 
             childEventScope.Publish();
         }
+
         parentEventScope.Publish();
 
         Assert.That(events.Count, Is.EqualTo(1));
@@ -87,7 +88,7 @@ public class EventsScopeTest
     public void TestPublish_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
     {
         Mock<IEvent> eventMock = new();
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
@@ -155,7 +156,7 @@ public class EventsScopeTest
     public async Task TestPublishAsync_WhenPublishingWithParentEventScope_ThenEventsAreAddedToParentEventScope()
     {
         Mock<IEvent> eventMock = new();
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
@@ -175,6 +176,7 @@ public class EventsScopeTest
 
             await childEventScope.PublishAsync();
         }
+
         parentEventScope.Publish();
 
         Assert.That(events.Count, Is.EqualTo(1));
@@ -200,7 +202,7 @@ public class EventsScopeTest
     public async Task TestPublishAsync_WhenMultipleNestedEventsScopesGiven_ThenEventsAreAddedToParentEventScope()
     {
         Mock<IEvent> eventMock = new();
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))

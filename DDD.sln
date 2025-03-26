@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain.Events.MediatR",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation.AspNetCore", "src\DDD.Domain.Validation.AspNetCore\DDD.Domain.Validation.AspNetCore.csproj", "{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation", "src\DDD.Domain.Validation\DDD.Domain.Validation.csproj", "{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{791A0A0C-AF68-4106-8E12-408B962E6828} = {6EBB0BFD-A124-465C-BDF8-6B124620BF44}
 		{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
 		{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
+		{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B} = {CF4655FF-4C70-4FE9-9A20-F77C1F94D459}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54DB9BFD-2243-400D-A850-7C656EB075B0}

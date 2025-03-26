@@ -58,7 +58,7 @@ public class EventManagerTest
     {
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
@@ -114,7 +114,7 @@ public class EventManagerTest
     {
         Mock<IEvent> eventMock = new();
         IEvent @event = eventMock.Object;
-        List<IEvent> events = new List<IEvent>();
+        List<IEvent> events = [];
         Mock<IEventDispatcher> eventDispatcherMock = new();
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))

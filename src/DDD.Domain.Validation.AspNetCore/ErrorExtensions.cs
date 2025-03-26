@@ -13,10 +13,7 @@ public static class ErrorExtensions
         this TError error,
         HttpContext? httpContext = null
     )
-        where TError : IError
-    {
-        return ErrorExtensions.CreateProblemDetails((dynamic)error, httpContext);
-    }
+        where TError : IError => ErrorExtensions.CreateProblemDetails((dynamic)error, httpContext);
 
     private static ProblemDetails CreateProblemDetails(IError error, HttpContext? httpContext)
     {

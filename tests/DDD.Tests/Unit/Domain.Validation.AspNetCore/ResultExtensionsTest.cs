@@ -339,7 +339,7 @@ public class ResultExtensionsTest
             }
         ).SetName($"{testName}(2)");
         yield return new TestCaseData(
-            (string?)null,
+            null,
             "my error test 2",
             new ObjectResult(new ProblemDetails() { Detail = "my error test 2", Instance = null })
             {

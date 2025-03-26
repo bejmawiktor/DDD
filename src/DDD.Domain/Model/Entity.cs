@@ -15,7 +15,9 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
 
     protected Entity(TIdentifier id)
     {
-        this.Id = id;
+        ArgumentNullException.ThrowIfNull(id);
+
+        this.id = id;
     }
 
     public static bool operator ==(Entity<TIdentifier> lhs, Entity<TIdentifier> rhs) =>
