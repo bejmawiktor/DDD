@@ -38,7 +38,7 @@ public static class ErrorExtensions
         where TError : IError
     {
         IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors =
-            ErrorExtensions.ConvertErrorsToKeyValuePair(errors);
+            ErrorExtensions.ConvertErrorsToKeyValuePairs(errors);
 
         if (errors.Errors.OfType<NotFoundError>().Count() == 1 && errors.Errors.Count() == 1)
         {
@@ -52,7 +52,7 @@ public static class ErrorExtensions
         );
     }
 
-    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePair<
+    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs<
         TAggregateError,
         TError
     >(IAggregateError<TAggregateError, TError> errors)
