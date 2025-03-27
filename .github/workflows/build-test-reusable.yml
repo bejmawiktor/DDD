@@ -25,7 +25,7 @@ jobs:
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
             
       - name: Install dependencies
-        run: dotnet restore -p:TargetFramework=net${{ matrix.dotnet-version }}
+        run: dotnet restore -p:TargetFramework=net8.0
         
       - name: Build
         run: dotnet build --configuration Release --no-restore
@@ -47,7 +47,7 @@ jobs:
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
                 
       - name: Install dependencies
-        run: dotnet restore -p:TargetFramework=net${{ matrix.dotnet-version }}
+        run: dotnet restore -p:TargetFramework=net8.0
         
       - name: Run tests
         run: dotnet test --no-restore --verbosity normal
