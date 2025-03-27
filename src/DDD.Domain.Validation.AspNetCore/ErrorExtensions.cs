@@ -31,13 +31,34 @@ public static class ErrorExtensions
     }
 
     private static ProblemDetails CreateProblemDetails<TAggregateError, TError>(
-        this IAggregateError<TAggregateError, TError> error,
+        this IAggregateError<TAggregateError, TError> errors,
         HttpContext? httpContext
     )
         where TAggregateError : IAggregateError<TAggregateError, TError>
         where TError : IError
     {
-        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors = error
+        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors =
+            ErrorExtensions.ConvertErrorsToKeyValuePair(errors);
+
+        if (errors.Errors.OfType<NotFoundError>().Count() == 1 && errors.Errors.Count() == 1)
+        {
+            return ErrorExtensions.CreateNotFoundProblemDetails(errors, httpContext);
+        }
+
+        return ErrorExtensions.CreateBadRequestProblemDetails(
+            errors,
+            httpContext,
+            validationProblemDetailsErrors
+        );
+    }
+
+    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePair<
+        TAggregateError,
+        TError
+    >(IAggregateError<TAggregateError, TError> errors)
+        where TAggregateError : IAggregateError<TAggregateError, TError>
+        where TError : IError =>
+        errors
             .Errors.Select(error =>
                 error is ValidationError validationError
                     ? (new { FieldName = validationError.FieldName ?? "", validationError.Message })
@@ -50,25 +71,37 @@ public static class ErrorExtensions
                     new KeyValuePair<string, string[]>(fieldName, messages.ToArray())
             );
 
-        if (error.Errors.OfType<NotFoundError>().Count() == 1 && error.Errors.Count() == 1)
-        {
-            ProblemDetails problemDetails =
-                new()
-                {
-                    Detail = error.Message,
-                    Status = (int)HttpStatusCode.NotFound,
-                    Instance = httpContext?.Request.Path,
-                };
-            problemDetails.Extensions["traceId"] =
-                Activity.Current?.Id ?? httpContext?.TraceIdentifier;
+    private static ProblemDetails CreateNotFoundProblemDetails<TAggregateError, TError>(
+        IAggregateError<TAggregateError, TError> errors,
+        HttpContext? httpContext
+    )
+        where TAggregateError : IAggregateError<TAggregateError, TError>
+        where TError : IError
+    {
+        ProblemDetails problemDetails =
+            new()
+            {
+                Detail = errors.Message,
+                Status = (int)HttpStatusCode.NotFound,
+                Instance = httpContext?.Request.Path,
+            };
+        problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
-            return problemDetails;
-        }
+        return problemDetails;
+    }
 
+    private static ValidationProblemDetails CreateBadRequestProblemDetails<TAggregateError, TError>(
+        IAggregateError<TAggregateError, TError> errors,
+        HttpContext? httpContext,
+        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors
+    )
+        where TAggregateError : IAggregateError<TAggregateError, TError>
+        where TError : IError
+    {
         ValidationProblemDetails validationProblemDetails =
             new(new Dictionary<string, string[]>(validationProblemDetailsErrors))
             {
-                Detail = error.Message,
+                Detail = errors.Message,
                 Status = (int)HttpStatusCode.BadRequest,
                 Instance = httpContext?.Request.Path,
             };

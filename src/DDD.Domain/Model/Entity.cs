@@ -35,18 +35,3 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
 
     public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);
 }
-
-public abstract class Entity<TIdentifier, TValidatedObject, TValidator> : Entity<TIdentifier>
-    where TIdentifier : notnull, IEquatable<TIdentifier>
-    where TValidator : IValidator<TValidatedObject>, new()
-{
-    protected TValidator Validator { get; }
-
-    protected Entity(TIdentifier id, TValidatedObject validatedObject)
-        : base(id)
-    {
-        this.Validator = new TValidator();
-
-        this.Validator.Validate(validatedObject);
-    }
-}
