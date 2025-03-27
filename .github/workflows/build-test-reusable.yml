@@ -19,7 +19,7 @@ jobs:
       - name: Setup .NET Core SDK 8.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0'
       
       - name: Add private nuget source
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
@@ -41,7 +41,7 @@ jobs:
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0'
       
       - name: Add private nuget source
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
