@@ -6,5 +6,5 @@ on:
         - main
 
 jobs:
-  call-reusable:
+  build-and-test:
     uses: ./.github/workflows/build-test-reusable.yml 
