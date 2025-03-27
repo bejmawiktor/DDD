@@ -8,3 +8,6 @@ on:
 jobs:
   build-and-test:
     uses: ./.github/workflows/build-test-reusable.yml 
+    secrets:
+      PRIVATE_NUGET_USERNAME: ${{ secrets.PRIVATE_NUGET_USERNAME }}
+      PRIVATE_NUGET_TOKEN: ${{ secrets.PRIVATE_NUGET_TOKEN }}
