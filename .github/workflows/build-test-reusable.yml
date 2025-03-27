@@ -30,9 +30,10 @@ jobs:
       - name: list
         run:
           sudo apt install mono-complete
-          wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+          sudo curl -o /usr/local/bin/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+          alias nuget="mono /usr/local/bin/nuget.exe"
           chmod +x nuget.exe
-          mono nuget.exe help
+          nuget help
 
       - name: Install dependencies
         run: dotnet restore
