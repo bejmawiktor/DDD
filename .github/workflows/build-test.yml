@@ -3,7 +3,7 @@ name: Version build and test
 on:
   push:
     branches-ignore:
-        - main
+      - main
 
 jobs:
   build-and-test:
