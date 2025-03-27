@@ -19,13 +19,16 @@ jobs:
       - name: Setup .NET Core SDK 8.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '8.x'
       
       - name: Add private nuget source
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
-            
+           
+      - name: Clean
+        run: dotnet clean
+          
       - name: Install dependencies
-        run: dotnet restore -p:TargetFramework=net8.0
+        run: dotnet restore
         
       - name: Build
         run: dotnet build --configuration Release --no-restore
@@ -41,13 +44,13 @@ jobs:
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '8.x'
       
       - name: Add private nuget source
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
                 
       - name: Install dependencies
-        run: dotnet restore -p:TargetFramework=net8.0
+        run: dotnet restore -p:TargetFramework=net8.x
         
       - name: Run tests
         run: dotnet test --no-restore --verbosity normal
