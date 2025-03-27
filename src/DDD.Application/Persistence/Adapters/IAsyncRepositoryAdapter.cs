@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DDD.Application.Model;
 using DDD.Application.Model.Converters;
@@ -62,17 +60,6 @@ public interface IAsyncRepositoryAdapter<
 
     private static TAggregateRoot? ConvertDto(TDto? aggregateRootDto) =>
         aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
-
-    Task<IEnumerable<TAggregateRoot>> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(
-        Pagination? pagination
-    )
-    {
-        return this
-            .DtoRepository.GetAsync(pagination)
-            .ContinueWith(r =>
-                r.Result?.Select(r => r.ToDomainObject()) ?? Enumerable.Empty<TAggregateRoot>()
-            );
-    }
 
     Task IAsyncRepository<TAggregateRoot, TIdentifier>.AddAsync(TAggregateRoot entity) =>
         this.DtoRepository.AddAsync(

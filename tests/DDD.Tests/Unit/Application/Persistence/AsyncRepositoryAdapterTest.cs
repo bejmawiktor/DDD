@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DDD.Domain.Persistence;
 using DDD.Tests.Unit.Application.TestDoubles;
 using NUnit.Framework;
 
@@ -22,20 +21,6 @@ public class AsyncRepositoryAdapterTest
     }
 
     [Test]
-    public async Task TestGetAsync_WhenPaginationGiven_ThenAggregateRootsAreReturned()
-    {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
-        AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
-        IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
-
-        IEnumerable<AggregateRootStub> aggregateRoots = await repository.GetAsync(
-            new Pagination(1, 100)
-        );
-
-        Assert.That(aggregateRoots, Is.EqualTo(new AggregateRootStub[] { new("1") }));
-    }
-
-    [Test]
     public async Task TestGetAsync_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
     {
         List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
@@ -45,19 +30,6 @@ public class AsyncRepositoryAdapterTest
         AggregateRootStub? aggregateRootStub = await repository.GetAsync("2");
 
         Assert.That(aggregateRootStub, Is.Null);
-    }
-
-    [Test]
-    public async Task TestGetAsync_WhenNullIsReturnedFromDtoRepository_ThenEmptyEnumerableIsReturned()
-    {
-        AsyncAggregateRootDtoStubRepository dtoRepository = new(null);
-        IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
-
-        IEnumerable<AggregateRootStub> aggregateRoots = await repository.GetAsync(
-            new Pagination(1, 100)
-        );
-
-        Assert.That(aggregateRoots, Is.Empty);
     }
 
     [Test]

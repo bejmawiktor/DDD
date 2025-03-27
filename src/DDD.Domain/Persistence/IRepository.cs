@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using DDD.Domain.Model;
 
 namespace DDD.Domain.Persistence;
@@ -9,8 +8,6 @@ public interface IRepository<TAggregateRoot, TIdentifier>
     where TIdentifier : IEquatable<TIdentifier>
 {
     TAggregateRoot? Get(TIdentifier identifier);
-
-    IEnumerable<TAggregateRoot> Get(Pagination? pagination = null);
 
     void Add(TAggregateRoot entity);
 

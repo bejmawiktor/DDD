@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DDD.Application.Persistence;
-using DDD.Domain.Persistence;
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
@@ -16,9 +15,6 @@ public class AggregateRootDtoStubRepository : IDtoRepository<AggregateRootDtoStu
 
     public AggregateRootDtoStub? Get(string identifier) =>
         this.Dtos?.FirstOrDefault(d => d.Id == identifier);
-
-    public IEnumerable<AggregateRootDtoStub> Get(Pagination? pagination = null) =>
-        this.Dtos ?? Enumerable.Empty<AggregateRootDtoStub>();
 
     public void Add(AggregateRootDtoStub dto) => this.Dtos?.Add(dto);
 

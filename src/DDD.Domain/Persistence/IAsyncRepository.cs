@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DDD.Domain.Model;
 
@@ -10,8 +9,6 @@ public interface IAsyncRepository<TAggregateRoot, TIdentifier>
     where TIdentifier : IEquatable<TIdentifier>
 {
     Task<TAggregateRoot?> GetAsync(TIdentifier identifier);
-
-    Task<IEnumerable<TAggregateRoot>> GetAsync(Pagination? pagination = null);
 
     Task AddAsync(TAggregateRoot entity);
 
