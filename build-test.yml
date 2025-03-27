@@ -1,0 +1,10 @@
+name: Version build and test
+
+on:
+  push:
+    branches-ignore:
+        - main
+
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/build-test-reusable.yml 
