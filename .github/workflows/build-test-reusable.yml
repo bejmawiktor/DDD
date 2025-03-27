@@ -24,9 +24,6 @@ jobs:
       - name: Clean
         run: dotnet clean
 
-      - name: Add private nuget source 
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -n github -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
-      
       - name: Install dependencies
         run: dotnet restore
         
