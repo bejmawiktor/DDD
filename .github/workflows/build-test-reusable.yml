@@ -25,7 +25,7 @@ jobs:
         run: dotnet clean
 
       - name: Add private nuget source 
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text
+        run: dotnet nuget add source -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text "https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json"
       
       - name: Install dependencies
         run: dotnet restore
@@ -47,7 +47,7 @@ jobs:
           dotnet-version: '8.x'
       
       - name: Add private nuget source
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text
+        run: dotnet nuget add source -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text "https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json"
                 
       - name: Install dependencies
         run: dotnet restore
