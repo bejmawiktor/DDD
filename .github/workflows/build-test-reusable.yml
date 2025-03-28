@@ -3,9 +3,9 @@ name: Reusable Workflow
 on: 
   workflow_call:
     secrets:
-      PRIVATE_NUGET_USERNAME:
+      NUGET_USERNAME:
         required: true
-      PRIVATE_NUGET_TOKEN:
+      NUGET_TOKEN:
         required: true
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
         run: dotnet clean
 
       - name: Add private nuget source 
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -n github -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
+        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text
       
       - name: Install dependencies
         run: dotnet restore
@@ -47,7 +47,7 @@ jobs:
           dotnet-version: '8.x'
       
       - name: Add private nuget source
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -n github -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
+        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text
                 
       - name: Install dependencies
         run: dotnet restore
