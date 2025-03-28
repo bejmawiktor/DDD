@@ -1,4 +1,4 @@
-name: Version build and test
+name: Buils and test
 
 on:
   push:
@@ -6,48 +6,8 @@ on:
       - main
 
 jobs:
-  build:
-    name: 'Build'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }} 
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.x'
-         
-      - name: Clean
-        run: dotnet clean
-
-      - name: Add private nuget source 
-        run: dotnet nuget add source -n github -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text "https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json"
-      
-      - name: Install dependencies
-        run: dotnet restore
-        
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-  
-  test:
-    name: 'Test'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.x'
-      
-      - name: Add private nuget source
-        run: dotnet nuget add source -n github -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text "https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json"
-                
-      - name: Install dependencies
-        run: dotnet restore
-        
-      - name: Run tests
-        run: dotnet test --no-restore --verbosity normal
+  build-and-test:
+    uses: ./.github/workflows/build-test-reusable.yml 
+    secrets:
+      NUGET_USERNAME: ${{ secrets.PRIVATE_NUGET_USERNAME }}
+      NUGET_TOKEN: ${{ secrets.PRIVATE_NUGET_TOKEN }}

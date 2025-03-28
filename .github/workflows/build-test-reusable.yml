@@ -20,9 +20,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-         
-      - name: Clean
-        run: dotnet clean
 
       - name: Add private nuget source 
         run: dotnet nuget add source -n github -u ${{ secrets.NUGET_USERNAME }} -p ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text "https://nuget.pkg.github.com/${{ secrets.NUGET_USERNAME }}/index.json"
