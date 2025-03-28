@@ -64,8 +64,8 @@ jobs:
          
       - name: Replace variables in nuget.config
         run: |
-          sed -i 's/%GITHUB_USERNAME%/${{ secrets.NUGET_USERNAME }}/g' nuget.config
-          sed -i 's/%GITHUB_TOKEN%/${{ secrets.NUGET_TOKEN }}/g' nuget.config
+          sed -i 's/%GITHUB_USERNAME%/${{ secrets.PRIVATE_NUGET_USERNAME }}/g' nuget.config
+          sed -i 's/%GITHUB_TOKEN%/${{ secrets.PRIVATE_NUGET_TOKEN }}/g' nuget.config
 
       - name: Install dependencies
         run: dotnet restore
