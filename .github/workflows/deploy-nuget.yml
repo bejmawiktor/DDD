@@ -61,10 +61,12 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-          
-      - name: Add private nuget source
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ secrets.PRIVATE_NUGET_USERNAME }}/index.json -u ${{ secrets.PRIVATE_NUGET_USERNAME }} -p ${{ secrets.PRIVATE_NUGET_TOKEN }} --store-password-in-clear-text
-            
+         
+      - name: Replace variables in nuget.config
+        run: |
+          sed -i 's/%GITHUB_USERNAME%/${{ secrets.NUGET_USERNAME }}/g' nuget.config
+          sed -i 's/%GITHUB_TOKEN%/${{ secrets.NUGET_TOKEN }}/g' nuget.config
+
       - name: Install dependencies
         run: dotnet restore
         
