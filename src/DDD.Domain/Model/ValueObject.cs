@@ -62,16 +62,3 @@ public abstract class ValueObject<TValue> : ValueObject
 
     public override string? ToString() => this.Value?.ToString();
 }
-
-public abstract class ValueObject<TValidatedObject, TValidator> : ValueObject
-    where TValidator : IValidator<TValidatedObject>, new()
-{
-    protected TValidator Validator { get; }
-
-    protected ValueObject(TValidatedObject validatedObject)
-    {
-        this.Validator = new TValidator();
-
-        this.Validator.Validate(validatedObject);
-    }
-}

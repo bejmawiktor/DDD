@@ -1,0 +1,57 @@
+name: Reusable Workflow
+
+on: 
+  workflow_call:
+    secrets:
+      NUGET_USERNAME:
+        required: true
+      NUGET_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: 'Build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET Core SDK 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Replace variables in nuget.config
+        run: |
+          sed -i 's/%GITHUB_USERNAME%/${{ secrets.NUGET_USERNAME }}/g' nuget.config
+          sed -i 's/%GITHUB_TOKEN%/${{ secrets.NUGET_TOKEN }}/g' nuget.config
+
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+  
+  test:
+    name: 'Test'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET Core SDK 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+     
+      - name: Replace variables in nuget.config
+        run: |
+          sed -i 's/%GITHUB_USERNAME%/${{ secrets.NUGET_USERNAME }}/g' nuget.config
+          sed -i 's/%GITHUB_TOKEN%/${{ secrets.NUGET_TOKEN }}/g' nuget.config
+          
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal

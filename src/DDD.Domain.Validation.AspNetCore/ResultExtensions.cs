@@ -1,7 +1,7 @@
-﻿using DDD.Domain.Utils;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Utils.Functional;
 
 namespace DDD.Domain.Validation.AspNetCore;
 
@@ -15,9 +15,7 @@ public static class ResultExtensions
     {
         if (result.Error is not null)
         {
-            ProblemDetails problemDetails = result.Error is IError<Exception> error
-                ? error.ToProblemDetails(httpContext)
-                : result.Error.ToProblemDetails(httpContext);
+            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
 
             return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
         }
@@ -34,9 +32,7 @@ public static class ResultExtensions
     {
         if (result.Error is not null)
         {
-            ProblemDetails problemDetails = result.Error is IError<Exception> error
-                ? error.ToProblemDetails(httpContext)
-                : result.Error.ToProblemDetails(httpContext);
+            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
 
             return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
         }

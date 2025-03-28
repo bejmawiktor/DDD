@@ -9,4 +9,8 @@
 		<Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Utils" Version="1.1.0" />
+  </ItemGroup>
+
 </Project>

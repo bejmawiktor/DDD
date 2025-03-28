@@ -75,4 +75,12 @@ public class IdentifierTest
         StringIdFake rhsIdentifier,
         bool expectedEqualityResult
     ) => Assert.That(lhsIdentifier.Equals(rhsIdentifier), Is.EqualTo(expectedEqualityResult));
+
+    [Test]
+    public void TestToString_WhenValueGiven_ThenConvertedStringValueIsReturned()
+    {
+        IntIdFake id = new(1000);
+
+        Assert.That(id.ToString(), Is.EqualTo("1000"));
+    }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DDD.Application.Persistence;
-using DDD.Domain.Persistence;
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
@@ -17,13 +16,6 @@ public class AsyncAggregateRootDtoStubRepository : IAsyncDtoRepository<Aggregate
 
     public Task<AggregateRootDtoStub?> GetAsync(string identifier) =>
         Task.FromResult(this.Dtos?.FirstOrDefault(d => d.Id == identifier));
-
-    public Task<IEnumerable<AggregateRootDtoStub>> GetAsync(Pagination? pagination = null)
-    {
-        return Task.FromResult(
-            this.Dtos?.AsEnumerable() ?? Enumerable.Empty<AggregateRootDtoStub>()
-        );
-    }
 
     public Task AddAsync(AggregateRootDtoStub dto) => Task.Run(() => this.Dtos?.Add(dto));
 

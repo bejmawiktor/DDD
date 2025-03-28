@@ -2,473 +2,350 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using DDD.Domain.Utils;
-using DDD.Domain.Validation;
 using DDD.Domain.Validation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Utils.Functional;
+using Utils.Validation;
 
 namespace DDD.Tests.Unit.Domain.Validation.AspNetCore;
 
 [TestFixture]
 public class ResultExtensionsTest
 {
-    public static IEnumerable<TestCaseData> ErrorWithReasonsTestData
+    public static IEnumerable<TestCaseData> CreateErrorWithReasonsTestData(string testName)
     {
-        get
-        {
-            yield return new TestCaseData(
-                "/test",
-                new ValidationError<Exception>([new Exception("my exception")]),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+        Error simpleError = new("my error");
+        ValidationError withFieldNameValidationError = new("fieldName", "my validation error");
+        ValidationError secondWithFieldNameValidationError = new("fieldName", "validation error 2");
+        ValidationError thirdWithFieldNameValidationError = new("fieldName2", "validation error 2");
+        ValidationError fourthWithFieldNameValidationError =
+            new("fieldName2", "validation exception 3");
+        ValidationError messageOnlyValidationError = new("validation error without fieldName");
+        Error argumentError = new("my argument error");
+        NotFoundError notFoundError = new("not found error");
+        NotFoundError secondNotFoundError = new("not found exception 2");
+
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>([simpleError]),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>() { { "", [simpleError.Message] } }
+                )
+                {
+                    Detail = simpleError.Message,
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(1)");
+        yield return new TestCaseData(
+            "/test2",
+            new AggregateError<IError>([withFieldNameValidationError]),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
                         {
-                            { "", [new Exception("my exception").Message] },
-                        }
-                    )
-                    {
-                        Detail = new Exception("my exception").Message,
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.BadRequest,
+                            withFieldNameValidationError.FieldName!,
+                            [withFieldNameValidationError.Message]
+                        },
                     }
                 )
                 {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Detail = withFieldNameValidationError.Message,
+                    Instance = "/test2",
+                    Status = (int)HttpStatusCode.BadRequest,
                 }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                "/test2",
-                new ValidationError<Exception>(
-                    [new ValidationException("fieldName", "my validation exception")]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(2)");
+        yield return new TestCaseData(
+            null,
+            new AggregateError<IError>([simpleError, argumentError]),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [simpleError.Message, argumentError.Message] },
+                    }
+                )
+                {
+                    Detail = $"""
+                    Multiple errors found:
+                      - {simpleError.Message}
+                      - {argumentError.Message}
+                    """,
+                    Instance = null,
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(3)");
+        yield return new TestCaseData(
+            "/test2",
+            new AggregateError<IError>(
+                [
+                    withFieldNameValidationError,
+                    simpleError,
+                    argumentError,
+                    messageOnlyValidationError,
+                    notFoundError,
+                ]
+            ),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
                         {
-                            {
-                                "fieldName",
+                            "",
 
-                                [
-                                    new ValidationException(
-                                        "fieldName",
-                                        "my validation exception"
-                                    ).Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = new ValidationException(
-                            "fieldName",
-                            "my validation exception"
-                        ).Message,
-                        Instance = "/test2",
-                        Status = (int)HttpStatusCode.BadRequest,
-                    }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(2)"
-            );
-            yield return new TestCaseData(
-                null,
-                new ValidationError<Exception>(
-                    [new Exception("my exception"), new ArgumentException("my argument exception")]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+                            [
+                                simpleError.Message,
+                                argumentError.Message,
+                                messageOnlyValidationError.Message,
+                                notFoundError.Message,
+                            ]
+                        },
                         {
-                            {
-                                "",
-
-                                [
-                                    new Exception("my exception").Message,
-                                    new ArgumentException("my argument exception").Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = $"""
-                        Multiple errors found:
-                          - {new Exception("my exception").Message}
-                          - {new ArgumentException("my argument exception").Message}
-                        """,
-                        Instance = null,
-                        Status = (int)HttpStatusCode.BadRequest,
+                            withFieldNameValidationError.FieldName,
+                            [withFieldNameValidationError.Message]
+                        },
                     }
                 )
                 {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Detail = $"""
+                    Multiple errors found:
+                      - {withFieldNameValidationError.Message}
+                      - {simpleError.Message}
+                      - {argumentError.Message}
+                      - {messageOnlyValidationError.Message}
+                      - {notFoundError.Message}
+                    """,
+                    Instance = "/test2",
+                    Status = (int)HttpStatusCode.BadRequest,
                 }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(3)"
-            );
-            yield return new TestCaseData(
-                "/test2",
-                new ValidationError<Exception>(
-                    [
-                        new ValidationException("fieldName", "validation exception"),
-                        new Exception("my exception"),
-                        new ArgumentException("my argument exception"),
-                        new ValidationException("validation exception without fieldName"),
-                        new NotFoundException("not found exception"),
-                    ]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(4)");
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>(
+                [
+                    withFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    simpleError,
+                    argumentError,
+                ]
+            ),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [simpleError.Message, argumentError.Message] },
                         {
-                            {
-                                "",
+                            withFieldNameValidationError.FieldName,
 
-                                [
-                                    new Exception("my exception").Message,
-                                    new ArgumentException("my argument exception").Message,
-                                    new ValidationException(
-                                        "validation exception without fieldName"
-                                    ).Message,
-                                    new NotFoundException("not found exception").Message,
-                                ]
-                            },
-                            {
-                                "fieldName",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception"
-                                    ).Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = $"""
-                        Multiple errors found:
-                          - {new ValidationException("fieldName", "validation exception").Message}
-                          - {new Exception("my exception").Message}
-                          - {new ArgumentException("my argument exception").Message}
-                          - {new ValidationException(
-                            "validation exception without fieldName"
-                        ).Message}
-                          - {new NotFoundException("not found exception").Message}
-                        """,
-                        Instance = "/test2",
-                        Status = (int)HttpStatusCode.BadRequest,
+                            [
+                                withFieldNameValidationError.Message,
+                                secondWithFieldNameValidationError.Message,
+                            ]
+                        },
                     }
                 )
                 {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Detail = $"""
+                    Multiple errors found:
+                      - {withFieldNameValidationError.Message}
+                      - {secondWithFieldNameValidationError.Message}
+                      - {simpleError.Message}
+                      - {argumentError.Message}
+                    """,
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
                 }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(4)"
-            );
-            yield return new TestCaseData(
-                "/test",
-                new ValidationError<Exception>(
-                    [
-                        new ValidationException("fieldName", "validation exception"),
-                        new ValidationException("fieldName", "validation exception 2"),
-                        new Exception("my exception"),
-                        new ArgumentException("my argument exception"),
-                    ]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(5)");
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>(
+                [
+                    withFieldNameValidationError,
+                    thirdWithFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    simpleError,
+                    argumentError,
+                ]
+            ),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [simpleError.Message, argumentError.Message] },
                         {
-                            {
-                                "",
+                            withFieldNameValidationError.FieldName,
 
-                                [
-                                    new Exception("my exception").Message,
-                                    new ArgumentException("my argument exception").Message,
-                                ]
-                            },
-                            {
-                                "fieldName",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception"
-                                    ).Message,
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception 2"
-                                    ).Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = $"""
-                        Multiple errors found:
-                          - {new ValidationException("fieldName", "validation exception").Message}
-                          - {new ValidationException("fieldName", "validation exception 2").Message}
-                          - {new Exception("my exception").Message}
-                          - {new ArgumentException("my argument exception").Message}
-                        """,
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.BadRequest,
-                    }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(5)"
-            );
-            yield return new TestCaseData(
-                "/test",
-                new ValidationError<Exception>(
-                    [
-                        new ValidationException("fieldName", "validation exception"),
-                        new ValidationException("fieldName2", "validation exception 2"),
-                        new ValidationException("fieldName", "validation exception 2"),
-                        new Exception("my exception"),
-                        new ArgumentException("my argument exception"),
-                    ]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+                            [
+                                withFieldNameValidationError.Message,
+                                secondWithFieldNameValidationError.Message,
+                            ]
+                        },
                         {
-                            {
-                                "",
-
-                                [
-                                    new Exception("my exception").Message,
-                                    new ArgumentException("my argument exception").Message,
-                                ]
-                            },
-                            {
-                                "fieldName",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception"
-                                    ).Message,
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception 2"
-                                    ).Message,
-                                ]
-                            },
-                            {
-                                "fieldName2",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName2",
-                                        "validation exception 2"
-                                    ).Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = $"""
-                        Multiple errors found:
-                          - {new ValidationException("fieldName", "validation exception").Message}
-                          - {new ValidationException(
-                            "fieldName2",
-                            "validation exception 2"
-                        ).Message}
-                          - {new ValidationException("fieldName", "validation exception 2").Message}
-                          - {new Exception("my exception").Message}
-                          - {new ArgumentException("my argument exception").Message}
-                        """,
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.BadRequest,
+                            thirdWithFieldNameValidationError.FieldName,
+                            [thirdWithFieldNameValidationError.Message]
+                        },
                     }
                 )
                 {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Detail = $"""
+                    Multiple errors found:
+                      - {withFieldNameValidationError.Message}
+                      - {thirdWithFieldNameValidationError.Message}
+                      - {secondWithFieldNameValidationError.Message}
+                      - {simpleError.Message}
+                      - {argumentError.Message}
+                    """,
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
                 }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(6)"
-            );
-            yield return new TestCaseData(
-                "/test",
-                new ValidationError<Exception>(
-                    [
-                        new ValidationException("fieldName", "validation exception"),
-                        new ValidationException("fieldName2", "validation exception 2"),
-                        new ValidationException("fieldName", "validation exception 2"),
-                        new ValidationException("fieldName2", "validation exception 3"),
-                        new Exception("my exception"),
-                        new ArgumentException("my argument exception"),
-                    ]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(6)");
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>(
+                [
+                    withFieldNameValidationError,
+                    thirdWithFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    fourthWithFieldNameValidationError,
+                    simpleError,
+                    argumentError,
+                ]
+            ),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [simpleError.Message, argumentError.Message] },
                         {
-                            {
-                                "",
+                            withFieldNameValidationError.FieldName,
 
-                                [
-                                    new Exception("my exception").Message,
-                                    new ArgumentException("my argument exception").Message,
-                                ]
-                            },
-                            {
-                                "fieldName",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception"
-                                    ).Message,
-                                    new ValidationException(
-                                        "fieldName",
-                                        "validation exception 2"
-                                    ).Message,
-                                ]
-                            },
-                            {
-                                "fieldName2",
-
-                                [
-                                    new ValidationException(
-                                        "fieldName2",
-                                        "validation exception 2"
-                                    ).Message,
-                                    new ValidationException(
-                                        "fieldName2",
-                                        "validation exception 3"
-                                    ).Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = $"""
-                        Multiple errors found:
-                          - {new ValidationException("fieldName", "validation exception").Message}
-                          - {new ValidationException(
-                            "fieldName2",
-                            "validation exception 2"
-                        ).Message}
-                          - {new ValidationException("fieldName", "validation exception 2").Message}
-                          - {new ValidationException(
-                            "fieldName2",
-                            "validation exception 3"
-                        ).Message}
-                          - {new Exception("my exception").Message}
-                          - {new ArgumentException("my argument exception").Message}
-                        """,
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.BadRequest,
-                    }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(7)"
-            );
-            yield return new TestCaseData(
-                "/test",
-                new Error<Exception>("not found", [new NotFoundException("not found exception")]),
-                new ObjectResult(
-                    new ProblemDetails()
-                    {
-                        Detail = "not found",
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.NotFound,
-                    }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.NotFound,
-                }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(8)"
-            );
-            yield return new TestCaseData(
-                "/test",
-                new Error<Exception>(
-                    "not found",
-                    [
-                        new NotFoundException("not found exception"),
-                        new NotFoundException("not found exception 2"),
-                    ]
-                ),
-                new ObjectResult(
-                    new ValidationProblemDetails(
-                        new Dictionary<string, string[]>()
+                            [
+                                withFieldNameValidationError.Message,
+                                secondWithFieldNameValidationError.Message,
+                            ]
+                        },
                         {
-                            {
-                                "",
+                            thirdWithFieldNameValidationError.FieldName,
 
-                                [
-                                    new NotFoundException("not found exception").Message,
-                                    new NotFoundException("not found exception 2").Message,
-                                ]
-                            },
-                        }
-                    )
-                    {
-                        Detail = "not found",
-                        Instance = "/test",
-                        Status = (int)HttpStatusCode.BadRequest,
+                            [
+                                thirdWithFieldNameValidationError.Message,
+                                fourthWithFieldNameValidationError.Message,
+                            ]
+                        },
                     }
                 )
                 {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Detail = $"""
+                    Multiple errors found:
+                      - {withFieldNameValidationError.Message}
+                      - {secondWithFieldNameValidationError.Message}
+                      - {thirdWithFieldNameValidationError.Message}
+                      - {fourthWithFieldNameValidationError.Message}
+                      - {simpleError.Message}
+                      - {argumentError.Message}
+                    """,
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
                 }
-            ).SetName(
-                $"{nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned)}(9)"
-            );
-        }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(7)");
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>("not found", [notFoundError]),
+            new ObjectResult(
+                new ProblemDetails()
+                {
+                    Detail = "not found",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.NotFound,
+                }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.NotFound,
+            }
+        ).SetName($"{testName}(8)");
+        yield return new TestCaseData(
+            "/test",
+            new AggregateError<IError>("not found", [notFoundError, secondNotFoundError]),
+            new ObjectResult(
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [notFoundError.Message, secondNotFoundError.Message] },
+                    }
+                )
+                {
+                    Detail = "not found",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(9)");
     }
 
-    public static IEnumerable<TestCaseData> ErrorTestData
+    public static IEnumerable<TestCaseData> CreateErrorTestData(string testName)
     {
-        get
-        {
-            yield return new TestCaseData(
-                "/test",
-                "my error test",
-                new ObjectResult(
-                    new ProblemDetails() { Detail = "my error test", Instance = "/test" }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName($"{nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned)}(1)");
-            yield return new TestCaseData(
-                "/test2",
-                "my error test 2",
-                new ObjectResult(
-                    new ProblemDetails() { Detail = "my error test 2", Instance = "/test2" }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName($"{nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned)}(2)");
-            yield return new TestCaseData(
-                null,
-                "my error test 2",
-                new ObjectResult(
-                    new ProblemDetails() { Detail = "my error test 2", Instance = null }
-                )
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                }
-            ).SetName($"{nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned)}(3)");
-        }
+        yield return new TestCaseData(
+            "/test",
+            "my error test",
+            new ObjectResult(new ProblemDetails() { Detail = "my error test", Instance = "/test" })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(1)");
+        yield return new TestCaseData(
+            "/test2",
+            "my error test 2",
+            new ObjectResult(
+                new ProblemDetails() { Detail = "my error test 2", Instance = "/test2" }
+            )
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(2)");
+        yield return new TestCaseData(
+            null,
+            "my error test 2",
+            new ObjectResult(new ProblemDetails() { Detail = "my error test 2", Instance = null })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+            }
+        ).SetName($"{testName}(3)");
     }
 
     public static IEnumerable<TestCaseData> OkTestData
@@ -489,10 +366,16 @@ public class ResultExtensionsTest
         }
     }
 
-    [TestCaseSource(nameof(ErrorWithReasonsTestData))]
+    [TestCaseSource(
+        nameof(CreateErrorWithReasonsTestData),
+        new object[]
+        {
+            nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned),
+        }
+    )]
     public void TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        Error<Exception> error,
+        AggregateError<IError> error,
         ObjectResult expectedActionResult
     )
     {
@@ -508,7 +391,7 @@ public class ResultExtensionsTest
         _ = httpContextMock
             .Setup(httpContext => httpContext.TraceIdentifier)
             .Returns(traceId.ToString());
-        Result<Error<Exception>> result = new(error);
+        Result<AggregateError<IError>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
         ObjectResult? actionResult =
@@ -526,7 +409,10 @@ public class ResultExtensionsTest
                 );
             }
 
-            Assert.That(problemDetails?.Detail, Is.EqualTo(expectedProblemDetails?.Detail));
+            Assert.That(
+                problemDetails?.Detail?.Replace("\r\n", "\n"),
+                Is.EqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"))
+            );
             Assert.That(problemDetails?.Status, Is.EqualTo(expectedProblemDetails?.Status));
             Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
             Assert.That(
@@ -564,7 +450,10 @@ public class ResultExtensionsTest
         });
     }
 
-    [TestCaseSource(nameof(ErrorTestData))]
+    [TestCaseSource(
+        nameof(CreateErrorTestData),
+        new object[] { nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned) }
+    )]
     public void TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,
         string error,
@@ -634,10 +523,18 @@ public class ResultExtensionsTest
         });
     }
 
-    [TestCaseSource(nameof(ErrorWithReasonsTestData))]
+    [TestCaseSource(
+        nameof(CreateErrorWithReasonsTestData),
+        new object[]
+        {
+            nameof(
+                TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned
+            ),
+        }
+    )]
     public void TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        Error<Exception> error,
+        AggregateError<IError> error,
         ObjectResult expectedActionResult
     )
     {
@@ -653,7 +550,7 @@ public class ResultExtensionsTest
         _ = httpContextMock
             .Setup(httpContext => httpContext.TraceIdentifier)
             .Returns(traceId.ToString());
-        Result<object, Error<Exception>> result = new(error);
+        Result<object, AggregateError<IError>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
         ObjectResult? actionResult =
@@ -671,7 +568,10 @@ public class ResultExtensionsTest
                 );
             }
 
-            Assert.That(problemDetails?.Detail, Is.EqualTo(expectedProblemDetails?.Detail));
+            Assert.That(
+                problemDetails?.Detail?.Replace("\r\n", "\n"),
+                Is.EqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"))
+            );
             Assert.That(problemDetails?.Status, Is.EqualTo(expectedProblemDetails?.Status));
             Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
             Assert.That(
@@ -715,7 +615,15 @@ public class ResultExtensionsTest
         });
     }
 
-    [TestCaseSource(nameof(ErrorTestData))]
+    [TestCaseSource(
+        nameof(CreateErrorTestData),
+        new object[]
+        {
+            nameof(
+                TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned
+            ),
+        }
+    )]
     public void TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,
         string error,

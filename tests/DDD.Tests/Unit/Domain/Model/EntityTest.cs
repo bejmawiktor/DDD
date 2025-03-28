@@ -207,6 +207,14 @@ public class EntityTest
     }
 
     [Test]
+    public void TestSet_WhenProperIdGiven_ThenIdIsSet()
+    {
+        StringEntityStub entity = new("AAA") { Id = "BBB" };
+
+        Assert.That(entity.Id, Is.EqualTo("BBB"));
+    }
+
+    [Test]
     public void TestConstructing_WhenIdGiven_ThenIdIsSet()
     {
         StringEntityStub stringEntityStub = new("1");

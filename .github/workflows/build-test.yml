@@ -1,0 +1,13 @@
+name: Buils and test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-test-reusable.yml 
+    secrets:
+      NUGET_USERNAME: ${{ secrets.PRIVATE_NUGET_USERNAME }}
+      NUGET_TOKEN: ${{ secrets.PRIVATE_NUGET_TOKEN }}
