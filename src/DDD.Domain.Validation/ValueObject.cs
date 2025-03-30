@@ -10,6 +10,17 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
     where TValueObject : ValueObject<TValueObject, TValidator, TValidationSource>
     where TValidationSource : new()
 {
+    protected TValidator Validator
+    {
+        get
+        {
+            TValidator validator = new();
+            validator.Update((TValueObject)this);
+
+            return validator;
+        }
+    }
+
     protected ValidationResult<IError> Validate(Action<TValidationSource> updateAction)
     {
         TValidator validator = new();
@@ -37,25 +48,17 @@ public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationS
     where TValueObject : ValueObject<TValueObject, TValue, TValidator, TValidationSource>
     where TValidationSource : new()
 {
+    protected TValidator Validator
+    {
+        get
+        {
+            TValidator validator = new();
+            validator.Update((TValueObject)this);
+
+            return validator;
+        }
+    }
+
     protected ValueObject(TValue value)
         : base(value) { }
-
-    protected ValidationResult<IError> Validate(Action<TValidationSource> updateAction)
-    {
-        TValidator validator = new();
-        validator.Update((TValueObject)this);
-
-        return validator.Validate(updateAction);
-    }
-
-    protected ValidationResult<IError> Validate(
-        string validatorName,
-        Action<TValidationSource> updateAction
-    )
-    {
-        TValidator validator = new();
-        validator.Update((TValueObject)this);
-
-        return validator.Validate(validatorName, updateAction);
-    }
 }

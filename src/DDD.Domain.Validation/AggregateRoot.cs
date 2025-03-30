@@ -1,5 +1,4 @@
 ﻿using DDD.Domain.Model;
-using Utils.Functional;
 using Utils.Validation;
 
 namespace DDD.Domain.Validation;
@@ -12,25 +11,17 @@ public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationS
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
+    protected TValidator Validator
+    {
+        get
+        {
+            TValidator validator = new();
+            validator.Update((TAggregateRoot)this);
+
+            return validator;
+        }
+    }
+
     protected AggregateRoot(TIdentifier id)
         : base(id) { }
-
-    protected ValidationResult<IError> Validate(Action<TValidationSource> updateAction)
-    {
-        TValidator validator = new();
-        validator.Update((TAggregateRoot)this);
-
-        return validator.Validate(updateAction);
-    }
-
-    protected ValidationResult<IError> Validate(
-        string validatorName,
-        Action<TValidationSource> updateAction
-    )
-    {
-        TValidator validator = new();
-        validator.Update((TAggregateRoot)this);
-
-        return validator.Validate(validatorName, updateAction);
-    }
 }

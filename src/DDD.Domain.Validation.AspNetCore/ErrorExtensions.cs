@@ -30,11 +30,10 @@ public static class ErrorExtensions
         return problemDetails;
     }
 
-    private static ProblemDetails CreateProblemDetails<TAggregateError, TError>(
-        this IAggregateError<TAggregateError, TError> errors,
+    private static ProblemDetails CreateProblemDetails<TError>(
+        IAggregateError<TError> errors,
         HttpContext? httpContext
     )
-        where TAggregateError : IAggregateError<TAggregateError, TError>
         where TError : IError
     {
         IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors =
@@ -52,11 +51,9 @@ public static class ErrorExtensions
         );
     }
 
-    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs<
-        TAggregateError,
-        TError
-    >(IAggregateError<TAggregateError, TError> errors)
-        where TAggregateError : IAggregateError<TAggregateError, TError>
+    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs<TError>(
+        IAggregateError<TError> errors
+    )
         where TError : IError =>
         errors
             .Errors.Select(error =>
@@ -71,11 +68,10 @@ public static class ErrorExtensions
                     new KeyValuePair<string, string[]>(fieldName, messages.ToArray())
             );
 
-    private static ProblemDetails CreateNotFoundProblemDetails<TAggregateError, TError>(
-        IAggregateError<TAggregateError, TError> errors,
+    private static ProblemDetails CreateNotFoundProblemDetails<TError>(
+        IAggregateError<TError> errors,
         HttpContext? httpContext
     )
-        where TAggregateError : IAggregateError<TAggregateError, TError>
         where TError : IError
     {
         ProblemDetails problemDetails =
@@ -90,12 +86,11 @@ public static class ErrorExtensions
         return problemDetails;
     }
 
-    private static ValidationProblemDetails CreateBadRequestProblemDetails<TAggregateError, TError>(
-        IAggregateError<TAggregateError, TError> errors,
+    private static ValidationProblemDetails CreateBadRequestProblemDetails<TError>(
+        IAggregateError<TError> errors,
         HttpContext? httpContext,
         IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors
     )
-        where TAggregateError : IAggregateError<TAggregateError, TError>
         where TError : IError
     {
         ValidationProblemDetails validationProblemDetails =
