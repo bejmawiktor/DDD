@@ -11,12 +11,13 @@ public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationS
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
+    private TValidator validator = new TValidator();
+
     protected TValidator Validator
     {
         get
         {
-            TValidator validator = new();
-            validator.Update((TAggregateRoot)this);
+            this.validator.Update((TAggregateRoot)this);
 
             return validator;
         }

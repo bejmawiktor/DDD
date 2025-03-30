@@ -11,12 +11,13 @@ public abstract class Entity<TEntity, TIdentifier, TValidator, TValidationSource
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
+    private TValidator validator = new TValidator();
+
     protected TValidator Validator
     {
         get
         {
-            TValidator validator = new();
-            validator.Update((TEntity)this);
+            this.validator.Update((TEntity)this);
 
             return validator;
         }

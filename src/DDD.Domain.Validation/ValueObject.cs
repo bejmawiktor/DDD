@@ -10,12 +10,13 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
     where TValueObject : ValueObject<TValueObject, TValidator, TValidationSource>
     where TValidationSource : new()
 {
+    private TValidator validator = new TValidator();
+
     protected TValidator Validator
     {
         get
         {
-            TValidator validator = new();
-            validator.Update((TValueObject)this);
+            this.validator.Update((TValueObject)this);
 
             return validator;
         }
@@ -29,12 +30,13 @@ public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationS
     where TValueObject : ValueObject<TValueObject, TValue, TValidator, TValidationSource>
     where TValidationSource : new()
 {
+    private TValidator validator = new TValidator();
+
     protected TValidator Validator
     {
         get
         {
-            TValidator validator = new();
-            validator.Update((TValueObject)this);
+            this.validator.Update((TValueObject)this);
 
             return validator;
         }
