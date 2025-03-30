@@ -20,25 +20,6 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
             return validator;
         }
     }
-
-    protected ValidationResult<IError> Validate(Action<TValidationSource> updateAction)
-    {
-        TValidator validator = new();
-        validator.Update((TValueObject)this);
-
-        return validator.Validate(updateAction);
-    }
-
-    protected ValidationResult<IError> Validate(
-        string validatorName,
-        Action<TValidationSource> updateAction
-    )
-    {
-        TValidator validator = new();
-        validator.Update((TValueObject)this);
-
-        return validator.Validate(validatorName, updateAction);
-    }
 }
 
 public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationSource>
