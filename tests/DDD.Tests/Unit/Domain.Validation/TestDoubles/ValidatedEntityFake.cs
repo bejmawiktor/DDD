@@ -21,7 +21,9 @@ internal class ValidatedEntityFake
     }
 
     private void ValidateTextField(string value) =>
-        this.Validate(nameof(this.TextField), source => source.TextField = value).ThrowIfFailed();
+        this
+            .Validator.Validate(nameof(this.TextField), source => source.TextField = value)
+            .ThrowIfFailed();
 
     public int IntField
     {
@@ -35,7 +37,9 @@ internal class ValidatedEntityFake
     }
 
     private void ValidateIntField(int value) =>
-        this.Validate(nameof(this.IntField), source => source.IntField = value).ThrowIfFailed();
+        this
+            .Validator.Validate(nameof(this.IntField), source => source.IntField = value)
+            .ThrowIfFailed();
 
     public ValidatedEntityFake(int id, string textField, int intField)
         : base(id)
@@ -48,7 +52,7 @@ internal class ValidatedEntityFake
 
     private void ValidateMembers(string textField, int intField)
     {
-        this.Validate(source =>
+        this.Validator.Validate(source =>
             {
                 source.TextField = textField;
                 source.IntField = intField;

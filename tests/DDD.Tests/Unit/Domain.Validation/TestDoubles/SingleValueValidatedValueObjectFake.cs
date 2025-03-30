@@ -32,12 +32,13 @@ public class SingleValueValidatedValueObjectFake
     }
 
     private void ValidateNextValue(int nextValue) =>
-        this.Validate(nameof(this.NextValue), source => source.NextValue = nextValue)
+        this
+            .Validator.Validate(nameof(this.NextValue), source => source.NextValue = nextValue)
             .ThrowIfFailed();
 
     protected override void ValidateValue(int value)
     {
-        this.Validate(source =>
+        this.Validator.Validate(source =>
             {
                 source.Value = value;
             })
