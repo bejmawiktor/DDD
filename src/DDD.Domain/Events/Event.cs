@@ -10,6 +10,6 @@ public abstract class Event : IEvent
     protected Event()
     {
         this.Id = Guid.NewGuid();
-        this.CreatedAt = DateTime.Now;
+        this.CreatedAt = DateTime.UtcNow;
     }
 }
