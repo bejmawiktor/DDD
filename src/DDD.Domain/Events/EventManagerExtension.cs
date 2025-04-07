@@ -12,12 +12,12 @@ public static class EventManagerExtension
         CompositeEventDispatcher compositeEventDispatcher = new();
         CompositeEventDispatcherConfiguration configuration = new();
 
-        eventManager.Dispatcher = compositeEventDispatcher;
-
         if (configureDispatcherFunc is not null)
         {
             configureDispatcherFunc(configuration);
             compositeEventDispatcher.AddRange(configuration.Dispatchers);
         }
+
+        eventManager.Dispatcher = compositeEventDispatcher;
     }
 }
