@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DDD.Application\DDD.Application.csproj">
       <Private></Private>
       <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly></ReferenceOutputAssembly>
       <EmbedInteropTypes></EmbedInteropTypes>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj">
       <Private></Private>
       <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>
