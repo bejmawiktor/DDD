@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation.AspNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation", "src\DDD.Domain.Validation\DDD.Domain.Validation.csproj", "{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Events.AspNetCore", "DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj", "{99F7AB51-375C-4C8A-A365-787A81F5CBC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Events.AspNetCore", "src\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj", "{99F7AB51-375C-4C8A-A365-787A81F5CBC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
