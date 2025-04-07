@@ -6,38 +6,35 @@ namespace DDD.Domain.Events;
 
 public class CompositeEventDispatcher : ICompositeEventDispatcher
 {
-    protected internal CompositeEventDispatcherConfiguration Configuration { get; }
+    protected internal List<IEventDispatcher> Dispatchers { get; }
 
     public CompositeEventDispatcher()
     {
-        this.Configuration = new();
+        this.Dispatchers = [];
     }
 
     public void Add(IEventDispatcher dispatcher)
     {
         ArgumentNullException.ThrowIfNull(dispatcher);
 
-        this.Configuration.WithDispatcher(dispatcher);
+        this.Dispatchers.Add(dispatcher);
     }
 
     public void AddRange(IEnumerable<IEventDispatcher> dispatchers)
     {
         ArgumentNullException.ThrowIfNull(dispatchers);
 
-        foreach (IEventDispatcher dispatcher in dispatchers)
-        {
-            this.Configuration.WithDispatcher(dispatcher);
-        }
+        this.Dispatchers.AddRange(dispatchers);
     }
 
     public void Dispatch<TItem>(TItem item)
         where TItem : notnull, IEvent =>
-        this.Configuration.Dispatchers.ForEach(dispatcher => dispatcher.Dispatch(item));
+        this.Dispatchers.ForEach(dispatcher => dispatcher.Dispatch(item));
 
     public Task DispatchAsync<TItem>(TItem item)
         where TItem : notnull, IEvent =>
         Parallel.ForEachAsync(
-            this.Configuration.Dispatchers,
+            this.Dispatchers,
             async (dispatcher, token) => await dispatcher.DispatchAsync(item)
         );
 }

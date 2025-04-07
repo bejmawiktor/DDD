@@ -17,8 +17,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -26,8 +26,8 @@ internal class CompositeEventDispatcherTest
                     firstDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -35,8 +35,8 @@ internal class CompositeEventDispatcherTest
                     secondDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -66,8 +66,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -75,8 +75,8 @@ internal class CompositeEventDispatcherTest
                     firstDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -84,8 +84,8 @@ internal class CompositeEventDispatcherTest
                     secondDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -112,8 +112,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -124,8 +124,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -136,8 +136,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -170,8 +170,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -182,8 +182,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -194,8 +194,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -225,8 +225,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -234,8 +234,8 @@ internal class CompositeEventDispatcherTest
                     firstDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -243,8 +243,8 @@ internal class CompositeEventDispatcherTest
                     secondDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(
                 (IEvent dispatchedEvent) =>
@@ -278,8 +278,8 @@ internal class CompositeEventDispatcherTest
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
         EventStub @event = new();
-        Mock<IEventDispatcher> firstEventDispatcherMock = new Mock<IEventDispatcher>();
-        firstEventDispatcherMock
+        Mock<IEventDispatcher> firstEventDispatcherMock = new();
+        _ = firstEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -290,8 +290,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> secondEventDispatcherMock = new Mock<IEventDispatcher>();
-        secondEventDispatcherMock
+        Mock<IEventDispatcher> secondEventDispatcherMock = new();
+        _ = secondEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>
@@ -302,8 +302,8 @@ internal class CompositeEventDispatcherTest
                     });
                 }
             );
-        Mock<IEventDispatcher> thirdEventDispatcherMock = new Mock<IEventDispatcher>();
-        thirdEventDispatcherMock
+        Mock<IEventDispatcher> thirdEventDispatcherMock = new();
+        _ = thirdEventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Returns(
                 async (IEvent dispatchedEvent) =>

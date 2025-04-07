@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DDD.Application\DDD.Application.csproj">
       <Private></Private>
       <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>

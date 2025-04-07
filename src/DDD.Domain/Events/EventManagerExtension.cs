@@ -10,19 +10,14 @@ public static class EventManagerExtension
     )
     {
         CompositeEventDispatcher compositeEventDispatcher = new();
+        CompositeEventDispatcherConfiguration configuration = new();
 
-        if (eventManager.Dispatcher is CompositeEventDispatcher eventManagerDispatcher)
-        {
-            compositeEventDispatcher = eventManagerDispatcher;
-        }
-        else
-        {
-            EventManager.Instance.Dispatcher = compositeEventDispatcher;
-        }
+        eventManager.Dispatcher = compositeEventDispatcher;
 
         if (configureDispatcherFunc is not null)
         {
-            configureDispatcherFunc(compositeEventDispatcher.Configuration);
+            configureDispatcherFunc(configuration);
+            compositeEventDispatcher.AddRange(configuration.Dispatchers);
         }
     }
 }

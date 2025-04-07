@@ -1,47 +1,21 @@
-﻿using System;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
+using DDD.Domain.Events.AspNetCore;
 using DDD.Tests.Unit.Domain.TestDoubles;
+using Microsoft.AspNetCore.Builder;
 using Moq;
 using NUnit.Framework;
-using Utils.Disposable;
 
-namespace DDD.Tests.Unit.Domain.Events;
+namespace DDD.Tests.Unit.Domain.Events.AspNetCore;
 
-[TestFixture]
-internal class EventManagerExtensionTest
+internal class WebApplicationExtensionTest
 {
     [TearDown]
     public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenNotUsedPreviously_ThenCompositeDispatcherIsSet()
+    public void TestUseEventCompositeDispatcher_WhenConfigurationGiven_ThenMultipleDispatchersAreUsedInEventManager()
     {
-        EventManager.Instance.UseCompositeDispatcher();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(EventManager.Instance.Dispatcher, Is.Not.Null);
-            Assert.That(EventManager.Instance.Dispatcher, Is.TypeOf<CompositeEventDispatcher>());
-        });
-    }
-
-    [Test]
-    public void TestUseCompositeDispatcher_WhenUsedPreviously_ThenNewCompositeDispatcherIsSet()
-    {
-        EventManager.Instance.UseCompositeDispatcher();
-        IDispatcher<IEvent>? eventDispatcher = EventManager.Instance.Dispatcher;
-
-        EventManager.Instance.UseCompositeDispatcher();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(EventManager.Instance.Dispatcher, Is.Not.SameAs(eventDispatcher));
-        });
-    }
-
-    [Test]
-    public void TestUseCompositeDispatcher_WhenConfigurationGiven_ThenDispatchersAreSetToEventManagerDispatcher()
-    {
+        WebApplication application = WebApplication.CreateBuilder().Build();
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
@@ -73,7 +47,7 @@ internal class EventManagerExtensionTest
                     thirdDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        EventManager.Instance.UseCompositeDispatcher(configuration =>
+        application.UseCompositeEventDispatcher(configuration =>
             configuration
                 .WithDispatcher(firstEventDispatcherMock.Object)
                 .WithDispatcher(secondEventDispatcherMock.Object)
@@ -91,12 +65,12 @@ internal class EventManagerExtensionTest
     }
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenNextConfigurationGiven_ThenDispatchersAreReplacedInEventManagerDispatcher()
+    public void TestUseEventCompositeDispatcher_WhenConfigurationWithServiceProviderGiven_ThenMultipleDispatchersAreUsedInEventManager()
     {
+        WebApplication application = WebApplication.CreateBuilder().Build();
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
         EventStub? thirdDispatchedEvent = null;
-        EventStub? fourthDispatchedEvent = null;
         EventStub @event = new();
         Mock<IEventDispatcher> firstEventDispatcherMock = new();
         _ = firstEventDispatcherMock
@@ -125,48 +99,21 @@ internal class EventManagerExtensionTest
                     thirdDispatchedEvent = dispatchedEvent as EventStub;
                 }
             );
-        Mock<IEventDispatcher> fourthEventDispatcherMock = new();
-        _ = fourthEventDispatcherMock
-            .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
-            .Callback(
-                (IEvent dispatchedEvent) =>
-                {
-                    fourthDispatchedEvent = dispatchedEvent as EventStub;
-                }
-            );
-        EventManager.Instance.UseCompositeDispatcher(configuration =>
-            configuration
-                .WithDispatcher(firstEventDispatcherMock.Object)
-                .WithDispatcher(secondEventDispatcherMock.Object)
-        );
-        EventManager.Instance.UseCompositeDispatcher(configuration =>
-            configuration
-                .WithDispatcher(thirdEventDispatcherMock.Object)
-                .WithDispatcher(fourthEventDispatcherMock.Object)
+        application.UseCompositeEventDispatcher(
+            (serviceProvider, configuration) =>
+                configuration
+                    .WithDispatcher(firstEventDispatcherMock.Object)
+                    .WithDispatcher(secondEventDispatcherMock.Object)
+                    .WithDispatcher(thirdEventDispatcherMock.Object)
         );
 
         EventManager.Instance.Notify(@event);
 
         Assert.Multiple(() =>
         {
-            Assert.That(firstDispatchedEvent, Is.Null);
-            Assert.That(secondDispatchedEvent, Is.Null);
+            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
+            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
             Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-            Assert.That(fourthDispatchedEvent, Is.SameAs(@event));
         });
-    }
-
-    [Test]
-    public void TestUseCompositeDispatcher_WhenNullDispatcherGiven_ThenNullExceptionIsThrown()
-    {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("dispatcher"),
-            () =>
-                EventManager.Instance.UseCompositeDispatcher(configuration =>
-                    configuration.WithDispatcher(null!)
-                )
-        );
     }
 }

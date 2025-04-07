@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DDD.Domain.Events;
 
@@ -15,9 +12,11 @@ public class CompositeEventDispatcherConfiguration
         this.Dispatchers = [];
     }
 
-    public CompositeEventDispatcherConfiguration WithDispatcher(IEventDispatcher eventDispatcher)
+    public CompositeEventDispatcherConfiguration WithDispatcher(IEventDispatcher dispatcher)
     {
-        this.Dispatchers.Add(eventDispatcher);
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        this.Dispatchers.Add(dispatcher);
 
         return this;
     }

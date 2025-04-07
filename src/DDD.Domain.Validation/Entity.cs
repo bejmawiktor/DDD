@@ -11,7 +11,7 @@ public abstract class Entity<TEntity, TIdentifier, TValidator, TValidationSource
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
-    private TValidator validator = new TValidator();
+    private readonly TValidator validator = new();
 
     protected TValidator Validator
     {
@@ -19,7 +19,7 @@ public abstract class Entity<TEntity, TIdentifier, TValidator, TValidationSource
         {
             this.validator.Update((TEntity)this);
 
-            return validator;
+            return this.validator;
         }
     }
 

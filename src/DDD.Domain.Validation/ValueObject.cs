@@ -1,5 +1,4 @@
-﻿using Utils.Functional;
-using Utils.Validation;
+﻿using Utils.Validation;
 
 namespace DDD.Domain.Validation;
 
@@ -10,7 +9,7 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
     where TValueObject : ValueObject<TValueObject, TValidator, TValidationSource>
     where TValidationSource : new()
 {
-    private TValidator validator = new TValidator();
+    private readonly TValidator validator = new();
 
     protected TValidator Validator
     {
@@ -18,7 +17,7 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
         {
             this.validator.Update((TValueObject)this);
 
-            return validator;
+            return this.validator;
         }
     }
 }
@@ -30,7 +29,7 @@ public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationS
     where TValueObject : ValueObject<TValueObject, TValue, TValidator, TValidationSource>
     where TValidationSource : new()
 {
-    private TValidator validator = new TValidator();
+    private readonly TValidator validator = new();
 
     protected TValidator Validator
     {
@@ -38,7 +37,7 @@ public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationS
         {
             this.validator.Update((TValueObject)this);
 
-            return validator;
+            return this.validator;
         }
     }
 

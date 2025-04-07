@@ -24,7 +24,7 @@ public class CompositeEventManagerConfigurationExtensionTest
         EventNotification<EventStub>? thirdDispatchedEvent = null;
         EventStub @event = new();
         Mock<IMediator> firstEventMediatorMock = new();
-        firstEventMediatorMock
+        _ = firstEventMediatorMock
             .Setup(e => e.Publish(It.IsAny<INotification>(), default))
             .Returns(
                 async (INotification notification, CancellationToken token) =>
@@ -36,7 +36,7 @@ public class CompositeEventManagerConfigurationExtensionTest
                 }
             );
         Mock<IMediator> secondEventMediatorMock = new();
-        secondEventMediatorMock
+        _ = secondEventMediatorMock
             .Setup(e => e.Publish(It.IsAny<INotification>(), default))
             .Returns(
                 async (INotification notification, CancellationToken token) =>
@@ -48,7 +48,7 @@ public class CompositeEventManagerConfigurationExtensionTest
                 }
             );
         Mock<IMediator> thirdEventMediatorMock = new();
-        thirdEventMediatorMock
+        _ = thirdEventMediatorMock
             .Setup(e => e.Publish(It.IsAny<INotification>(), default))
             .Returns(
                 async (INotification notification, CancellationToken token) =>
