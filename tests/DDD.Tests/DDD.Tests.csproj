@@ -22,6 +22,7 @@
       <ReferenceOutputAssembly></ReferenceOutputAssembly>
       <EmbedInteropTypes></EmbedInteropTypes>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj">
       <Private></Private>
       <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>

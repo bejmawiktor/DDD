@@ -11,7 +11,7 @@ namespace DDD.Tests.Unit.Domain.Events.MediatR;
 internal class EventManagerExtensionTest
 {
     [TearDown]
-    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+    public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
     public void TestUseMediatREventDispatcher_WhenMediatorGiven_ThenMediatorIsSet()
@@ -19,7 +19,7 @@ internal class EventManagerExtensionTest
         Mock<IMediator> mediatorMock = new();
         IMediator mediator = mediatorMock.Object;
 
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(mediator);
+        EventManager.Instance.UseMediatREventDispatcher(mediator);
 
         Assert.That(EventManager.Instance.Dispatcher, Is.Not.Null);
     }

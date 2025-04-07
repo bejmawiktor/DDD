@@ -14,6 +14,8 @@ env:
   APPLICATION_PACKAGE_NAME: 'DDD.Application'
   DOMAIN_VALIDATION_PROJECT_PATH: 'src/DDD.Domain.Validation/DDD.Domain.Validation.csproj'
   DOMAIN_VALIDATION_PACKAGE_NAME: 'DDD.Domain.Validation'
+  EVENTS_ASPNETCORE_PROJECT_PATH: 'src/DDD.Domain.Events.AspNetCore/DDD.Domain.Events.AspNetCore.csproj'
+  EVENTS_ASPNETCORE_PACKAGE_NAME: 'DDD.Domain.Events.AspNetCore'
   EVENTS_MEDIATR_PROJECT_PATH: 'src/DDD.Domain.Events.MediatR/DDD.Domain.Events.MediatR.csproj'
   EVENTS_MEDIATR_PACKAGE_NAME: 'DDD.Domain.Events.MediatR'
   VALIDATION_ASPNETCORE_PROJECT_PATH: 'src/DDD.Domain.Validation.AspNetCore/DDD.Domain.Validation.AspNetCore.csproj'
@@ -81,6 +83,9 @@ jobs:
       
       - name: Pack domain validation project
         run: dotnet pack ${{ env.DOMAIN_VALIDATION_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      
+      - name: Pack AspNetCore events project
+        run: dotnet pack ${{ env.EVENTS_ASPNETCORE_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 
       
       - name: Pack MediatR events project
         run: dotnet pack ${{ env.EVENTS_MEDIATR_PROJECT_PATH }} --no-restore --no-build --configuration Release -p:IncludeSymbols=false -p:PackageVersion=${{ steps.remove-v-from-version.outputs.substring }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} 

@@ -25,7 +25,7 @@ public class EventTest
     {
         Event @event = new Mock<Event>().Object;
 
-        Assert.That(@event.CreatedAt, Is.GreaterThan(DateTime.MinValue));
+        Assert.That(@event.CreatedAt, Is.EqualTo(DateTime.UtcNow).Within(1).Minutes);
     }
 
     [Test]

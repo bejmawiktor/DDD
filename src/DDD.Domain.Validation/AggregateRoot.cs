@@ -11,7 +11,7 @@ public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationS
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
-    private TValidator validator = new TValidator();
+    private readonly TValidator validator = new();
 
     protected TValidator Validator
     {
@@ -19,7 +19,7 @@ public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationS
         {
             this.validator.Update((TAggregateRoot)this);
 
-            return validator;
+            return this.validator;
         }
     }
 
