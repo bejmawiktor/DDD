@@ -11,9 +11,9 @@ public static class WebApplicationExtension
 
     public static void UseCompositeEventDispatcher(
         this WebApplication application,
-        Action<IServiceProvider, CompositeEventDispatcherConfiguration> configureDispatcherFunc
+        Action<CompositeEventDispatcherConfiguration, IServiceProvider> configureDispatcherFunc
     ) =>
         EventManager.Instance.UseCompositeDispatcher(configuration =>
-            configureDispatcherFunc(application.Services, configuration)
+            configureDispatcherFunc(configuration, application.Services)
         );
 }

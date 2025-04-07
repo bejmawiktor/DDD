@@ -100,7 +100,7 @@ internal class WebApplicationExtensionTest
                 }
             );
         application.UseCompositeEventDispatcher(
-            (serviceProvider, configuration) =>
+            (configuration, serviceProvider) =>
                 configuration
                     .WithDispatcher(firstEventDispatcherMock.Object)
                     .WithDispatcher(secondEventDispatcherMock.Object)
