@@ -31,7 +31,7 @@ internal class EventManagerExtensionTest
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
                 .EqualTo("mediator"),
-            () => DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(null!)
+            () => EventManager.Instance.UseMediatREventDispatcher(null!)
         );
     }
 }

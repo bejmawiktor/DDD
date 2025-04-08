@@ -35,13 +35,13 @@ internal class EventDispatcherTest
     }
 
     [TearDown]
-    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+    public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
     public void TestDispatch_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+        EventManager.Instance.UseMediatREventDispatcher(
             this.ServiceProvider.GetRequiredService<IMediator>()
         );
 
@@ -54,7 +54,7 @@ internal class EventDispatcherTest
     public async Task TestDispatchAsync_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+        EventManager.Instance.UseMediatREventDispatcher(
             this.ServiceProvider.GetRequiredService<IMediator>()
         );
 
@@ -67,7 +67,7 @@ internal class EventDispatcherTest
     public void TestDispatch_WhenEventIsAppliedWithScope_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+        EventManager.Instance.UseMediatREventDispatcher(
             this.ServiceProvider.GetRequiredService<IMediator>()
         );
 
@@ -84,7 +84,7 @@ internal class EventDispatcherTest
     public async Task TestDispatchAsync_WhenEventIsAppliedWithScope_ThenEventIsHandled()
     {
         EventStub eventStub = new();
-        DDD.Domain.Events.EventManager.Instance.UseMediatREventDispatcher(
+        EventManager.Instance.UseMediatREventDispatcher(
             this.ServiceProvider.GetRequiredService<IMediator>()
         );
 

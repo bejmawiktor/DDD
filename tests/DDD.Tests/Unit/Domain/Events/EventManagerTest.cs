@@ -15,8 +15,8 @@ public class EventManagerTest
     [TearDown]
     public void ClearEventManager()
     {
-        DDD.Domain.Events.EventManager.CurrentScope?.Dispose();
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+        EventManager.CurrentScope?.Dispose();
+        EventManager.Instance.Dispatcher = null;
     }
 
     [Test]
@@ -27,7 +27,7 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         EventManager.Instance.Notify(new EventStub());
 
@@ -43,7 +43,7 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using (EventsScope eventsScope = new())
         {
@@ -68,7 +68,7 @@ public class EventManagerTest
                     events.Add(e);
                 }
             );
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
         EventManager.Instance.Notify(eventMock.Object);
@@ -99,7 +99,7 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.Dispatch(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using (EventsScope eventsScope = new())
         {
@@ -124,7 +124,7 @@ public class EventManagerTest
                     events.Add(e);
                 }
             );
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         using EventsScope eventsScope = new();
         await EventManager.Instance.NotifyAsync(eventMock.Object);
@@ -144,7 +144,7 @@ public class EventManagerTest
         _ = eventDispatcherMock
             .Setup(e => e.DispatchAsync(It.IsAny<IEvent>()))
             .Callback(() => dispatched = true);
-        DDD.Domain.Events.EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
+        EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
         await EventManager.Instance.NotifyAsync(new EventStub());
 
