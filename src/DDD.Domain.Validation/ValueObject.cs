@@ -22,11 +22,16 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
     }
 }
 
-public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationSource>
+public abstract class ValueObject<TDeriviedValueObject, TValue, TValidator, TValidationSource>
     : Model.ValueObject<TValue>,
-        IValidationTarget<TValueObject, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TValueObject>, new()
-    where TValueObject : ValueObject<TValueObject, TValue, TValidator, TValidationSource>
+        IValidationTarget<TDeriviedValueObject, TValidationSource>
+    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
+    where TDeriviedValueObject : ValueObject<
+            TDeriviedValueObject,
+            TValue,
+            TValidator,
+            TValidationSource
+        >
     where TValidationSource : new()
 {
     private readonly TValidator validator = new();
@@ -35,7 +40,7 @@ public abstract class ValueObject<TValueObject, TValue, TValidator, TValidationS
     {
         get
         {
-            this.validator.Update((TValueObject)this);
+            this.validator.Update((TDeriviedValueObject)this);
 
             return this.validator;
         }

@@ -3,11 +3,11 @@ using Utils.Validation;
 
 namespace DDD.Domain.Validation;
 
-public abstract class Entity<TEntity, TIdentifier, TValidator, TValidationSource>
+public abstract class Entity<TDeriviedEntity, TIdentifier, TValidator, TValidationSource>
     : Entity<TIdentifier>,
-        IValidationTarget<TEntity, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TEntity>, new()
-    where TEntity : Entity<TEntity, TIdentifier, TValidator, TValidationSource>
+        IValidationTarget<TDeriviedEntity, TValidationSource>
+    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedEntity>, new()
+    where TDeriviedEntity : Entity<TDeriviedEntity, TIdentifier, TValidator, TValidationSource>
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
@@ -17,7 +17,7 @@ public abstract class Entity<TEntity, TIdentifier, TValidator, TValidationSource
     {
         get
         {
-            this.validator.Update((TEntity)this);
+            this.validator.Update((TDeriviedEntity)this);
 
             return this.validator;
         }
