@@ -1,5 +1,4 @@
-﻿using DDD.Domain.Model;
-using Utils.Validation;
+﻿using Utils.Validation;
 
 namespace DDD.Domain.Validation;
 

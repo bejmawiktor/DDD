@@ -46,8 +46,6 @@ internal class IdentifierValidatorFake
         );
     }
 
-    protected override void UpdateSource(ValidatedIdentifierFake validationTarget)
-    {
+    protected override void UpdateSource(ValidatedIdentifierFake validationTarget) =>
         this.Value = validationTarget.Value;
-    }
 }
