@@ -51,6 +51,17 @@ internal class IdentifierTest
         });
     }
 
+    [Test]
+    public void TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    {
+        ExtendedValidatedIdentifierFake identifier = new("b");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(identifier.Value, Is.EqualTo("b"));
+        });
+    }
+
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
         new object[]
@@ -65,6 +76,46 @@ internal class IdentifierTest
     {
         AggregateException? exception = Assert.Throws<AggregateException>(
             () => new ValidatedIdentifierFake(value)
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception, Is.Not.Null);
+            Assert.That(
+                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.ToString())
+                )
+            );
+            Assert.That(
+                exception?.InnerExceptions.Select(exception => exception.GetType()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.GetType())
+                )
+            );
+        });
+    }
+
+    [TestCaseSource(
+        nameof(CreateIncorrectDataTestData),
+        new object[]
+        {
+            nameof(
+                TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
+            ),
+        }
+    )]
+    public void TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+        string value,
+        AggregateException aggregateException
+    )
+    {
+        AggregateException? exception = Assert.Throws<AggregateException>(
+            () => new ExtendedValidatedIdentifierFake(value)
         );
 
         Assert.Multiple(() =>
