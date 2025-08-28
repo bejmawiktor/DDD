@@ -3,11 +3,16 @@ using Utils.Validation;
 
 namespace DDD.Domain.Validation;
 
-public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationSource>
+public class AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator, TValidationSource>
     : AggregateRoot<TIdentifier>,
-        IValidationTarget<TAggregateRoot, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TAggregateRoot>, new()
-    where TAggregateRoot : AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationSource>
+        IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
+    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedAggregateRoot>, new()
+    where TDeriviedAggregateRoot : AggregateRoot<
+            TDeriviedAggregateRoot,
+            TIdentifier,
+            TValidator,
+            TValidationSource
+        >
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
@@ -17,7 +22,7 @@ public class AggregateRoot<TAggregateRoot, TIdentifier, TValidator, TValidationS
     {
         get
         {
-            this.validator.Update((TAggregateRoot)this);
+            this.validator.Update((TDeriviedAggregateRoot)this);
 
             return this.validator;
         }
