@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using DDD.Domain.Validation;
+using DDD.Domain.Model;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 public class ValidatedValueObjectFake
-    : ValueObject<ValidatedValueObjectFake, ValueObjectValidatorFake, ValueObjectValidatorFake>
+    : ValueObject<ValidatedValueObjectFake, ValueObjectValidatorFake>
 {
     private string textField;
     private int intField;

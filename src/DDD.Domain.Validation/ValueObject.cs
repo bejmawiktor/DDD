@@ -1,13 +1,13 @@
-﻿using Utils.Validation;
+﻿using DDD.Domain.Model.Validation;
+using Utils.Validation;
 
-namespace DDD.Domain.Validation;
+namespace DDD.Domain.Model;
 
-public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
+public abstract class ValueObject<TValueObject, TValidator>
     : Model.ValueObject,
-        IValidationTarget<TValueObject, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TValueObject>, new()
-    where TValueObject : ValueObject<TValueObject, TValidator, TValidationSource>
-    where TValidationSource : new()
+        IValidationTarget<TValueObject, TValidator>
+    where TValidator : DomainObjectValidator<TValidator, TValueObject>, new()
+    where TValueObject : ValueObject<TValueObject, TValidator>
 {
     private readonly TValidator validator = new();
 
@@ -22,17 +22,11 @@ public abstract class ValueObject<TValueObject, TValidator, TValidationSource>
     }
 }
 
-public abstract class ValueObject<TDeriviedValueObject, TValue, TValidator, TValidationSource>
+public abstract class ValueObject<TDeriviedValueObject, TValue, TValidator>
     : Model.ValueObject<TValue>,
-        IValidationTarget<TDeriviedValueObject, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
-    where TDeriviedValueObject : ValueObject<
-            TDeriviedValueObject,
-            TValue,
-            TValidator,
-            TValidationSource
-        >
-    where TValidationSource : new()
+        IValidationTarget<TDeriviedValueObject, TValidator>
+    where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
+    where TDeriviedValueObject : ValueObject<TDeriviedValueObject, TValue, TValidator>
 {
     private readonly TValidator validator = new();
 

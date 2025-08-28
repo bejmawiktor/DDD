@@ -1,4 +1,4 @@
-﻿using DDD.Domain.Validation;
+﻿using DDD.Domain.Model.Validation;
 using Utils.Validation;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;

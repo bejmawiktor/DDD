@@ -1,19 +1,13 @@
-﻿using DDD.Domain.Model;
+﻿using DDD.Domain.Model.Validation;
 using Utils.Validation;
 
-namespace DDD.Domain.Validation;
+namespace DDD.Domain.Model;
 
-public class AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator, TValidationSource>
+public class AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator>
     : AggregateRoot<TIdentifier>,
-        IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedAggregateRoot>, new()
-    where TDeriviedAggregateRoot : AggregateRoot<
-            TDeriviedAggregateRoot,
-            TIdentifier,
-            TValidator,
-            TValidationSource
-        >
-    where TValidationSource : new()
+        IValidationTarget<TDeriviedAggregateRoot, TValidator>
+    where TValidator : DomainObjectValidator<TValidator, TDeriviedAggregateRoot>, new()
+    where TDeriviedAggregateRoot : AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator>
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
     private readonly TValidator validator = new();

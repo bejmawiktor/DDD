@@ -1,10 +1,10 @@
-﻿using DDD.Domain.Validation;
+﻿using DDD.Domain.Model;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 internal class ValidatedIdentifierFake
-    : Identifier<ValidatedIdentifierFake, string, IdentifierValidatorFake, IdentifierValidatorFake>
+    : Identifier<ValidatedIdentifierFake, string, IdentifierValidatorFake>
 {
     public ValidatedIdentifierFake(string value)
         : base(value) { }

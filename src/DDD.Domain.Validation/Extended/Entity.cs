@@ -1,13 +1,14 @@
 ﻿using DDD.Domain.Model.Validation;
 using Utils.Validation;
 
-namespace DDD.Domain.Model;
+namespace DDD.Domain.Model.Extended;
 
-public abstract class Entity<TDeriviedEntity, TIdentifier, TValidator>
+public abstract class Entity<TDeriviedEntity, TIdentifier, TValidator, TValidationSource>
     : Entity<TIdentifier>,
-        IValidationTarget<TDeriviedEntity, TValidator>
-    where TValidator : DomainObjectValidator<TValidator, TDeriviedEntity>, new()
-    where TDeriviedEntity : Entity<TDeriviedEntity, TIdentifier, TValidator>
+        IValidationTarget<TDeriviedEntity, TValidationSource>
+    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedEntity>, new()
+    where TDeriviedEntity : Entity<TDeriviedEntity, TIdentifier, TValidator, TValidationSource>
+    where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
     private readonly TValidator validator = new();

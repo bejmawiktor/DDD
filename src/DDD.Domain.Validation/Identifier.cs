@@ -1,24 +1,14 @@
-﻿using Utils.Validation;
+﻿using DDD.Domain.Model.Validation;
+using Utils.Validation;
 
-namespace DDD.Domain.Validation;
+namespace DDD.Domain.Model;
 
-public abstract class Identifier<
-    TDeriviedIdentifier,
-    TIdentifierValue,
-    TValidator,
-    TValidationSource
->
+public abstract class Identifier<TDeriviedIdentifier, TIdentifierValue, TValidator>
     : Model.Identifier<TIdentifierValue, TDeriviedIdentifier>,
-        IValidationTarget<TDeriviedIdentifier, TValidationSource>
-    where TValidator : DomainObjectValidator<TValidationSource, TDeriviedIdentifier>, new()
-    where TDeriviedIdentifier : Identifier<
-            TDeriviedIdentifier,
-            TIdentifierValue,
-            TValidator,
-            TValidationSource
-        >
+        IValidationTarget<TDeriviedIdentifier, TValidator>
+    where TValidator : DomainObjectValidator<TValidator, TDeriviedIdentifier>, new()
+    where TDeriviedIdentifier : Identifier<TDeriviedIdentifier, TIdentifierValue, TValidator>
     where TIdentifierValue : notnull, IEquatable<TIdentifierValue>
-    where TValidationSource : new()
 {
     private readonly TValidator validator = new();
 

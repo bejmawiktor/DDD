@@ -1,15 +1,10 @@
-﻿using DDD.Domain.Validation;
+﻿using DDD.Domain.Model;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 public class SingleValueValidatedValueObjectFake
-    : ValueObject<
-        SingleValueValidatedValueObjectFake,
-        int,
-        SingleValueValueObjectValidatorFake,
-        SingleValueValueObjectValidatorFake
-    >
+    : ValueObject<SingleValueValidatedValueObjectFake, int, SingleValueValueObjectValidatorFake>
 {
     private int nextValue;
     public new int Value => base.Value;
