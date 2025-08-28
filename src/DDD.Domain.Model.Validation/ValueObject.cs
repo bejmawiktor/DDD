@@ -3,11 +3,11 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model;
 
-public abstract class ValueObject<TValueObject, TValidator>
+public abstract class ValueObject<TDeriviedValueObject, TValidator>
     : Model.ValueObject,
-        IValidationTarget<TValueObject, TValidator>
-    where TValidator : DomainObjectValidator<TValidator, TValueObject>, new()
-    where TValueObject : ValueObject<TValueObject, TValidator>
+        IValidationTarget<TDeriviedValueObject, TValidator>
+    where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
+    where TDeriviedValueObject : ValueObject<TDeriviedValueObject, TValidator>
 {
     private readonly TValidator validator = new();
 
@@ -15,7 +15,7 @@ public abstract class ValueObject<TValueObject, TValidator>
     {
         get
         {
-            this.validator.Update((TValueObject)this);
+            this.validator.Update((TDeriviedValueObject)this);
 
             return this.validator;
         }
