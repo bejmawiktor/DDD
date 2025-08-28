@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model.Extended;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-public class ValidatedValueObjectFake
-    : ValueObject<ValidatedValueObjectFake, ValueObjectValidatorFake>
+internal class ExtendedValidatedAggregateRootFake
+    : AggregateRoot<
+        int,
+        ExtendedValidatedAggregateRootFake,
+        ExtendedAggregateRootValidatorFake,
+        AggregateRootValidationSource
+    >
 {
     private string textField;
     private int intField;
@@ -42,7 +46,8 @@ public class ValidatedValueObjectFake
             .Validator.Validate(nameof(this.IntField), source => source.IntField = value)
             .ThrowIfFailed();
 
-    public ValidatedValueObjectFake(string textField, int intField)
+    public ExtendedValidatedAggregateRootFake(int id, string textField, int intField)
+        : base(id)
     {
         this.ValidateMembers(textField, intField);
 
@@ -58,11 +63,5 @@ public class ValidatedValueObjectFake
                 source.IntField = intField;
             })
             .ThrowIfFailed();
-    }
-
-    protected override IEnumerable<object?> GetEqualityMembers()
-    {
-        yield return this.TextField;
-        yield return this.IntField;
     }
 }

@@ -1,8 +1,7 @@
-﻿using DDD.Domain.Model;
-using Utils.Functional;
+﻿using Utils.Functional;
 using Utils.Validation;
 
-namespace DDD.Domain.Validation;
+namespace DDD.Domain.Model.Validation;
 
 public abstract class DomainObjectValidator<TValidationSource, TValidationTarget>
     : TargetedValidatorBase<TValidationSource, TValidationTarget, IError>

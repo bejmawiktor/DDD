@@ -3,8 +3,13 @@ using Utils.Validation;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class IdentifierValidatorFake
-    : DomainObjectValidator<IdentifierValidatorFake, ValidatedIdentifierFake>
+internal class IdentifierValidationSource
+{
+    public string? Value { get; set; }
+}
+
+internal class ExtendedIdentifierValidatorFake
+    : DomainObjectValidator<IdentifierValidationSource, ExtendedValidatedIdentifierFake>
 {
     public static readonly string EmptyValueErrorMessage =
         "Empty Value given. Identifier can't be empty.";
@@ -14,31 +19,37 @@ internal class IdentifierValidatorFake
     public static readonly string ValueLengthGreaterThanOndeErrorMessage =
         "Identifier can't be longer than 1 character.";
 
-    public string? Value { get; set; }
+    protected override IdentifierValidationSource ValidationSource { get; }
 
-    protected override IdentifierValidatorFake ValidationSource => this;
-
-    public IdentifierValidatorFake()
+    public ExtendedIdentifierValidatorFake()
         : base()
     {
+        this.ValidationSource = new IdentifierValidationSource();
+
         _ = this.Configuration.WithValidation(
-            nameof(this.Value),
+            nameof(IdentifierValidationSource.Value),
             validator =>
                 validator
                     .WithValidationStep(value =>
                         value.Value == string.Empty
-                            ? new ValidationError(nameof(this.Value), EmptyValueErrorMessage)
+                            ? new ValidationError(
+                                nameof(IdentifierValidationSource.Value),
+                                EmptyValueErrorMessage
+                            )
                             : null
                     )
                     .WithValidationStep(value =>
                         value.Value == "AB"
-                            ? new ValidationError(nameof(this.Value), ValueCantBeABErrorMessage)
+                            ? new ValidationError(
+                                nameof(IdentifierValidationSource.Value),
+                                ValueCantBeABErrorMessage
+                            )
                             : null
                     )
                     .WithValidationStep(value =>
                         value.Value?.Length > 1
                             ? new ValidationError(
-                                nameof(this.Value),
+                                nameof(IdentifierValidationSource.Value),
                                 ValueLengthGreaterThanOndeErrorMessage
                             )
                             : null
@@ -46,6 +57,6 @@ internal class IdentifierValidatorFake
         );
     }
 
-    protected override void UpdateSource(ValidatedIdentifierFake validationTarget) =>
-        this.Value = validationTarget.Value;
+    protected override void UpdateSource(ExtendedValidatedIdentifierFake validationTarget) =>
+        this.ValidationSource.Value = validationTarget.Value;
 }

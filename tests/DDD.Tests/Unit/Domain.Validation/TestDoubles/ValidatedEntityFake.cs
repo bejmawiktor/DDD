@@ -1,10 +1,9 @@
-﻿using DDD.Domain.Validation;
+﻿using DDD.Domain.Model;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class ValidatedEntityFake
-    : Entity<ValidatedEntityFake, int, EntityValidatorFake, EntityValidatorFake>
+internal class ValidatedEntityFake : Entity<int, ValidatedEntityFake, EntityValidatorFake>
 {
     private string textField;
     private int intField;

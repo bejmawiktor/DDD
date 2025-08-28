@@ -3,7 +3,14 @@ using Utils.Validation;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class EntityValidatorFake : DomainObjectValidator<EntityValidatorFake, ValidatedEntityFake>
+internal class EntityValidationSource
+{
+    public string? TextField { get; set; }
+    public int? IntField { get; set; }
+}
+
+internal class ExtendedEntityValidatorFake
+    : DomainObjectValidator<EntityValidationSource, ExtendedValidatedEntityFake>
 {
     public static readonly string EmptyTextFieldErrorMessage =
         "Empty TextField given. This field is required.";
@@ -14,37 +21,32 @@ internal class EntityValidatorFake : DomainObjectValidator<EntityValidatorFake, 
 
     public static readonly string MinusFiveIntFieldErrorMessage = "Forbidden value occured.";
 
-    public string? TextField { get; set; }
-    public int? IntField { get; set; }
+    protected override EntityValidationSource ValidationSource { get; }
 
-    protected override EntityValidatorFake ValidationSource => this;
-
-    public EntityValidatorFake(string textField, int intField)
-        : this()
-    {
-        this.TextField = textField;
-        this.IntField = intField;
-    }
-
-    public EntityValidatorFake()
+    public ExtendedEntityValidatorFake()
         : base()
     {
+        this.ValidationSource = new EntityValidationSource();
+
         _ = this
             .Configuration.WithValidation(
-                nameof(this.TextField),
+                nameof(EntityValidationSource.TextField),
                 value =>
                     value.TextField == string.Empty
-                        ? new ValidationError(nameof(this.TextField), EmptyTextFieldErrorMessage)
+                        ? new ValidationError(
+                            nameof(EntityValidationSource.TextField),
+                            EmptyTextFieldErrorMessage
+                        )
                         : null
             )
             .WithValidation(
-                nameof(this.IntField),
+                nameof(EntityValidationSource.IntField),
                 validator =>
                     validator
                         .WithValidationStep(value =>
                             value.IntField < 0
                                 ? new ValidationError(
-                                    nameof(this.IntField),
+                                    nameof(EntityValidationSource.IntField),
                                     LessThanZeroIntFieldErrorMessage
                                 )
                                 : null
@@ -52,7 +54,7 @@ internal class EntityValidatorFake : DomainObjectValidator<EntityValidatorFake, 
                         .WithValidationStep(value =>
                             value.IntField > 10
                                 ? new ValidationError(
-                                    nameof(this.IntField),
+                                    nameof(EntityValidationSource.IntField),
                                     GreaterThanTenIntFieldErrorMessage
                                 )
                                 : null
@@ -60,7 +62,7 @@ internal class EntityValidatorFake : DomainObjectValidator<EntityValidatorFake, 
                         .WithValidationStep(value =>
                             value.IntField == -5
                                 ? new ValidationError(
-                                    nameof(this.IntField),
+                                    nameof(EntityValidationSource.IntField),
                                     MinusFiveIntFieldErrorMessage
                                 )
                                 : null
@@ -68,9 +70,9 @@ internal class EntityValidatorFake : DomainObjectValidator<EntityValidatorFake, 
             );
     }
 
-    protected override void UpdateSource(ValidatedEntityFake validationTarget)
+    protected override void UpdateSource(ExtendedValidatedEntityFake validationTarget)
     {
-        this.TextField = validationTarget.TextField;
-        this.IntField = validationTarget.IntField;
+        this.ValidationSource.TextField = validationTarget.TextField;
+        this.ValidationSource.IntField = validationTarget.IntField;
     }
 }

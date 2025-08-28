@@ -30,8 +30,8 @@
       <EmbedInteropTypes></EmbedInteropTypes>
       <ExcludeAssets></ExcludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\DDD.Domain.Validation.AspNetCore\DDD.Domain.Validation.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\DDD.Domain.Validation\DDD.Domain.Validation.csproj" />
+    <ProjectReference Include="..\..\src\DDD.Domain.Model.Validation.AspNetCore\DDD.Domain.Model.Validation.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\DDD.Domain.Model.Validation\DDD.Domain.Model.Validation.csproj" />
     <ProjectReference Include="..\..\src\DDD.Domain\DDD.Domain.csproj">
       <Private></Private>
       <CopyLocalSatelliteAssemblies></CopyLocalSatelliteAssemblies>

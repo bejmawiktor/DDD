@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
-using DDD.Domain.Model;
+using DDD.Domain.Model.Extended;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-public class ValidatedValueObjectFake
-    : ValueObject<ValidatedValueObjectFake, ValueObjectValidatorFake>
+internal class ExtendedValidatedValueObjectFake
+    : ValueObject<
+        ExtendedValidatedValueObjectFake,
+        ExtendedValueObjectValidatorFake,
+        ValueObjectValidationSource
+    >
 {
     private string textField;
     private int intField;
@@ -42,7 +46,7 @@ public class ValidatedValueObjectFake
             .Validator.Validate(nameof(this.IntField), source => source.IntField = value)
             .ThrowIfFailed();
 
-    public ValidatedValueObjectFake(string textField, int intField)
+    public ExtendedValidatedValueObjectFake(string textField, int intField)
     {
         this.ValidateMembers(textField, intField);
 

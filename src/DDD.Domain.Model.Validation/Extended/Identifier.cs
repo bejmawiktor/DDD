@@ -1,10 +1,11 @@
-﻿using Utils.Validation;
+﻿using DDD.Domain.Model.Validation;
+using Utils.Validation;
 
-namespace DDD.Domain.Validation;
+namespace DDD.Domain.Model.Extended;
 
 public abstract class Identifier<
-    TDeriviedIdentifier,
     TIdentifierValue,
+    TDeriviedIdentifier,
     TValidator,
     TValidationSource
 >
@@ -12,8 +13,8 @@ public abstract class Identifier<
         IValidationTarget<TDeriviedIdentifier, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedIdentifier>, new()
     where TDeriviedIdentifier : Identifier<
-            TDeriviedIdentifier,
             TIdentifierValue,
+            TDeriviedIdentifier,
             TValidator,
             TValidationSource
         >

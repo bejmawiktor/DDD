@@ -1,12 +1,17 @@
-﻿using DDD.Domain.Model;
+﻿using DDD.Domain.Model.Extended;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class ValidatedIdentifierFake
-    : Identifier<string, ValidatedIdentifierFake, IdentifierValidatorFake>
+internal class ExtendedValidatedIdentifierFake
+    : Identifier<
+        string,
+        ExtendedValidatedIdentifierFake,
+        ExtendedIdentifierValidatorFake,
+        IdentifierValidationSource
+    >
 {
-    public ValidatedIdentifierFake(string value)
+    public ExtendedValidatedIdentifierFake(string value)
         : base(value) { }
 
     protected override void ValidateValue(string value)

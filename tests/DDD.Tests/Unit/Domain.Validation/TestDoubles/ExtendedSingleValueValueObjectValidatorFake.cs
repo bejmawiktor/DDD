@@ -3,10 +3,16 @@ using Utils.Validation;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-public class SingleValueValueObjectValidatorFake
+public class SingleValueValueObjectValidationSource
+{
+    public int? Value { get; set; }
+    public int? NextValue { get; set; }
+}
+
+public class ExtendedSingleValueValueObjectValidatorFake
     : DomainObjectValidator<
-        SingleValueValueObjectValidatorFake,
-        SingleValueValidatedValueObjectFake
+        SingleValueValueObjectValidationSource,
+        ExtendedSingleValueValidatedValueObjectFake
     >
 {
     public static readonly string LessThanZeroValueErrorMessage =
@@ -16,29 +22,22 @@ public class SingleValueValueObjectValidatorFake
     public static readonly string LessThanZeroNextValueErrorMessage =
         "Value must be greater than zero.";
 
-    public int? Value { get; set; }
-    public int? NextValue { get; set; }
+    protected override SingleValueValueObjectValidationSource ValidationSource { get; }
 
-    protected override SingleValueValueObjectValidatorFake ValidationSource => this;
-
-    public SingleValueValueObjectValidatorFake(int value)
-        : this()
-    {
-        this.Value = value;
-    }
-
-    public SingleValueValueObjectValidatorFake()
+    public ExtendedSingleValueValueObjectValidatorFake()
         : base()
     {
+        this.ValidationSource = new SingleValueValueObjectValidationSource();
+
         _ = this
             .Configuration.WithValidation(
-                nameof(this.Value),
+                nameof(SingleValueValueObjectValidationSource.Value),
                 validator =>
                     validator
                         .WithValidationStep(value =>
                             value.Value < 0
                                 ? new ValidationError(
-                                    nameof(this.Value),
+                                    nameof(SingleValueValueObjectValidationSource.Value),
                                     LessThanZeroValueErrorMessage
                                 )
                                 : null
@@ -46,7 +45,7 @@ public class SingleValueValueObjectValidatorFake
                         .WithValidationStep(value =>
                             value.Value > 10
                                 ? new ValidationError(
-                                    nameof(this.Value),
+                                    nameof(SingleValueValueObjectValidationSource.Value),
                                     GreaterThanTenValueErrorMessage
                                 )
                                 : null
@@ -54,24 +53,25 @@ public class SingleValueValueObjectValidatorFake
                         .WithValidationStep(value =>
                             value.Value == -5
                                 ? new ValidationError(
-                                    nameof(this.Value),
+                                    nameof(SingleValueValueObjectValidationSource.Value),
                                     MinusFiveValueErrorMessage
                                 )
                                 : null
                         )
             )
             .WithValidation(
-                nameof(this.NextValue),
+                nameof(SingleValueValueObjectValidationSource.NextValue),
                 source =>
                     source.NextValue < 0
                         ? new ValidationError(
-                            nameof(this.NextValue),
+                            nameof(SingleValueValueObjectValidationSource.NextValue),
                             LessThanZeroNextValueErrorMessage
                         )
                         : null
             );
     }
 
-    protected override void UpdateSource(SingleValueValidatedValueObjectFake validationTarget) =>
-        this.Value = validationTarget.Value;
+    protected override void UpdateSource(
+        ExtendedSingleValueValidatedValueObjectFake validationTarget
+    ) => this.ValidationSource.Value = validationTarget.Value;
 }

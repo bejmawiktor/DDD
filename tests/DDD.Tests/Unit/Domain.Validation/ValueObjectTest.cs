@@ -191,6 +191,80 @@ internal class ValueObjectTest
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }
 
+    public static IEnumerable<TestCaseData> CreateIncorrectDataForOneOfExtendedValidatorsTestData(
+        string testName
+    )
+    {
+        yield return new TestCaseData(
+            "my example text",
+            5,
+            (ExtendedValidatedValueObjectFake valueObject) =>
+            {
+                valueObject.TextField = "";
+            },
+            new AggregateException(
+                [
+                    new ValidationException(
+                        nameof(ValueObjectValidationSource.TextField),
+                        ExtendedValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                    ),
+                ]
+            )
+        ).SetName($"{testName}(Empty TextField)");
+        yield return new TestCaseData(
+            "example text",
+            5,
+            (ExtendedValidatedValueObjectFake valueObject) =>
+            {
+                valueObject.IntField = -1;
+            },
+            new AggregateException(
+                [
+                    new ValidationException(
+                        nameof(ValueObjectValidationSource.IntField),
+                        ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                ]
+            )
+        ).SetName($"{testName}(Less Than Zero IntField)");
+        yield return new TestCaseData(
+            "example text",
+            5,
+            (ExtendedValidatedValueObjectFake valueObject) =>
+            {
+                valueObject.IntField = -5;
+            },
+            new AggregateException(
+                [
+                    new ValidationException(
+                        nameof(ValueObjectValidationSource.IntField),
+                        ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(ValueObjectValidationSource.IntField),
+                        ExtendedValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
+                    ),
+                ]
+            )
+        ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
+        yield return new TestCaseData(
+            "example text",
+            5,
+            (ExtendedValidatedValueObjectFake valueObject) =>
+            {
+                valueObject.IntField = 11;
+            },
+            new AggregateException(
+                [
+                    new ValidationException(
+                        nameof(ValueObjectValidationSource.IntField),
+                        ExtendedValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
+                    ),
+                ]
+            )
+        ).SetName($"{testName}(Greater Than Ten IntField)");
+    }
+
     public static IEnumerable<TestCaseData> CreateSingleValueIncorrectDataTestData(string testName)
     {
         yield return new TestCaseData(
@@ -269,10 +343,44 @@ internal class ValueObjectTest
         ).SetName($"{testName}(Less Than Zero Next Value)");
     }
 
+    public static IEnumerable<TestCaseData> CreateSingleValueIncorrectDataForOneOfExtendedValidatorTestData(
+        string testName
+    )
+    {
+        yield return new TestCaseData(
+            1,
+            1,
+            (ExtendedSingleValueValidatedValueObjectFake valueObject) =>
+            {
+                valueObject.NextValue = -1;
+            },
+            new AggregateException(
+                [
+                    new ValidationException(
+                        nameof(SingleValueValueObjectValidationSource.NextValue),
+                        ExtendedSingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
+                    ),
+                ]
+            )
+        ).SetName($"{testName}(Less Than Zero Next Value)");
+    }
+
     [Test]
     public void TestConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ValidatedValueObjectFake valueObject = new("example text", 5);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueObject.TextField, Is.EqualTo("example text"));
+            Assert.That(valueObject.IntField, Is.EqualTo(5));
+        });
+    }
+
+    [Test]
+    public void TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    {
+        ExtendedValidatedValueObjectFake valueObject = new("example text", 5);
 
         Assert.Multiple(() =>
         {
@@ -317,10 +425,62 @@ internal class ValueObjectTest
         });
     }
 
+    [TestCaseSource(
+        nameof(CreateIncorrectDataTestData),
+        new object[]
+        {
+            nameof(TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
+        }
+    )]
+    public void TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+        string textField,
+        int intField,
+        AggregateException aggregateException
+    )
+    {
+        AggregateException? exception = Assert.Throws<AggregateException>(
+            () => new ExtendedValidatedValueObjectFake(textField, intField)
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception, Is.Not.Null);
+            Assert.That(
+                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.ToString())
+                )
+            );
+            Assert.That(
+                exception?.InnerExceptions.Select(exception => exception.GetType()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.GetType())
+                )
+            );
+        });
+    }
+
     [Test]
     public void TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ValidatedValueObjectFake valueObject =
+            new("example text", 5) { TextField = "second text", IntField = 5 };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueObject.TextField, Is.EqualTo("second text"));
+            Assert.That(valueObject.IntField, Is.EqualTo(5));
+        });
+    }
+
+    [Test]
+    public void TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    {
+        ExtendedValidatedValueObjectFake valueObject =
             new("example text", 5) { TextField = "second text", IntField = 5 };
 
         Assert.Multiple(() =>
@@ -374,10 +534,66 @@ internal class ValueObjectTest
         });
     }
 
+    [TestCaseSource(
+        nameof(CreateIncorrectDataForOneOfExtendedValidatorsTestData),
+        new object[]
+        {
+            nameof(
+                TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
+            ),
+        }
+    )]
+    public void TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+        string textField,
+        int intField,
+        Action<ExtendedValidatedValueObjectFake> updateAction,
+        AggregateException aggregateException
+    )
+    {
+        ExtendedValidatedValueObjectFake valueObject = new(textField, intField);
+
+        AggregateException? exception = Assert.Throws<AggregateException>(
+            () => updateAction(valueObject)
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception, Is.Not.Null);
+            Assert.That(
+                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.ToString())
+                )
+            );
+            Assert.That(
+                exception?.InnerExceptions.Select(exception => exception.GetType()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.GetType())
+                )
+            );
+        });
+    }
+
     [Test]
     public void TestConstructingSingleValue_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         SingleValueValidatedValueObjectFake valueObject = new(5, 5);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueObject.Value, Is.EqualTo(5));
+            Assert.That(valueObject.NextValue, Is.EqualTo(5));
+        });
+    }
+
+    [Test]
+    public void TestExtendedConstructingSingleValue_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    {
+        ExtendedSingleValueValidatedValueObjectFake valueObject = new(5, 5);
 
         Assert.Multiple(() =>
         {
@@ -425,10 +641,62 @@ internal class ValueObjectTest
         });
     }
 
+    [TestCaseSource(
+        nameof(CreateSingleValueIncorrectDataTestData),
+        new object[]
+        {
+            nameof(
+                TestExtendedValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
+            ),
+        }
+    )]
+    public void TestExtendedValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+        int value,
+        int nextValue,
+        AggregateException aggregateException
+    )
+    {
+        AggregateException? exception = Assert.Throws<AggregateException>(
+            () => new ExtendedSingleValueValidatedValueObjectFake(value, nextValue)
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception, Is.Not.Null);
+            Assert.That(
+                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.ToString())
+                )
+            );
+            Assert.That(
+                exception?.InnerExceptions.Select(exception => exception.GetType()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.GetType())
+                )
+            );
+        });
+    }
+
     [Test]
     public void TestValidateSingleValueWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         SingleValueValidatedValueObjectFake valueObject = new(5, 5) { NextValue = 9 };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(valueObject.NextValue, Is.EqualTo(9));
+        });
+    }
+
+    [Test]
+    public void TestExtendedValidateSingleValueWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    {
+        ExtendedSingleValueValidatedValueObjectFake valueObject = new(5, 5) { NextValue = 9 };
 
         Assert.Multiple(() =>
         {
@@ -453,6 +721,50 @@ internal class ValueObjectTest
     )
     {
         SingleValueValidatedValueObjectFake valueObject = new(value, nextValue);
+
+        AggregateException? exception = Assert.Throws<AggregateException>(
+            () => updateAction(valueObject)
+        );
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception, Is.Not.Null);
+            Assert.That(
+                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.ToString())
+                )
+            );
+            Assert.That(
+                exception?.InnerExceptions.Select(exception => exception.GetType()),
+                Is.EquivalentTo(
+                    aggregateException
+                        .Flatten()
+                        .InnerExceptions.Select(exception => exception.GetType())
+                )
+            );
+        });
+    }
+
+    [TestCaseSource(
+        nameof(CreateSingleValueIncorrectDataForOneOfExtendedValidatorTestData),
+        new object[]
+        {
+            nameof(
+                TestExtendedValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
+            ),
+        }
+    )]
+    public void TestExtendedValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+        int value,
+        int nextValue,
+        Action<ExtendedSingleValueValidatedValueObjectFake> updateAction,
+        AggregateException aggregateException
+    )
+    {
+        ExtendedSingleValueValidatedValueObjectFake valueObject = new(value, nextValue);
 
         AggregateException? exception = Assert.Throws<AggregateException>(
             () => updateAction(valueObject)
