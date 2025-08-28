@@ -4,7 +4,7 @@ using Utils.Functional;
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 internal class ValidatedAggregateRootFake
-    : AggregateRoot<ValidatedAggregateRootFake, int, AggregateRootValidatorFake>
+    : AggregateRoot<int, ValidatedAggregateRootFake, AggregateRootValidatorFake>
 {
     private string textField;
     private int intField;

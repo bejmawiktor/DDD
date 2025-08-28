@@ -3,11 +3,11 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model;
 
-public abstract class Entity<TDeriviedEntity, TIdentifier, TValidator>
+public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator>
     : Entity<TIdentifier>,
         IValidationTarget<TDeriviedEntity, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedEntity>, new()
-    where TDeriviedEntity : Entity<TDeriviedEntity, TIdentifier, TValidator>
+    where TDeriviedEntity : Entity<TIdentifier, TDeriviedEntity, TValidator>
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
     private readonly TValidator validator = new();

@@ -22,11 +22,11 @@ public abstract class ValueObject<TDeriviedValueObject, TValidator>
     }
 }
 
-public abstract class ValueObject<TDeriviedValueObject, TValue, TValidator>
+public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator>
     : Model.ValueObject<TValue>,
         IValidationTarget<TDeriviedValueObject, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
-    where TDeriviedValueObject : ValueObject<TDeriviedValueObject, TValue, TValidator>
+    where TDeriviedValueObject : ValueObject<TValue, TDeriviedValueObject, TValidator>
 {
     private readonly TValidator validator = new();
 

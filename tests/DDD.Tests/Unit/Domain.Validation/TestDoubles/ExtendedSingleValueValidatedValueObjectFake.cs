@@ -5,8 +5,8 @@ namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 public class ExtendedSingleValueValidatedValueObjectFake
     : ValueObject<
-        ExtendedSingleValueValidatedValueObjectFake,
         int,
+        ExtendedSingleValueValidatedValueObjectFake,
         ExtendedSingleValueValueObjectValidatorFake,
         SingleValueValueObjectValidationSource
     >

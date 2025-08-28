@@ -4,7 +4,7 @@ using Utils.Functional;
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 internal class ExtendedValidatedEntityFake
-    : Entity<ExtendedValidatedEntityFake, int, ExtendedEntityValidatorFake, EntityValidationSource>
+    : Entity<int, ExtendedValidatedEntityFake, ExtendedEntityValidatorFake, EntityValidationSource>
 {
     private string textField;
     private int intField;

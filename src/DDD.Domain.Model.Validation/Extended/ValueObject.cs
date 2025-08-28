@@ -23,13 +23,13 @@ public abstract class ValueObject<TDeriviedValueObject, TValidator, TValidationS
     }
 }
 
-public abstract class ValueObject<TDeriviedValueObject, TValue, TValidator, TValidationSource>
+public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TValidationSource>
     : Model.ValueObject<TValue>,
         IValidationTarget<TDeriviedValueObject, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<
-            TDeriviedValueObject,
             TValue,
+            TDeriviedValueObject,
             TValidator,
             TValidationSource
         >

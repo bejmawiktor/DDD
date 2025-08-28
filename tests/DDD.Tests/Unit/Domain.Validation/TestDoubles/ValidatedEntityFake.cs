@@ -3,7 +3,7 @@ using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class ValidatedEntityFake : Entity<ValidatedEntityFake, int, EntityValidatorFake>
+internal class ValidatedEntityFake : Entity<int, ValidatedEntityFake, EntityValidatorFake>
 {
     private string textField;
     private int intField;

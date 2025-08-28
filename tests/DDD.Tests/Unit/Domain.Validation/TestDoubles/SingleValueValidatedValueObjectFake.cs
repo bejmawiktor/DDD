@@ -4,7 +4,7 @@ using Utils.Functional;
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 public class SingleValueValidatedValueObjectFake
-    : ValueObject<SingleValueValidatedValueObjectFake, int, SingleValueValueObjectValidatorFake>
+    : ValueObject<int, SingleValueValidatedValueObjectFake, SingleValueValueObjectValidatorFake>
 {
     private int nextValue;
     public new int Value => base.Value;

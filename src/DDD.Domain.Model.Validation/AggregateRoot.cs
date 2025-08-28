@@ -3,11 +3,11 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model;
 
-public class AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator>
+public abstract class AggregateRoot<TIdentifier, TDeriviedAggregateRoot, TValidator>
     : AggregateRoot<TIdentifier>,
         IValidationTarget<TDeriviedAggregateRoot, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedAggregateRoot>, new()
-    where TDeriviedAggregateRoot : AggregateRoot<TDeriviedAggregateRoot, TIdentifier, TValidator>
+    where TDeriviedAggregateRoot : AggregateRoot<TIdentifier, TDeriviedAggregateRoot, TValidator>
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
     private readonly TValidator validator = new();

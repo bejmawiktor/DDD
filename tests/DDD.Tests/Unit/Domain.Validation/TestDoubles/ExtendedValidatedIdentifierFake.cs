@@ -5,8 +5,8 @@ namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 internal class ExtendedValidatedIdentifierFake
     : Identifier<
-        ExtendedValidatedIdentifierFake,
         string,
+        ExtendedValidatedIdentifierFake,
         ExtendedIdentifierValidatorFake,
         IdentifierValidationSource
     >

@@ -4,7 +4,7 @@ using Utils.Functional;
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
 internal class ValidatedIdentifierFake
-    : Identifier<ValidatedIdentifierFake, string, IdentifierValidatorFake>
+    : Identifier<string, ValidatedIdentifierFake, IdentifierValidatorFake>
 {
     public ValidatedIdentifierFake(string value)
         : base(value) { }
