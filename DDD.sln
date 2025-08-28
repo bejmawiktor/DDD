@@ -25,9 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8E7F0AC5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDD.Domain.Events.MediatR", "src\DDD.Domain.Events.MediatR\DDD.Domain.Events.MediatR.csproj", "{B5BE87EE-6AD0-403D-83C4-4F4E41D80CCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation.AspNetCore", "src\DDD.Domain.Validation.AspNetCore\DDD.Domain.Validation.AspNetCore.csproj", "{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Model.Validation.AspNetCore", "src\DDD.Domain.Model.Validation.AspNetCore\DDD.Domain.Model.Validation.AspNetCore.csproj", "{43578889-6EB9-49AE-8F35-F3A0E9CC3E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Validation", "src\DDD.Domain.Validation\DDD.Domain.Validation.csproj", "{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Model.Validation", "src\DDD.Domain.Model.Validation\DDD.Domain.Model.Validation.csproj", "{2D6EA90F-F4EB-4DC0-AEBA-3427495C423B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDD.Domain.Events.AspNetCore", "src\DDD.Domain.Events.AspNetCore\DDD.Domain.Events.AspNetCore.csproj", "{99F7AB51-375C-4C8A-A365-787A81F5CBC9}"
 EndProject
