@@ -29,7 +29,7 @@ public class ErrorExtensionsTest
 
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>([messageOnlyValidationError]),
+            new AggregateError<IError>(messageOnlyValidationError),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>() { { "", [messageOnlyValidationError.Message] } }
             )
@@ -41,7 +41,7 @@ public class ErrorExtensionsTest
         ).SetName($"{testName}(Single Validation Error)");
         yield return new TestCaseData(
             "/test2",
-            new AggregateError<IError>([withFieldValidationError]),
+            new AggregateError<IError>(withFieldValidationError),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
                 {
@@ -56,7 +56,7 @@ public class ErrorExtensionsTest
         ).SetName($"{testName}(Field Name Validation Error)");
         yield return new TestCaseData(
             null,
-            new AggregateError<IError>([simpleError, argumentError]),
+            new AggregateError<IError>(simpleError, argumentError),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
                 {
@@ -76,13 +76,11 @@ public class ErrorExtensionsTest
         yield return new TestCaseData(
             "/test2",
             new AggregateError<IError>(
-                [
-                    withFieldValidationError,
-                    simpleError,
-                    argumentError,
-                    messageOnlyValidationError,
-                    notFoundError,
-                ]
+                withFieldValidationError,
+                simpleError,
+                argumentError,
+                messageOnlyValidationError,
+                notFoundError
             ),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
@@ -116,7 +114,10 @@ public class ErrorExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [withFieldValidationError, withField2ValidationError, simpleError, argumentError]
+                withFieldValidationError,
+                withField2ValidationError,
+                simpleError,
+                argumentError
             ),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
@@ -143,13 +144,11 @@ public class ErrorExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [
-                    withFieldValidationError,
-                    secondFieldValidationError,
-                    withField2ValidationError,
-                    simpleError,
-                    argumentError,
-                ]
+                withFieldValidationError,
+                secondFieldValidationError,
+                withField2ValidationError,
+                simpleError,
+                argumentError
             ),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
@@ -178,14 +177,12 @@ public class ErrorExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [
-                    withFieldValidationError,
-                    secondFieldValidationError,
-                    withField2ValidationError,
-                    secondField2ValidationError,
-                    simpleError,
-                    argumentError,
-                ]
+                withFieldValidationError,
+                secondFieldValidationError,
+                withField2ValidationError,
+                secondField2ValidationError,
+                simpleError,
+                argumentError
             ),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
@@ -217,7 +214,7 @@ public class ErrorExtensionsTest
         ).SetName($"{testName}(Multi FieldName Multi Messages Errors)");
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>("not found", [notFoundError]),
+            new AggregateError<IError>("not found", notFoundError),
             new ProblemDetails()
             {
                 Detail = "not found",
@@ -227,7 +224,7 @@ public class ErrorExtensionsTest
         ).SetName($"{testName}(8)");
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>("not found", [notFoundError, secondNotFoundError]),
+            new AggregateError<IError>("not found", notFoundError, secondNotFoundError),
             new ValidationProblemDetails(
                 new Dictionary<string, string[]>()
                 {
