@@ -15,104 +15,90 @@ internal class ValueObjectTest
             "",
             5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.TextField),
-                        ValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.TextField),
+                    ValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
             "example text",
             -1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
             "example text",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
             "example text",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.TextField),
-                        ValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.TextField),
+                    ValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             -11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.TextField),
-                        ValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.TextField),
+                    ValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero IntField)");
         yield return new TestCaseData(
             "",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.TextField),
-                        ValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.TextField),
+                    ValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero Forbidden Value IntField)");
     }
@@ -129,12 +115,10 @@ internal class ValueObjectTest
                 valueObject.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.TextField),
-                        ValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.TextField),
+                    ValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -145,12 +129,10 @@ internal class ValueObjectTest
                 valueObject.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -161,16 +143,14 @@ internal class ValueObjectTest
                 valueObject.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -181,12 +161,10 @@ internal class ValueObjectTest
                 valueObject.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidatorFake.IntField),
-                        ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidatorFake.IntField),
+                    ValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }
@@ -203,12 +181,10 @@ internal class ValueObjectTest
                 valueObject.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidationSource.TextField),
-                        ExtendedValueObjectValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidationSource.TextField),
+                    ExtendedValueObjectValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -219,12 +195,10 @@ internal class ValueObjectTest
                 valueObject.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidationSource.IntField),
-                        ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidationSource.IntField),
+                    ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -235,16 +209,14 @@ internal class ValueObjectTest
                 valueObject.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidationSource.IntField),
-                        ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(ValueObjectValidationSource.IntField),
-                        ExtendedValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidationSource.IntField),
+                    ExtendedValueObjectValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(ValueObjectValidationSource.IntField),
+                    ExtendedValueObjectValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -255,12 +227,10 @@ internal class ValueObjectTest
                 valueObject.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(ValueObjectValidationSource.IntField),
-                        ExtendedValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(ValueObjectValidationSource.IntField),
+                    ExtendedValueObjectValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }
@@ -271,52 +241,44 @@ internal class ValueObjectTest
             -1,
             1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.Value),
-                        SingleValueValueObjectValidatorFake.LessThanZeroValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.Value),
+                    SingleValueValueObjectValidatorFake.LessThanZeroValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero Value)");
         yield return new TestCaseData(
             1,
             -1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.NextValue),
-                        SingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.NextValue),
+                    SingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero Next Value)");
         yield return new TestCaseData(
             -5,
             1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.Value),
-                        SingleValueValueObjectValidatorFake.LessThanZeroValueErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.Value),
-                        SingleValueValueObjectValidatorFake.MinusFiveValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.Value),
+                    SingleValueValueObjectValidatorFake.LessThanZeroValueErrorMessage
+                ),
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.Value),
+                    SingleValueValueObjectValidatorFake.MinusFiveValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value)");
         yield return new TestCaseData(
             11,
             1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.Value),
-                        SingleValueValueObjectValidatorFake.GreaterThanTenValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.Value),
+                    SingleValueValueObjectValidatorFake.GreaterThanTenValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten Value)");
     }
@@ -333,12 +295,10 @@ internal class ValueObjectTest
                 valueObject.NextValue = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidatorFake.NextValue),
-                        SingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidatorFake.NextValue),
+                    SingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero Next Value)");
     }
@@ -355,12 +315,10 @@ internal class ValueObjectTest
                 valueObject.NextValue = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(SingleValueValueObjectValidationSource.NextValue),
-                        ExtendedSingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(SingleValueValueObjectValidationSource.NextValue),
+                    ExtendedSingleValueValueObjectValidatorFake.LessThanZeroNextValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero Next Value)");
     }

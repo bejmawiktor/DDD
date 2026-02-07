@@ -11,7 +11,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestGetAsync_WhenIdentifierGiven_ThenAggregateRootIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -23,7 +23,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestGetAsync_WhenNullAggregateRootDtoIsReturnedFromDtoRepository_ThenNullIsReturned()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -46,7 +46,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestRemoveAsync_WhenIdentifierGiven_ThenAggregateRootIsRemoved()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 
@@ -58,7 +58,7 @@ public class AsyncRepositoryAdapterTest
     [Test]
     public async Task TestUpdateAsync_WhenAggregateRootDtoGiven_ThenAggregateRootIsUpdated()
     {
-        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new AggregateRootDtoStub("1")];
+        List<AggregateRootDtoStub> aggregateRootDtosStubs = [new("1")];
         AsyncAggregateRootDtoStubRepository dtoRepository = new(aggregateRootDtosStubs);
         IAsyncAggregateRootStubRepository repository = new AsyncRepositoryAdapter(dtoRepository);
 

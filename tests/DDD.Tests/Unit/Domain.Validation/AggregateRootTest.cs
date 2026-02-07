@@ -15,104 +15,90 @@ internal class AggregateRootTest
             "",
             5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.TextField),
-                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.TextField),
+                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
             "example text",
             -1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
             "example text",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
             "example text",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.TextField),
-                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.TextField),
+                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             -11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.TextField),
-                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.TextField),
+                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero IntField)");
         yield return new TestCaseData(
             "",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.TextField),
-                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.TextField),
+                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero Forbidden Value IntField)");
     }
@@ -129,12 +115,10 @@ internal class AggregateRootTest
                 aggregateRoot.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.TextField),
-                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.TextField),
+                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -145,12 +129,10 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -161,16 +143,14 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -181,12 +161,10 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidatorFake.IntField),
-                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidatorFake.IntField),
+                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }
@@ -203,12 +181,10 @@ internal class AggregateRootTest
                 aggregateRoot.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidationSource.TextField),
-                        ExtendedAggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidationSource.TextField),
+                    ExtendedAggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -219,12 +195,10 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidationSource.IntField),
-                        ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidationSource.IntField),
+                    ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -235,16 +209,14 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidationSource.IntField),
-                        ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(AggregateRootValidationSource.IntField),
-                        ExtendedAggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidationSource.IntField),
+                    ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(AggregateRootValidationSource.IntField),
+                    ExtendedAggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -255,12 +227,10 @@ internal class AggregateRootTest
                 aggregateRoot.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(AggregateRootValidationSource.IntField),
-                        ExtendedAggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(AggregateRootValidationSource.IntField),
+                    ExtendedAggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }

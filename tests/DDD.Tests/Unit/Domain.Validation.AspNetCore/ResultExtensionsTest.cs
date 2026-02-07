@@ -30,7 +30,7 @@ public class ResultExtensionsTest
 
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>([simpleError]),
+            new AggregateError<IError>(simpleError),
             new ObjectResult(
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>() { { "", [simpleError.Message] } }
@@ -47,7 +47,7 @@ public class ResultExtensionsTest
         ).SetName($"{testName}(1)");
         yield return new TestCaseData(
             "/test2",
-            new AggregateError<IError>([withFieldNameValidationError]),
+            new AggregateError<IError>(withFieldNameValidationError),
             new ObjectResult(
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
@@ -70,7 +70,7 @@ public class ResultExtensionsTest
         ).SetName($"{testName}(2)");
         yield return new TestCaseData(
             null,
-            new AggregateError<IError>([simpleError, argumentError]),
+            new AggregateError<IError>(simpleError, argumentError),
             new ObjectResult(
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
@@ -95,13 +95,11 @@ public class ResultExtensionsTest
         yield return new TestCaseData(
             "/test2",
             new AggregateError<IError>(
-                [
-                    withFieldNameValidationError,
-                    simpleError,
-                    argumentError,
-                    messageOnlyValidationError,
-                    notFoundError,
-                ]
+                withFieldNameValidationError,
+                simpleError,
+                argumentError,
+                messageOnlyValidationError,
+                notFoundError
             ),
             new ObjectResult(
                 new ValidationProblemDetails(
@@ -143,12 +141,10 @@ public class ResultExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [
-                    withFieldNameValidationError,
-                    secondWithFieldNameValidationError,
-                    simpleError,
-                    argumentError,
-                ]
+                withFieldNameValidationError,
+                secondWithFieldNameValidationError,
+                simpleError,
+                argumentError
             ),
             new ObjectResult(
                 new ValidationProblemDetails(
@@ -184,13 +180,11 @@ public class ResultExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [
-                    withFieldNameValidationError,
-                    thirdWithFieldNameValidationError,
-                    secondWithFieldNameValidationError,
-                    simpleError,
-                    argumentError,
-                ]
+                withFieldNameValidationError,
+                thirdWithFieldNameValidationError,
+                secondWithFieldNameValidationError,
+                simpleError,
+                argumentError
             ),
             new ObjectResult(
                 new ValidationProblemDetails(
@@ -231,14 +225,12 @@ public class ResultExtensionsTest
         yield return new TestCaseData(
             "/test",
             new AggregateError<IError>(
-                [
-                    withFieldNameValidationError,
-                    thirdWithFieldNameValidationError,
-                    secondWithFieldNameValidationError,
-                    fourthWithFieldNameValidationError,
-                    simpleError,
-                    argumentError,
-                ]
+                withFieldNameValidationError,
+                thirdWithFieldNameValidationError,
+                secondWithFieldNameValidationError,
+                fourthWithFieldNameValidationError,
+                simpleError,
+                argumentError
             ),
             new ObjectResult(
                 new ValidationProblemDetails(
@@ -283,7 +275,7 @@ public class ResultExtensionsTest
         ).SetName($"{testName}(7)");
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>("not found", [notFoundError]),
+            new AggregateError<IError>("not found", notFoundError),
             new ObjectResult(
                 new ProblemDetails()
                 {
@@ -298,7 +290,7 @@ public class ResultExtensionsTest
         ).SetName($"{testName}(8)");
         yield return new TestCaseData(
             "/test",
-            new AggregateError<IError>("not found", [notFoundError, secondNotFoundError]),
+            new AggregateError<IError>("not found", notFoundError, secondNotFoundError),
             new ObjectResult(
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()

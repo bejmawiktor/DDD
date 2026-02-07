@@ -16,104 +16,90 @@ internal class EntityTest
             "",
             5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.TextField),
-                        EntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.TextField),
+                    EntityValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
             "example text",
             -1,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
             "example text",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
             "example text",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.TextField),
-                        EntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.TextField),
+                    EntityValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Greater Than Ten IntField)");
         yield return new TestCaseData(
             "",
             -11,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.TextField),
-                        EntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.TextField),
+                    EntityValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero IntField)");
         yield return new TestCaseData(
             "",
             -5,
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.TextField),
-                        EntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.TextField),
+                    EntityValidatorFake.EmptyTextFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField and Less Than Zero Forbidden Value IntField)");
     }
@@ -130,12 +116,10 @@ internal class EntityTest
                 entity.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.TextField),
-                        EntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.TextField),
+                    EntityValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -146,12 +130,10 @@ internal class EntityTest
                 entity.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -162,16 +144,14 @@ internal class EntityTest
                 entity.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -182,12 +162,10 @@ internal class EntityTest
                 entity.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidatorFake.IntField),
-                        EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidatorFake.IntField),
+                    EntityValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }
@@ -204,12 +182,10 @@ internal class EntityTest
                 entity.TextField = "";
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidationSource.TextField),
-                        ExtendedEntityValidatorFake.EmptyTextFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidationSource.TextField),
+                    ExtendedEntityValidatorFake.EmptyTextFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty TextField)");
         yield return new TestCaseData(
@@ -220,12 +196,10 @@ internal class EntityTest
                 entity.IntField = -1;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidationSource.IntField),
-                        ExtendedEntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidationSource.IntField),
+                    ExtendedEntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero IntField)");
         yield return new TestCaseData(
@@ -236,16 +210,14 @@ internal class EntityTest
                 entity.IntField = -5;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidationSource.IntField),
-                        ExtendedEntityValidatorFake.LessThanZeroIntFieldErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(EntityValidationSource.IntField),
-                        ExtendedEntityValidatorFake.MinusFiveIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidationSource.IntField),
+                    ExtendedEntityValidatorFake.LessThanZeroIntFieldErrorMessage
+                ),
+                new ValidationException(
+                    nameof(EntityValidationSource.IntField),
+                    ExtendedEntityValidatorFake.MinusFiveIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
         yield return new TestCaseData(
@@ -256,12 +228,10 @@ internal class EntityTest
                 entity.IntField = 11;
             },
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(EntityValidationSource.IntField),
-                        ExtendedEntityValidatorFake.GreaterThanTenIntFieldErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(EntityValidationSource.IntField),
+                    ExtendedEntityValidatorFake.GreaterThanTenIntFieldErrorMessage
+                )
             )
         ).SetName($"{testName}(Greater Than Ten IntField)");
     }

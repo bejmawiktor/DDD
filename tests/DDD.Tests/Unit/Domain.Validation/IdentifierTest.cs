@@ -15,27 +15,23 @@ internal class IdentifierTest
         yield return new TestCaseData(
             "",
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(IdentifierValidatorFake.Value),
-                        IdentifierValidatorFake.EmptyValueErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(IdentifierValidatorFake.Value),
+                    IdentifierValidatorFake.EmptyValueErrorMessage
+                )
             )
         ).SetName($"{testName}(Empty Value)");
         yield return new TestCaseData(
             "AB",
             new AggregateException(
-                [
-                    new ValidationException(
-                        nameof(IdentifierValidatorFake.Value),
-                        IdentifierValidatorFake.ValueCantBeABErrorMessage
-                    ),
-                    new ValidationException(
-                        nameof(IdentifierValidatorFake.Value),
-                        IdentifierValidatorFake.ValueLengthGreaterThanOndeErrorMessage
-                    ),
-                ]
+                new ValidationException(
+                    nameof(IdentifierValidatorFake.Value),
+                    IdentifierValidatorFake.ValueCantBeABErrorMessage
+                ),
+                new ValidationException(
+                    nameof(IdentifierValidatorFake.Value),
+                    IdentifierValidatorFake.ValueLengthGreaterThanOndeErrorMessage
+                )
             )
         ).SetName($"{testName}(Value AB, Longer than 1)");
     }
