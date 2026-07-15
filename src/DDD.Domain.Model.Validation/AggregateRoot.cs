@@ -3,25 +3,20 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model;
 
-public abstract class AggregateRoot<TIdentifier, TDeriviedAggregateRoot, TValidator>
-    : AggregateRoot<TIdentifier>,
+public abstract class AggregateRoot<TIdentifier, TDeriviedAggregateRoot, TValidator>(TIdentifier id)
+    : AggregateRoot<TIdentifier>(id),
         IValidationTarget<TDeriviedAggregateRoot, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedAggregateRoot>, new()
     where TDeriviedAggregateRoot : AggregateRoot<TIdentifier, TDeriviedAggregateRoot, TValidator>
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedAggregateRoot)this);
+            field.Update((TDeriviedAggregateRoot)this);
 
-            return this.validator;
+            return field;
         }
-    }
-
-    protected AggregateRoot(TIdentifier id)
-        : base(id) { }
+    } = new();
 }

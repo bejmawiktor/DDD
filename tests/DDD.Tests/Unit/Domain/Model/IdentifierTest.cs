@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Model;
@@ -11,24 +9,36 @@ public class IdentifierTest
     public static IEnumerable<TestCaseData> EqualsTestData()
     {
         yield return new TestCaseData(
-            new object[] { new StringIdFake("1"), new StringIdFake("1"), true }
+            new StringIdFake("1"),
+            new StringIdFake("1"),
+            true
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
         yield return new TestCaseData(
-            new object[] { new StringIdFake("3"), new StringIdFake("3"), true }
+            new StringIdFake("3"),
+            new StringIdFake("3"),
+            true
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(2)");
         yield return new TestCaseData(
-            new object[] { new StringIdFake("2"), new StringIdFake("2"), true }
+            new StringIdFake("2"),
+            new StringIdFake("2"),
+            true
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(3)");
         yield return new TestCaseData(
-            new object[] { new StringIdFake("1"), new StringIdFake("2"), false }
+            new StringIdFake("1"),
+            new StringIdFake("2"),
+            false
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(4)");
         yield return new TestCaseData(
-            new object[] { new StringIdFake("34"), new StringIdFake("3"), false }
+            new StringIdFake("34"),
+            new StringIdFake("3"),
+            false
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(5)");
         yield return new TestCaseData(
-            new object[] { new StringIdFake("5"), new StringIdFake("2"), false }
+            new StringIdFake("5"),
+            new StringIdFake("2"),
+            false
         ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(6)");
-        yield return new TestCaseData(new object?[] { new StringIdFake("5"), null, false }).SetName(
+        yield return new TestCaseData(new StringIdFake("5"), null, false).SetName(
             $"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(7)"
         );
     }

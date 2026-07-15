@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Model.Extended;
+﻿using DDD.Domain.Model.Extended;
 using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;

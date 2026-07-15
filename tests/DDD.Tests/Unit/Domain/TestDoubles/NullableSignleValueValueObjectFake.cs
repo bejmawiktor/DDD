@@ -2,10 +2,7 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class NullableSignleValueValueObjectFake : ValueObject<string?>
+public class NullableSignleValueValueObjectFake(string? value) : ValueObject<string?>(value)
 {
-    public NullableSignleValueValueObjectFake(string? value)
-        : base(value) { }
-
     protected override void ValidateValue(string? value) { }
 }

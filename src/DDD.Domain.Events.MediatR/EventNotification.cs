@@ -2,13 +2,8 @@
 
 namespace DDD.Domain.Events.MediatR;
 
-public class EventNotification<TEvent> : INotification
+public class EventNotification<TEvent>(TEvent @event) : INotification
     where TEvent : notnull, DDD.Domain.Events.IEvent
 {
-    public TEvent Event { get; }
-
-    public EventNotification(TEvent @event)
-    {
-        this.Event = @event;
-    }
+    public TEvent Event { get; } = @event;
 }

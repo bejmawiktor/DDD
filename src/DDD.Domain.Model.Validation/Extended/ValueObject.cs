@@ -4,27 +4,25 @@ using Utils.Validation;
 namespace DDD.Domain.Model.Extended;
 
 public abstract class ValueObject<TDeriviedValueObject, TValidator, TValidationSource>
-    : Model.ValueObject,
+    : ValueObject,
         IValidationTarget<TDeriviedValueObject, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<TDeriviedValueObject, TValidator, TValidationSource>
     where TValidationSource : new()
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedValueObject)this);
+            field.Update((TDeriviedValueObject)this);
 
-            return this.validator;
+            return field;
         }
-    }
+    } = new();
 }
 
-public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TValidationSource>
-    : Model.ValueObject<TValue>,
+public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TValidationSource>(TValue value)
+    : ValueObject<TValue>(value),
         IValidationTarget<TDeriviedValueObject, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<
@@ -35,18 +33,13 @@ public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TVal
         >
     where TValidationSource : new()
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedValueObject)this);
+            field.Update((TDeriviedValueObject)this);
 
-            return this.validator;
+            return field;
         }
-    }
-
-    protected ValueObject(TValue value)
-        : base(value) { }
+    } = new();
 }

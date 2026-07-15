@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using DDD.Domain.Validation.AspNetCore;
 using Microsoft.AspNetCore.Http;
@@ -360,10 +358,9 @@ public class ResultExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorWithReasonsTestData),
-        new object[]
-        {
+        [
             nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned),
-        }
+        ]
     )]
     public void TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
@@ -444,7 +441,7 @@ public class ResultExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorTestData),
-        new object[] { nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned) }
+        [nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned)]
     )]
     public void TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,
@@ -517,12 +514,11 @@ public class ResultExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorWithReasonsTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned
             ),
-        }
+        ]
     )]
     public void TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
@@ -609,12 +605,11 @@ public class ResultExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned
             ),
-        }
+        ]
     )]
     public void TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,

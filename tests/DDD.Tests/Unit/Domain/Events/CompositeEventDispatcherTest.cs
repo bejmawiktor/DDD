@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using Moq;
 using NUnit.Framework;

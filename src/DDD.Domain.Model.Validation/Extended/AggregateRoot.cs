@@ -8,7 +8,7 @@ public abstract class AggregateRoot<
     TDeriviedAggregateRoot,
     TValidator,
     TValidationSource
-> : AggregateRoot<TIdentifier>, IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
+>(TIdentifier id) : AggregateRoot<TIdentifier>(id), IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedAggregateRoot>, new()
     where TDeriviedAggregateRoot : AggregateRoot<
             TIdentifier,
@@ -19,18 +19,13 @@ public abstract class AggregateRoot<
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedAggregateRoot)this);
+            field.Update((TDeriviedAggregateRoot)this);
 
-            return this.validator;
+            return field;
         }
-    }
-
-    protected AggregateRoot(TIdentifier id)
-        : base(id) { }
+    } = new();
 }

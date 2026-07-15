@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace DDD.Domain.Model;
 
@@ -27,44 +24,36 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
     public static TEnumeration CollateNull(TEnumeration? enumeration) =>
         enumeration ?? Enumeration<TValue, TEnumeration>.Default;
 
-    public static IEnumerable<TEnumeration?> GetValues()
-    {
-        return typeof(TEnumeration)
+    public static IEnumerable<TEnumeration?> GetValues() =>
+        typeof(TEnumeration)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(v => v.FieldType == typeof(TEnumeration))
             .Select(v => (TEnumeration?)v.GetValue(null));
-    }
 
-    public static IEnumerable<string> GetNames()
-    {
-        return typeof(TEnumeration)
+    public static IEnumerable<string> GetNames() =>
+        typeof(TEnumeration)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(v => v.FieldType == typeof(TEnumeration))
             .Select(v => v.Name);
-    }
 
     public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Value);
 
-    public override bool Equals(object? other) =>
-        (other?.GetType()) == this.GetType() && this.Equals(other as TEnumeration);
+    public override bool Equals(object? obj) =>
+        obj is TEnumeration enumeration
+        && obj.GetType() == this.GetType()
+        && this.Equals(enumeration);
 
-    public bool Equals(TEnumeration? other)
-    {
-        return !(this.Value is null ^ (other is null || other.Value is null))
-            && (
-                (this.Value is null && (other is null || other.Value is null))
-                || this.Value!.Equals(other!.Value)
-            );
-    }
+    public bool Equals(TEnumeration? other) =>
+        AreValuesEqual(this.Value, other is null ? default : other.Value);
 
     public static bool operator ==(
-        Enumeration<TValue, TEnumeration> lhs,
-        Enumeration<TValue, TEnumeration> rhs
-    ) => (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
+        Enumeration<TValue, TEnumeration>? lhs,
+        Enumeration<TValue, TEnumeration>? rhs
+    ) => lhs is null ? rhs is null : lhs.Equals(rhs);
 
     public static bool operator !=(
-        Enumeration<TValue, TEnumeration> lhs,
-        Enumeration<TValue, TEnumeration> rhs
+        Enumeration<TValue, TEnumeration>? lhs,
+        Enumeration<TValue, TEnumeration>? rhs
     ) => !(lhs == rhs);
 
     public override string? ToString() => this.Value?.ToString();
@@ -74,8 +63,7 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
         ?? throw new ArgumentException($"Wrong {typeof(TEnumeration).Name} value.");
 
     private static bool AreValuesEqual(TValue? lhsValue, TValue? rhsValue) =>
-        !(lhsValue is null ^ rhsValue is null)
-        && ((lhsValue is null && rhsValue is null) || lhsValue!.Equals(rhsValue));
+        EqualityComparer<TValue?>.Default.Equals(lhsValue, rhsValue);
 
     public static implicit operator TValue?(Enumeration<TValue, TEnumeration>? value) =>
         value is null ? default : value.Value;

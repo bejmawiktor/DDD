@@ -1,18 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DDD.Application.Persistence;
+﻿using DDD.Application.Persistence;
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
-public class AsyncAggregateRootDtoStubRepository : IAsyncDtoRepository<AggregateRootDtoStub, string>
+public class AsyncAggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos) : IAsyncDtoRepository<AggregateRootDtoStub, string>
 {
-    public List<AggregateRootDtoStub>? Dtos { get; private set; }
-
-    public AsyncAggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos)
-    {
-        this.Dtos = dtos;
-    }
+    public List<AggregateRootDtoStub>? Dtos { get; private set; } = dtos;
 
     public Task<AggregateRootDtoStub?> GetAsync(string identifier) =>
         Task.FromResult(this.Dtos?.FirstOrDefault(d => d.Id == identifier));

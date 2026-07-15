@@ -2,8 +2,6 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class OtherStringEntityStub : Entity<string>
+public class OtherStringEntityStub(string id) : Entity<string>(id)
 {
-    public OtherStringEntityStub(string id)
-        : base(id) { }
 }

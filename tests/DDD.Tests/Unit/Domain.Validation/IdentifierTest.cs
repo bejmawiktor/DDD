@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DDD.Tests.Unit.Domain.Validation.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.Validation.TestDoubles;
 using NUnit.Framework;
 using Utils.Validation;
 
@@ -60,10 +57,9 @@ internal class IdentifierTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        }
+        ]
     )]
     public void TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,
@@ -98,12 +94,11 @@ internal class IdentifierTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,

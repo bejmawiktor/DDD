@@ -1,22 +1,13 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class FourthValueObjectFake : ValueObject
+public class FourthValueObjectFake(int field1, double field2, string? field3, bool field4) : ValueObject
 {
-    public int Field1 { get; }
-    public double Field2 { get; }
-    public string? Field3 { get; }
-    public bool Field4 { get; }
-
-    public FourthValueObjectFake(int field1, double field2, string? field3, bool field4)
-    {
-        this.Field1 = field1;
-        this.Field2 = field2;
-        this.Field3 = field3;
-        this.Field4 = field4;
-    }
+    public int Field1 { get; } = field1;
+    public double Field2 { get; } = field2;
+    public string? Field3 { get; } = field3;
+    public bool Field4 { get; } = field4;
 
     protected override IEnumerable<object?> GetEqualityMembers()
     {

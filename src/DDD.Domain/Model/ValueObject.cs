@@ -1,44 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace DDD.Domain.Model;
+﻿namespace DDD.Domain.Model;
 
 public abstract class ValueObject : IDomainObject
 {
-    public static bool operator ==(ValueObject lhs, ValueObject rhs) =>
-        (lhs is null && rhs is null) || (lhs is not null && rhs is not null && lhs.Equals(rhs));
+    public static bool operator ==(ValueObject? lhs, ValueObject? rhs) =>
+        lhs is null ? rhs is null : lhs.Equals(rhs);
 
-    public static bool operator !=(ValueObject lhs, ValueObject rhs) => !(lhs == rhs);
+    public static bool operator !=(ValueObject? lhs, ValueObject? rhs) => !(lhs == rhs);
 
     protected abstract IEnumerable<object?> GetEqualityMembers();
 
-    public override bool Equals(object? obj)
-    {
-        if (this.GetType() != obj?.GetType())
-        {
-            return false;
-        }
-
-        ValueObject? other = obj as ValueObject;
-
-        return this.GetEqualityMembers().SequenceEqual(other!.GetEqualityMembers());
-    }
+    public override bool Equals(object? obj) =>
+        obj is ValueObject other
+        && this.GetType() == other.GetType()
+        && this.GetEqualityMembers().SequenceEqual(other.GetEqualityMembers());
 
     public override int GetHashCode()
     {
-        unchecked
+        HashCode hash = new();
+        hash.Add(this.GetType());
+
+        foreach (object? memberValue in this.GetEqualityMembers())
         {
-            int hash = 2893249;
-            hash = (hash * 1674319) + this.GetType().GetHashCode();
-
-            foreach (object? memberValue in this.GetEqualityMembers())
-            {
-                hash = (hash * 1674319) + (memberValue?.GetHashCode() ?? 0);
-            }
-
-            return hash;
+            hash.Add(memberValue);
         }
+
+        return hash.ToHashCode();
     }
 }
 

@@ -1,18 +1,11 @@
-﻿using System.Collections.Generic;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class FirstValueObjectFake : ValueObject
+public class FirstValueObjectFake(int field1, string? field2) : ValueObject
 {
-    public int Field1 { get; }
-    public string? Field2 { get; }
-
-    public FirstValueObjectFake(int field1, string? field2)
-    {
-        this.Field1 = field1;
-        this.Field2 = field2;
-    }
+    public int Field1 { get; } = field1;
+    public string? Field2 { get; } = field2;
 
     protected override IEnumerable<object?> GetEqualityMembers()
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DDD.Tests.Unit.Domain.Validation.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.Validation.TestDoubles;
 using NUnit.Framework;
 using Utils.Validation;
 
@@ -349,7 +346,7 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[] { nameof(TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown) }
+        [nameof(TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown)]
     )]
     public void TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -385,10 +382,9 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        }
+        ]
     )]
     public void TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -450,12 +446,11 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataForOneOfValidatorsTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -494,12 +489,11 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataForOneOfExtendedValidatorsTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -562,10 +556,9 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateSingleValueIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(TestValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        }
+        ]
     )]
     public void TestValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         int value,
@@ -601,12 +594,11 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateSingleValueIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateSingleValue_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         int value,
@@ -664,12 +656,11 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateSingleValueIncorrectDataForOneOfValidatorTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         int value,
@@ -708,12 +699,11 @@ internal class ValueObjectTest
 
     [TestCaseSource(
         nameof(CreateSingleValueIncorrectDataForOneOfExtendedValidatorTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateSingleValueWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         int value,

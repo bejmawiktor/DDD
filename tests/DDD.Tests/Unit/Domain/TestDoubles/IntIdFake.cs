@@ -2,10 +2,7 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class IntIdFake : Identifier<int, IntIdFake>
+public class IntIdFake(int value) : Identifier<int, IntIdFake>(value)
 {
-    public IntIdFake(int value)
-        : base(value) { }
-
     protected override void ValidateValue(int value) { }
 }

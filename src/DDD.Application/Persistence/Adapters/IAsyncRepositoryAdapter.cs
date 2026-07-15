@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using DDD.Application.Model;
+﻿using DDD.Application.Model;
 using DDD.Application.Model.Converters;
 using DDD.Domain.Model;
 using DDD.Domain.Persistence;
@@ -31,69 +29,23 @@ public interface IAsyncRepositoryAdapter<
 
     private static TAggregateRootDtoConverter Converter => new();
 
-    Task<TAggregateRoot?> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(
+    async Task<TAggregateRoot?> IAsyncRepository<TAggregateRoot, TIdentifier>.GetAsync(
         TIdentifier identifier
     )
     {
-        return this
-            .DtoRepository.GetAsync(
-                IAsyncRepositoryAdapter<
-                    TDto,
-                    TDtoIdentifier,
-                    TDtoRepository,
-                    TAggregateRootDtoConverter,
-                    TAggregateRoot,
-                    TIdentifier
-                >.Converter.ToDtoIdentifier(identifier)
-            )
-            .ContinueWith(a =>
-                IAsyncRepositoryAdapter<
-                    TDto,
-                    TDtoIdentifier,
-                    TDtoRepository,
-                    TAggregateRootDtoConverter,
-                    TAggregateRoot,
-                    TIdentifier
-                >.ConvertDto(a.Result)
-            );
+        TDto? aggregateRootDto = await this.DtoRepository.GetAsync(
+            Converter.ToDtoIdentifier(identifier)
+        );
+
+        return aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
     }
 
-    private static TAggregateRoot? ConvertDto(TDto? aggregateRootDto) =>
-        aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
-
     Task IAsyncRepository<TAggregateRoot, TIdentifier>.AddAsync(TAggregateRoot entity) =>
-        this.DtoRepository.AddAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.AddAsync(Converter.ToDto(entity));
 
     Task IAsyncRepository<TAggregateRoot, TIdentifier>.RemoveAsync(TAggregateRoot entity) =>
-        this.DtoRepository.RemoveAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.RemoveAsync(Converter.ToDto(entity));
 
     Task IAsyncRepository<TAggregateRoot, TIdentifier>.UpdateAsync(TAggregateRoot entity) =>
-        this.DtoRepository.UpdateAsync(
-            IAsyncRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TAggregateRootDtoConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.UpdateAsync(Converter.ToDto(entity));
 }
