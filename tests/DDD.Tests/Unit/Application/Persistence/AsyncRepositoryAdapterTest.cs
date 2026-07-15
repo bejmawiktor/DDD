@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using DDD.Tests.Unit.Application.TestDoubles;
+﻿using DDD.Tests.Unit.Application.TestDoubles;
 using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Application.Persistence;

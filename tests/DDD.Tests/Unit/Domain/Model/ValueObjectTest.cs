@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
 

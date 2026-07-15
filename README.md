@@ -2,7 +2,7 @@
 
 [![Build and test](https://github.com/bejmawiktor/DDD/actions/workflows/build-test.yml/badge.svg)](https://github.com/bejmawiktor/DDD/actions/workflows/build-test.yml)
 
-A set of .NET (net8.0) libraries providing tactical Domain-Driven Design patterns: entities, aggregates, value objects, domain events, plus an optional validation layer and ASP.NET Core / MediatR integrations.
+A set of .NET (net10.0) libraries providing tactical Domain-Driven Design patterns: entities, aggregates, value objects, domain events, plus an optional validation layer and ASP.NET Core / MediatR integrations.
 
 Example usage: https://github.com/bejmawiktor/Identity
 
@@ -320,7 +320,7 @@ public class CustomerRepository
 
 ## Requirements
 
-- .NET SDK 8.0
+- .NET SDK 10.0
 - The [Utils](https://www.nuget.org/packages/Utils) package (v3.3.0) for the domain and validation modules
 
 ## Building and testing

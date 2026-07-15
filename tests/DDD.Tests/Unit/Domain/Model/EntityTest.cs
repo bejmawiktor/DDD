@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DDD.Tests.Unit.Domain.TestDoubles;
+﻿using DDD.Tests.Unit.Domain.TestDoubles;
 using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Model;
@@ -201,7 +199,7 @@ public class EntityTest
         _ = Assert.Throws(
             Is.InstanceOf<ArgumentNullException>()
                 .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("id"),
+                .EqualTo("value"),
             () => new StringEntityStub("AAA").Id = null!
         );
     }

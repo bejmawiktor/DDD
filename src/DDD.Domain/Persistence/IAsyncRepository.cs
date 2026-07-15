@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
 
 namespace DDD.Domain.Persistence;
 

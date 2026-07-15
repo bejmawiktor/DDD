@@ -1,5 +1,4 @@
-﻿using System;
-using DDD.Application.Model;
+﻿using DDD.Application.Model;
 using DDD.Application.Model.Converters;
 using DDD.Domain.Model;
 using DDD.Domain.Persistence;
@@ -32,46 +31,17 @@ public interface IRepositoryAdapter<
 
     TAggregateRoot? IRepository<TAggregateRoot, TIdentifier>.Get(TIdentifier identifier)
     {
-        TDto? aggregateRootDto = this.DtoRepository.Get(
-            new TDtoAggregateRootConverter().ToDtoIdentifier(identifier)
-        );
+        TDto? aggregateRootDto = this.DtoRepository.Get(Converter.ToDtoIdentifier(identifier));
 
         return aggregateRootDto is null ? default : aggregateRootDto.ToDomainObject();
     }
 
     void IRepository<TAggregateRoot, TIdentifier>.Add(TAggregateRoot entity) =>
-        this.DtoRepository.Add(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.Add(Converter.ToDto(entity));
 
     void IRepository<TAggregateRoot, TIdentifier>.Remove(TAggregateRoot entity) =>
-        this.DtoRepository.Remove(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.Remove(Converter.ToDto(entity));
 
     void IRepository<TAggregateRoot, TIdentifier>.Update(TAggregateRoot entity) =>
-        this.DtoRepository.Update(
-            IRepositoryAdapter<
-                TDto,
-                TDtoIdentifier,
-                TDtoRepository,
-                TDtoAggregateRootConverter,
-                TAggregateRoot,
-                TIdentifier
-            >.Converter.ToDto(entity)
-        );
+        this.DtoRepository.Update(Converter.ToDto(entity));
 }

@@ -4,41 +4,37 @@ using Utils.Validation;
 namespace DDD.Domain.Model;
 
 public abstract class ValueObject<TDeriviedValueObject, TValidator>
-    : Model.ValueObject,
+    : ValueObject,
         IValidationTarget<TDeriviedValueObject, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<TDeriviedValueObject, TValidator>
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedValueObject)this);
+            field.Update((TDeriviedValueObject)this);
 
-            return this.validator;
+            return field;
         }
-    }
+    } = new();
 }
 
 public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator>
-    : Model.ValueObject<TValue>,
+    : ValueObject<TValue>,
         IValidationTarget<TDeriviedValueObject, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<TValue, TDeriviedValueObject, TValidator>
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedValueObject)this);
+            field.Update((TDeriviedValueObject)this);
 
-            return this.validator;
+            return field;
         }
-    }
+    } = new();
 
     protected ValueObject(TValue value)
         : base(value) { }

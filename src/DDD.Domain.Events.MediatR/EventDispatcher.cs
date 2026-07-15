@@ -2,14 +2,10 @@
 
 namespace DDD.Domain.Events.MediatR;
 
-internal class EventDispatcher : IEventDispatcher
+internal class EventDispatcher(IMediator mediator) : IEventDispatcher
 {
-    private IMediator Mediator { get; }
-
-    public EventDispatcher(IMediator mediator)
-    {
-        this.Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-    }
+    private IMediator Mediator { get; } =
+        mediator ?? throw new ArgumentNullException(nameof(mediator));
 
     public void Dispatch<TEvent>(TEvent @event)
         where TEvent : notnull, IEvent =>

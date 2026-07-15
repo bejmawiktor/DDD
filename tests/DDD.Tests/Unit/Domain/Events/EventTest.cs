@@ -1,5 +1,4 @@
-﻿using System;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using Moq;
 using NUnit.Framework;
 

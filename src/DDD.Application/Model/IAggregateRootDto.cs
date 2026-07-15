@@ -1,5 +1,4 @@
-﻿using System;
-using DDD.Domain.Model;
+﻿using DDD.Domain.Model;
 
 namespace DDD.Application.Model;
 

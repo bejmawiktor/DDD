@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DDD.Domain.Events;
+﻿namespace DDD.Domain.Events;
 
 public static class EventManagerExtension
 {

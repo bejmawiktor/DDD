@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace DDD.Application.Persistence;
+﻿namespace DDD.Application.Persistence;
 
 public interface IAsyncDtoRepository<TDto, TDtoIdentifier>
 {

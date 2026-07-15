@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Utils.Disposable;
+﻿using Utils.Disposable;
 
 namespace DDD.Domain.Events;
 

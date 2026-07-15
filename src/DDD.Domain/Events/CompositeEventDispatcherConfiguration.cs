@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DDD.Domain.Events;
+﻿namespace DDD.Domain.Events;
 
 public class CompositeEventDispatcherConfiguration
 {

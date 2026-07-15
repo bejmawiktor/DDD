@@ -1,16 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
     <Title>DDD Tactical Patterns</Title>
     <Authors>Wiktor Bejma</Authors>
     <Company />
     <Description>DDD tactical patterns with some useful extras.</Description>
-		<Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Utils" Version="3.3.0" />
+    <PackageReference Include="Utils" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

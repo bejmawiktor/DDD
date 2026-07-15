@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;

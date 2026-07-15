@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DDD.Application.Persistence;
+﻿using DDD.Application.Persistence;
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
@@ -21,11 +19,6 @@ public class AggregateRootDtoStubRepository : IDtoRepository<AggregateRootDtoStu
     public void Remove(AggregateRootDtoStub dto) =>
         this.Dtos?.RemoveAt(this.Dtos.FindIndex(e => e.Id == dto.Id));
 
-    public void Update(AggregateRootDtoStub dto)
-    {
-        if (this.Dtos is not null)
-        {
-            this.Dtos[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto;
-        }
-    }
+    public void Update(AggregateRootDtoStub dto) =>
+        this.Dtos?[this.Dtos.FindIndex(e => e.Id == dto.Id)] = dto;
 }

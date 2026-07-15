@@ -19,17 +19,15 @@ public abstract class AggregateRoot<
     where TValidationSource : new()
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedAggregateRoot)this);
+            field.Update((TDeriviedAggregateRoot)this);
 
-            return this.validator;
+            return field;
         }
-    }
+    } = new();
 
     protected AggregateRoot(TIdentifier id)
         : base(id) { }

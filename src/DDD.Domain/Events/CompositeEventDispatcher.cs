@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace DDD.Domain.Events;
+﻿namespace DDD.Domain.Events;
 
 public class CompositeEventDispatcher : ICompositeEventDispatcher
 {

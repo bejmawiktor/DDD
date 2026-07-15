@@ -1,5 +1,4 @@
-﻿using System;
-using DDD.Domain.Events;
+﻿using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using MediatR;
 using Moq;

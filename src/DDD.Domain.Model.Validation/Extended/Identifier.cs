@@ -9,7 +9,7 @@ public abstract class Identifier<
     TValidator,
     TValidationSource
 >
-    : Model.Identifier<TIdentifierValue, TDeriviedIdentifier>,
+    : Identifier<TIdentifierValue, TDeriviedIdentifier>,
         IValidationTarget<TDeriviedIdentifier, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedIdentifier>, new()
     where TDeriviedIdentifier : Identifier<
@@ -21,17 +21,15 @@ public abstract class Identifier<
     where TIdentifierValue : notnull, IEquatable<TIdentifierValue>
     where TValidationSource : new()
 {
-    private readonly TValidator validator = new();
-
     protected TValidator Validator
     {
         get
         {
-            this.validator.Update((TDeriviedIdentifier)this);
+            field.Update((TDeriviedIdentifier)this);
 
-            return this.validator;
+            return field;
         }
-    }
+    } = new();
 
     protected Identifier(TIdentifierValue value)
         : base(value) { }
