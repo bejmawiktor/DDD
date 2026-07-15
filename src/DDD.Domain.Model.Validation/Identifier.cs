@@ -3,8 +3,8 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model;
 
-public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier, TValidator>
-    : Identifier<TIdentifierValue, TDeriviedIdentifier>,
+public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier, TValidator>(TIdentifierValue value)
+    : Identifier<TIdentifierValue, TDeriviedIdentifier>(value),
         IValidationTarget<TDeriviedIdentifier, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedIdentifier>, new()
     where TDeriviedIdentifier : Identifier<TIdentifierValue, TDeriviedIdentifier, TValidator>
@@ -19,7 +19,4 @@ public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier, TValidat
             return field;
         }
     } = new();
-
-    protected Identifier(TIdentifierValue value)
-        : base(value) { }
 }

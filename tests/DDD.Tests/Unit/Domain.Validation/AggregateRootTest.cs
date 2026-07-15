@@ -258,7 +258,7 @@ internal class AggregateRootTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[] { nameof(TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown) }
+        [nameof(TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown)]
     )]
     public void TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -294,10 +294,9 @@ internal class AggregateRootTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        }
+        ]
     )]
     public void TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -359,12 +358,11 @@ internal class AggregateRootTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataForOneOfValidatorsTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
@@ -403,12 +401,11 @@ internal class AggregateRootTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataForOneOfExtendedValidatorsTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,

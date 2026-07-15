@@ -20,8 +20,8 @@ public abstract class ValueObject<TDeriviedValueObject, TValidator>
     } = new();
 }
 
-public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator>
-    : ValueObject<TValue>,
+public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator>(TValue value)
+    : ValueObject<TValue>(value),
         IValidationTarget<TDeriviedValueObject, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<TValue, TDeriviedValueObject, TValidator>
@@ -35,7 +35,4 @@ public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator>
             return field;
         }
     } = new();
-
-    protected ValueObject(TValue value)
-        : base(value) { }
 }

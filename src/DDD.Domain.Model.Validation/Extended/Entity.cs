@@ -3,8 +3,8 @@ using Utils.Validation;
 
 namespace DDD.Domain.Model.Extended;
 
-public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>
-    : Entity<TIdentifier>,
+public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>(TIdentifier id)
+    : Entity<TIdentifier>(id),
         IValidationTarget<TDeriviedEntity, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedEntity>, new()
     where TDeriviedEntity : Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>
@@ -20,7 +20,4 @@ public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator, TValidati
             return field;
         }
     } = new();
-
-    protected Entity(TIdentifier id)
-        : base(id) { }
 }

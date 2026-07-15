@@ -8,7 +8,7 @@ public abstract class AggregateRoot<
     TDeriviedAggregateRoot,
     TValidator,
     TValidationSource
-> : AggregateRoot<TIdentifier>, IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
+>(TIdentifier id) : AggregateRoot<TIdentifier>(id), IValidationTarget<TDeriviedAggregateRoot, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedAggregateRoot>, new()
     where TDeriviedAggregateRoot : AggregateRoot<
             TIdentifier,
@@ -28,7 +28,4 @@ public abstract class AggregateRoot<
             return field;
         }
     } = new();
-
-    protected AggregateRoot(TIdentifier id)
-        : base(id) { }
 }

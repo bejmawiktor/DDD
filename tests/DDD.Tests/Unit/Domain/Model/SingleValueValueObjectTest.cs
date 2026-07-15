@@ -9,55 +9,39 @@ public class SingleValueValueObjectTest
     public static IEnumerable<TestCaseData> EqualsTestData()
     {
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("1"),
-                new SingleValueValueObjectFake("1"),
-                true,
-            }
+            new SingleValueValueObjectFake("1"),
+            new SingleValueValueObjectFake("1"),
+            true
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(1)");
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("3"),
-                new SingleValueValueObjectFake("3"),
-                true,
-            }
+            new SingleValueValueObjectFake("3"),
+            new SingleValueValueObjectFake("3"),
+            true
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(2)");
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("2"),
-                new SingleValueValueObjectFake("2"),
-                true,
-            }
+            new SingleValueValueObjectFake("2"),
+            new SingleValueValueObjectFake("2"),
+            true
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(3)");
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("1"),
-                new SingleValueValueObjectFake("2"),
-                false,
-            }
+            new SingleValueValueObjectFake("1"),
+            new SingleValueValueObjectFake("2"),
+            false
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(4)");
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("34"),
-                new SingleValueValueObjectFake("3"),
-                false,
-            }
+            new SingleValueValueObjectFake("34"),
+            new SingleValueValueObjectFake("3"),
+            false
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(5)");
         yield return new TestCaseData(
-            new object[]
-            {
-                new SingleValueValueObjectFake("5"),
-                new SingleValueValueObjectFake("2"),
-                false,
-            }
+            new SingleValueValueObjectFake("5"),
+            new SingleValueValueObjectFake("2"),
+            false
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(6)");
         yield return new TestCaseData(
-            new object?[] { new SingleValueValueObjectFake("5"), null, false }
+            new SingleValueValueObjectFake("5"),
+            null,
+            false
         ).SetName($"{nameof(TestEquals_WhenValueObjectsGiven_ThenValuesAreCompared)}(7)");
     }
 

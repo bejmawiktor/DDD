@@ -2,14 +2,9 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
-public class AggregateRootDtoStubRepository : IDtoRepository<AggregateRootDtoStub, string>
+public class AggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos) : IDtoRepository<AggregateRootDtoStub, string>
 {
-    public List<AggregateRootDtoStub>? Dtos { get; private set; }
-
-    public AggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos)
-    {
-        this.Dtos = dtos;
-    }
+    public List<AggregateRootDtoStub>? Dtos { get; private set; } = dtos;
 
     public AggregateRootDtoStub? Get(string identifier) =>
         this.Dtos?.FirstOrDefault(d => d.Id == identifier);

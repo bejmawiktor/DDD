@@ -258,10 +258,9 @@ public class ErrorExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorWithReasonsTestData),
-        new object[]
-        {
+        [
             nameof(TestToProblemDetails_WhenErrorWithReasonsGiven_ThenProblemDetailsIsReturned),
-        }
+        ]
     )]
     public void TestToProblemDetails_WhenErrorWithReasonsGiven_ThenProblemDetailsIsReturned(
         string? path,
@@ -311,7 +310,7 @@ public class ErrorExtensionsTest
 
     [TestCaseSource(
         nameof(CreateErrorTestData),
-        new object[] { nameof(TestToProblemDetails_WhenErrorGiven_ThenProblemDetailsIsReturned) }
+        [nameof(TestToProblemDetails_WhenErrorGiven_ThenProblemDetailsIsReturned)]
     )]
     public void TestToProblemDetails_WhenErrorGiven_ThenProblemDetailsIsReturned(
         string? path,

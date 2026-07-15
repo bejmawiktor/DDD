@@ -8,8 +8,8 @@ public abstract class Identifier<
     TDeriviedIdentifier,
     TValidator,
     TValidationSource
->
-    : Identifier<TIdentifierValue, TDeriviedIdentifier>,
+>(TIdentifierValue value)
+    : Identifier<TIdentifierValue, TDeriviedIdentifier>(value),
         IValidationTarget<TDeriviedIdentifier, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedIdentifier>, new()
     where TDeriviedIdentifier : Identifier<
@@ -30,7 +30,4 @@ public abstract class Identifier<
             return field;
         }
     } = new();
-
-    protected Identifier(TIdentifierValue value)
-        : base(value) { }
 }

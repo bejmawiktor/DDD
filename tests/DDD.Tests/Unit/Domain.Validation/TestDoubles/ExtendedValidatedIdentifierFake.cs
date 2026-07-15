@@ -3,17 +3,14 @@ using Utils.Functional;
 
 namespace DDD.Tests.Unit.Domain.Validation.TestDoubles;
 
-internal class ExtendedValidatedIdentifierFake
+internal class ExtendedValidatedIdentifierFake(string value)
     : Identifier<
         string,
         ExtendedValidatedIdentifierFake,
         ExtendedIdentifierValidatorFake,
         IdentifierValidationSource
-    >
+    >(value)
 {
-    public ExtendedValidatedIdentifierFake(string value)
-        : base(value) { }
-
     protected override void ValidateValue(string value)
     {
         this.Validator.Validate(source =>

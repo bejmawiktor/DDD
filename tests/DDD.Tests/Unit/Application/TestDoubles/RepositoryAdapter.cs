@@ -2,7 +2,7 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
-public class RepositoryAdapter
+public class RepositoryAdapter(AggregateRootDtoStubRepository dtoRepository)
     : IRepositoryAdapter<
         AggregateRootDtoStub,
         string,
@@ -22,10 +22,5 @@ public class RepositoryAdapter
         string
     >.DtoRepository => this.DtoRepository;
 
-    public AggregateRootDtoStubRepository DtoRepository { get; }
-
-    public RepositoryAdapter(AggregateRootDtoStubRepository dtoRepository)
-    {
-        this.DtoRepository = dtoRepository;
-    }
+    public AggregateRootDtoStubRepository DtoRepository { get; } = dtoRepository;
 }

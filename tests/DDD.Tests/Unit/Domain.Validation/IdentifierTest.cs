@@ -57,10 +57,9 @@ internal class IdentifierTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        }
+        ]
     )]
     public void TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,
@@ -95,12 +94,11 @@ internal class IdentifierTest
 
     [TestCaseSource(
         nameof(CreateIncorrectDataTestData),
-        new object[]
-        {
+        [
             nameof(
                 TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
             ),
-        }
+        ]
     )]
     public void TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,
