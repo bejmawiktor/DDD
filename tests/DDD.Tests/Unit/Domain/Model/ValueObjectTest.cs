@@ -1,404 +1,371 @@
 using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Utils;
+using ValueObjectEqualsCase = (
+    object LhsValueObject,
+    object? RhsValueObject,
+    bool ExpectedEqualsResult
+);
+using ValueObjectHashCodeCase = (object LhsValueObject, object RhsObject, bool ExpectedResult);
+using ValueObjectOperatorCase = (
+    DDD.Tests.Unit.Domain.TestDoubles.ThirdValueObjectFake? LhsValueObject,
+    DDD.Tests.Unit.Domain.TestDoubles.ThirdValueObjectFake? RhsValueObject,
+    bool ExpectedResult
+);
 
 namespace DDD.Tests.Unit.Domain.Model;
 
 public class ValueObjectTest
 {
-    public static IEnumerable<TestCaseData> EqualsTestData
+    public static IEnumerable<Func<TestDataRow<ValueObjectEqualsCase>>> EqualsTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(1, "AA"),
-                true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(1)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, "AAB"),
-                new FirstValueObjectFake(2, "AAB"),
-                true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(2)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, null),
-                new FirstValueObjectFake(2, null),
-                true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(4)");
-            yield return new TestCaseData(
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(1, "AA"), true),
+            "Equal two-member value objects"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(2, "AAB"), new FirstValueObjectFake(2, "AAB"), true),
+            "Equal two-member value objects (2, AAB)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(2, null), new FirstValueObjectFake(2, null), true),
+            "Equal two-member value objects with null member"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(5)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(6)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 3.1, null),
-                new ThirdValueObjectFake(1, 3.1, null),
-                true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(7)");
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(2, 3, "AABC"), new ThirdValueObjectFake(2, 3, "AABC"), true),
+            "Equal three-member value objects (2, 3, AABC)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 3.1, null), new ThirdValueObjectFake(1, 3.1, null), true),
+            "Equal three-member value objects with null member"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (
                 new FourthValueObjectFake(1, 3.1, null, true),
                 new FourthValueObjectFake(1, 3.1, null, true),
                 true
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(8)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(2, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(9)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                null,
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(10)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(1, "AB"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(11)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(2, null),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(12)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new ThirdValueObjectFake(1, 0, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(13)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, "AA"),
-                new ThirdValueObjectFake(2, 0, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(14)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, "AA"),
-                new ThirdValueObjectFake(1, 0, "AB"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(15)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, "AA"),
-                new ThirdValueObjectFake(2, 1, null),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(16)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, "AA"),
-                new ThirdValueObjectFake(1, 0, null),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(17)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, null),
-                new ThirdValueObjectFake(1, 0, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(18)");
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(1, 0, "AA"),
-                new FirstValueObjectFake(1, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(19)");
-            yield return new TestCaseData(
+            ),
+            "Equal four-member value objects"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(2, "AA"), false),
+            "Different first member"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), null, false),
+            "Compared with null"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(1, "AB"), false),
+            "Different second member"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(2, null), false),
+            "Different members with null"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new ThirdValueObjectFake(1, 0, "AA"), false),
+            "Different value object types (First vs Third)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, "AA"), new ThirdValueObjectFake(2, 0, "AA"), false),
+            "Different first member (three-member)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, "AA"), new ThirdValueObjectFake(1, 0, "AB"), false),
+            "Different third member (three-member)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, "AA"), new ThirdValueObjectFake(2, 1, null), false),
+            "Different members with null (three-member)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, "AA"), new ThirdValueObjectFake(1, 0, null), false),
+            "Third member null on one side"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, null), new ThirdValueObjectFake(1, 0, "AA"), false),
+            "Third member null on other side"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new ThirdValueObjectFake(1, 0, "AA"), new FirstValueObjectFake(1, "AA"), false),
+            "Different value object types (Third vs First)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (
                 new FourthValueObjectFake(1, 0, "AA", false),
                 new FourthValueObjectFake(1, 0, "AA", true),
                 false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(20)");
-            yield return new TestCaseData(
+            ),
+            "Different boolean member"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (
                 new FourthValueObjectFake(1, 0, "AA", true),
                 new FourthValueObjectFake(1, 0, "AA", false),
                 false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(21)");
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new SecondValueObjectFake(1, "AA"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenValueObjectGiven_ThenMembersAreComapred)}(22)");
-        }
+            ),
+            "Different boolean member (reversed)"
+        );
+        yield return TestCase.Of<ValueObjectEqualsCase>(
+            (new FirstValueObjectFake(1, "AA"), new SecondValueObjectFake(1, "AA"), false),
+            "Different value object types with same members"
+        );
     }
 
-    public static IEnumerable<TestCaseData> EqualsOperatorTestData
+    public static IEnumerable<Func<TestDataRow<ValueObjectOperatorCase>>> EqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(1)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(2)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.4, AAC)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(3)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.5, AAC)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.1, "AAB"),
                 new ThirdValueObjectFake(2, 3.1, "AAB"),
                 true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(4)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.1, AAB)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.2, "AAB"),
                 false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(5)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Different second member"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(3, 3.5, "AAC"),
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(6)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Different first and second members"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(3, 3.4, "AAD"),
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3.1, "AAB"),
-                null,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(8)"
-            );
-            yield return new TestCaseData(
-                null,
-                new ThirdValueObjectFake(2, 3.1, "AAB"),
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(9)"
-            );
-            yield return new TestCaseData(null, null, true).SetName(
-                $"{nameof(TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(10)"
-            );
-        }
+            ),
+            "All members different"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (new ThirdValueObjectFake(2, 3.1, "AAB"), null, false),
+            "Right side is null"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (null, new ThirdValueObjectFake(2, 3.1, "AAB"), false),
+            "Left side is null"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (null, null, true),
+            "Both sides are null"
+        );
     }
 
-    public static IEnumerable<TestCaseData> NotEqualsOperatorTestData
+    public static IEnumerable<
+        Func<TestDataRow<ValueObjectOperatorCase>>
+    > NotEqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(1)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(2)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.4, AAC)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(3)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.5, AAC)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(2, 3.1, "AAB"),
                 new ThirdValueObjectFake(2, 3.1, "AAB"),
                 false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(4)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Equal three-member value objects (2, 3.1, AAB)"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.2, "AAB"),
                 true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(5)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Different second member"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(3, 3.5, "AAC"),
                 new ThirdValueObjectFake(2, 3.4, "AAC"),
                 true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(6)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Different first and second members"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (
                 new ThirdValueObjectFake(3, 3.4, "AAD"),
                 new ThirdValueObjectFake(2, 3.5, "AAC"),
                 true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(7)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3.1, "AAB"),
-                null,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(8)"
-            );
-            yield return new TestCaseData(
-                null,
-                new ThirdValueObjectFake(2, 3.1, "AAB"),
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(9)"
-            );
-            yield return new TestCaseData(null, null, false).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred)}(10)"
-            );
-        }
+            ),
+            "All members different"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (new ThirdValueObjectFake(2, 3.1, "AAB"), null, true),
+            "Right side is null"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (null, new ThirdValueObjectFake(2, 3.1, "AAB"), true),
+            "Left side is null"
+        );
+        yield return TestCase.Of<ValueObjectOperatorCase>(
+            (null, null, false),
+            "Both sides are null"
+        );
     }
 
-    public static IEnumerable<TestCaseData> GetHashCodeTestData
+    public static IEnumerable<Func<TestDataRow<ValueObjectHashCodeCase>>> GetHashCodeTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(1, "AA"),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, "AAB"),
-                new FirstValueObjectFake(2, "AAB"),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, null),
-                new FirstValueObjectFake(2, null),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(1, "AA"), true),
+            "Same members"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(2, "AAB"), new FirstValueObjectFake(2, "AAB"), true),
+            "Same members (2, AAB)"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(2, null), new FirstValueObjectFake(2, null), true),
+            "Same members with null"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(1, "AA"),
-                new FirstValueObjectFake(1, "AC"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(3, "AAB"),
-                new FirstValueObjectFake(2, "AAB"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, null),
-                new FirstValueObjectFake(2, "AS"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
+            ),
+            "Same three members"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new ThirdValueObjectFake(2, 3, "AABC"), new ThirdValueObjectFake(2, 3, "AABC"), true),
+            "Same three members (2, 3, AABC)"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(1, "AA"), new FirstValueObjectFake(1, "AC"), false),
+            "Different second member"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(3, "AAB"), new FirstValueObjectFake(2, "AAB"), false),
+            "Different first member"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(2, null), new FirstValueObjectFake(2, "AS"), false),
+            "Null vs non-null second member"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (
                 new ThirdValueObjectFake(1, 3.2, "AAB"),
                 new ThirdValueObjectFake(1, 3.1, "AAB"),
                 false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                new ThirdValueObjectFake(2, 33, "AAB"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                new FirstValueObjectFake(2, "AAB"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, null),
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new FirstValueObjectFake(2, null),
-                "1",
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new ThirdValueObjectFake(2, 3, "AABC"),
-                2,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned)}(1)"
-            );
-        }
+            ),
+            "Different second member (three-member)"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new ThirdValueObjectFake(2, 3, "AABC"), new ThirdValueObjectFake(2, 33, "AAB"), false),
+            "Different second and third members"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new ThirdValueObjectFake(2, 3, "AABC"), new FirstValueObjectFake(2, "AAB"), false),
+            "Different value object types"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(2, null), new ThirdValueObjectFake(2, 3, "AABC"), false),
+            "Different value object types (First vs Third)"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new FirstValueObjectFake(2, null), "1", false),
+            "Value object compared with raw string"
+        );
+        yield return TestCase.Of<ValueObjectHashCodeCase>(
+            (new ThirdValueObjectFake(2, 3, "AABC"), 2, false),
+            "Value object compared with raw int"
+        );
     }
 
-    [TestCaseSource(nameof(EqualsTestData))]
-    public void TestEquals_WhenValueObjectGiven_ThenMembersAreComapred(
+    [Test]
+    [MethodDataSource(nameof(EqualsTestData))]
+    public async Task TestEquals_WhenValueObjectGiven_ThenMembersAreComapred(
         object lhsValueObject,
-        object rhsValueObject,
+        object? rhsValueObject,
         bool expectedEqualsResult
-    ) => Assert.That(lhsValueObject.Equals(rhsValueObject), Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsValueObject.Equals(rhsValueObject)).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(EqualsOperatorTestData))]
-    public void TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred(
-        ThirdValueObjectFake lhsValueObject,
-        ThirdValueObjectFake rhsValueObject,
+    [Test]
+    [MethodDataSource(nameof(EqualsOperatorTestData))]
+    public async Task TestEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred(
+        ThirdValueObjectFake? lhsValueObject,
+        ThirdValueObjectFake? rhsValueObject,
         bool expectedEqualsResult
-    ) => Assert.That(lhsValueObject != rhsValueObject, Is.Not.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsValueObject != rhsValueObject).IsNotEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(NotEqualsOperatorTestData))]
-    public void TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred(
-        ThirdValueObjectFake lhsValueObject,
-        ThirdValueObjectFake rhsValueObject,
+    [Test]
+    [MethodDataSource(nameof(NotEqualsOperatorTestData))]
+    public async Task TestNotEqualsOperator_WhenValueObjectGiven_ThenMembersAreComapred(
+        ThirdValueObjectFake? lhsValueObject,
+        ThirdValueObjectFake? rhsValueObject,
         bool expectedEqualsResult
-    ) => Assert.That(lhsValueObject != rhsValueObject, Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsValueObject != rhsValueObject).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(GetHashCodeTestData))]
-    public void TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned(
+    [Test]
+    [MethodDataSource(nameof(GetHashCodeTestData))]
+    public async Task TestGetHashCode_WhenTwoValueObjectHaveSameMembers_ThenSameHashCodesAreReturned(
         object lhsValueObject,
         object rhsObject,
         bool expectedEqualsHashCodeResult
-    )
-    {
-        Assert.That(
-            lhsValueObject.GetHashCode() == rhsObject.GetHashCode(),
-            Is.EqualTo(expectedEqualsHashCodeResult)
-        );
-    }
+    ) =>
+        await Assert
+            .That(lhsValueObject.GetHashCode() == rhsObject.GetHashCode())
+            .IsEqualTo(expectedEqualsHashCodeResult);
 }

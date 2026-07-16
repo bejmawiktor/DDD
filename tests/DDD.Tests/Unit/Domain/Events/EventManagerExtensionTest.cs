@@ -1,45 +1,41 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
-using NUnit.Framework;
 using Utils.Disposable;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
-[TestFixture]
+[NotInParallel]
 internal class EventManagerExtensionTest
 {
-    [TearDown]
-    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+    [After(Test)]
+    public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenNotUsedPreviously_ThenCompositeDispatcherIsSet()
+    public async Task TestUseCompositeDispatcher_WhenNotUsedPreviously_ThenCompositeDispatcherIsSet()
     {
         EventManager.Instance.UseCompositeDispatcher();
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(EventManager.Instance.Dispatcher, Is.Not.Null);
-            Assert.That(EventManager.Instance.Dispatcher, Is.TypeOf<CompositeEventDispatcher>());
-        });
+            await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
+            await Assert.That(EventManager.Instance.Dispatcher).IsTypeOf<CompositeEventDispatcher>();
+        }
     }
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenUsedPreviously_ThenNewCompositeDispatcherIsSet()
+    public async Task TestUseCompositeDispatcher_WhenUsedPreviously_ThenNewCompositeDispatcherIsSet()
     {
         EventManager.Instance.UseCompositeDispatcher();
         IDispatcher<IEvent>? eventDispatcher = EventManager.Instance.Dispatcher;
 
         EventManager.Instance.UseCompositeDispatcher();
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(EventManager.Instance.Dispatcher, Is.Not.SameAs(eventDispatcher));
-        });
+        await Assert.That(EventManager.Instance.Dispatcher).IsNotSameReferenceAs(eventDispatcher);
     }
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenConfigurationGiven_ThenDispatchersAreSetToEventManagerDispatcher()
+    public async Task TestUseCompositeDispatcher_WhenConfigurationGiven_ThenDispatchersAreSetToEventManagerDispatcher()
     {
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
@@ -81,16 +77,16 @@ internal class EventManagerExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenNextConfigurationGiven_ThenDispatchersAreReplacedInEventManagerDispatcher()
+    public async Task TestUseCompositeDispatcher_WhenNextConfigurationGiven_ThenDispatchersAreReplacedInEventManagerDispatcher()
     {
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
@@ -146,26 +142,25 @@ internal class EventManagerExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.Null);
-            Assert.That(secondDispatchedEvent, Is.Null);
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-            Assert.That(fourthDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsNull();
+            await Assert.That(secondDispatchedEvent).IsNull();
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(fourthDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestUseCompositeDispatcher_WhenNullDispatcherGiven_ThenNullExceptionIsThrown()
+    public async Task TestUseCompositeDispatcher_WhenNullDispatcherGiven_ThenNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("dispatcher"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () =>
                 EventManager.Instance.UseCompositeDispatcher(configuration =>
                     configuration.WithDispatcher(null!)
                 )
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("dispatcher");
     }
 }

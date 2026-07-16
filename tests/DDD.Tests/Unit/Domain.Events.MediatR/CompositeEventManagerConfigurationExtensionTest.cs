@@ -1,20 +1,19 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
-[TestFixture]
+[NotInParallel]
 public class CompositeEventManagerConfigurationExtensionTest
 {
-    [TearDown]
-    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+    [After(Test)]
+    public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestWithMediatRDispatcher_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
+    public async Task TestWithMediatRDispatcher_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
     {
         EventNotification<EventStub>? firstDispatchedEvent = null;
         EventNotification<EventStub>? secondDispatchedEvent = null;
@@ -65,22 +64,21 @@ public class CompositeEventManagerConfigurationExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent?.Event, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent?.Event, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent?.Event, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent?.Event).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent?.Event).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent?.Event).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestWithMediatRDispatcher_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestWithMediatRDispatcher_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("mediator"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => new CompositeEventDispatcherConfiguration().WithMediatRDispatcher(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 }

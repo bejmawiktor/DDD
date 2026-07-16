@@ -1,12 +1,12 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
+[NotInParallel]
 internal class EventDispatcherTest
 {
     private ServiceProvider ServiceProvider { get; set; }
@@ -22,21 +22,20 @@ internal class EventDispatcherTest
     }
 
     [Test]
-    public void TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("mediator"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => new EventDispatcher(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 
-    [TearDown]
+    [After(Test)]
     public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestDispatch_WhenEventIsApplied_ThenEventIsHandled()
+    public async Task TestDispatch_WhenEventIsApplied_ThenEventIsHandled()
     {
         EventStub eventStub = new();
         EventManager.Instance.UseMediatREventDispatcher(
@@ -45,7 +44,7 @@ internal class EventDispatcherTest
 
         EventManager.Instance.Notify(eventStub);
 
-        Assert.That(eventStub.WasHandled, Is.True);
+        await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
@@ -58,11 +57,11 @@ internal class EventDispatcherTest
 
         await EventManager.Instance.NotifyAsync(eventStub);
 
-        Assert.That(eventStub.WasHandled, Is.True);
+        await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
-    public void TestDispatch_WhenEventIsAppliedWithScope_ThenEventIsHandled()
+    public async Task TestDispatch_WhenEventIsAppliedWithScope_ThenEventIsHandled()
     {
         EventStub eventStub = new();
         EventManager.Instance.UseMediatREventDispatcher(
@@ -75,7 +74,7 @@ internal class EventDispatcherTest
 
         eventsScope.Publish();
 
-        Assert.That(eventStub.WasHandled, Is.True);
+        await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
@@ -92,6 +91,6 @@ internal class EventDispatcherTest
 
         await eventsScope.PublishAsync();
 
-        Assert.That(eventStub.WasHandled, Is.True);
+        await Assert.That(eventStub.WasHandled).IsTrue();
     }
 }

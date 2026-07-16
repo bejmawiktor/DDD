@@ -1,15 +1,13 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
-[TestFixture]
 internal class CompositeEventDispatcherTest
 {
     [Test]
-    public void TestDispatch_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
+    public async Task TestDispatch_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
     {
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
@@ -49,16 +47,16 @@ internal class CompositeEventDispatcherTest
 
         compositeDispatcher.Dispatch(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestDispatch_WhenNoDispatchersAdded_ThenNoDispatchAreExecuted()
+    public async Task TestDispatch_WhenNoDispatchersAdded_ThenNoDispatchAreExecuted()
     {
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
@@ -95,12 +93,12 @@ internal class CompositeEventDispatcherTest
 
         compositeDispatcher.Dispatch(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.Null);
-            Assert.That(secondDispatchedEvent, Is.Null);
-            Assert.That(thirdDispatchedEvent, Is.Null);
-        });
+            await Assert.That(firstDispatchedEvent).IsNull();
+            await Assert.That(secondDispatchedEvent).IsNull();
+            await Assert.That(thirdDispatchedEvent).IsNull();
+        }
     }
 
     [Test]
@@ -153,12 +151,12 @@ internal class CompositeEventDispatcherTest
 
         await compositeDispatcher.DispatchAsync(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
@@ -208,16 +206,16 @@ internal class CompositeEventDispatcherTest
 
         await compositeDispatcher.DispatchAsync(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.Null);
-            Assert.That(secondDispatchedEvent, Is.Null);
-            Assert.That(thirdDispatchedEvent, Is.Null);
-        });
+            await Assert.That(firstDispatchedEvent).IsNull();
+            await Assert.That(secondDispatchedEvent).IsNull();
+            await Assert.That(thirdDispatchedEvent).IsNull();
+        }
     }
 
     [Test]
-    public void TestDispatchUsingAddRange_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
+    public async Task TestDispatchUsingAddRange_WhenMultipleDispatchersAdded_ThenMultipleDispatchAreExecuted()
     {
         EventStub? firstDispatchedEvent = null;
         EventStub? secondDispatchedEvent = null;
@@ -261,12 +259,12 @@ internal class CompositeEventDispatcherTest
 
         compositeDispatcher.Dispatch(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
@@ -323,37 +321,35 @@ internal class CompositeEventDispatcherTest
 
         await compositeDispatcher.DispatchAsync(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestAdd_WhenNullDispatcherGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestAdd_WhenNullDispatcherGiven_ThenArgumentNullExceptionIsThrown()
     {
         CompositeEventDispatcher compositeDispatcher = new();
 
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("dispatcher"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => compositeDispatcher.Add(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("dispatcher");
     }
 
     [Test]
-    public void TestAddRange_WhenNullDispatcherGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestAddRange_WhenNullDispatcherGiven_ThenArgumentNullExceptionIsThrown()
     {
         CompositeEventDispatcher compositeDispatcher = new();
 
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("dispatchers"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => compositeDispatcher.AddRange(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("dispatchers");
     }
 }

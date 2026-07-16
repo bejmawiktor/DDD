@@ -1,19 +1,19 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Domain.Events.AspNetCore;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Microsoft.AspNetCore.Builder;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events.AspNetCore;
 
+[NotInParallel]
 internal class WebApplicationExtensionTest
 {
-    [TearDown]
-    public void ClearEventManager() => DDD.Domain.Events.EventManager.Instance.Dispatcher = null;
+    [After(Test)]
+    public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestUseEventCompositeDispatcher_WhenConfigurationGiven_ThenMultipleDispatchersAreUsedInEventManager()
+    public async Task TestUseEventCompositeDispatcher_WhenConfigurationGiven_ThenMultipleDispatchersAreUsedInEventManager()
     {
         WebApplication application = WebApplication.CreateBuilder().Build();
         EventStub? firstDispatchedEvent = null;
@@ -56,16 +56,16 @@ internal class WebApplicationExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 
     [Test]
-    public void TestUseEventCompositeDispatcher_WhenConfigurationWithServiceProviderGiven_ThenMultipleDispatchersAreUsedInEventManager()
+    public async Task TestUseEventCompositeDispatcher_WhenConfigurationWithServiceProviderGiven_ThenMultipleDispatchersAreUsedInEventManager()
     {
         WebApplication application = WebApplication.CreateBuilder().Build();
         EventStub? firstDispatchedEvent = null;
@@ -109,11 +109,11 @@ internal class WebApplicationExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(firstDispatchedEvent, Is.SameAs(@event));
-            Assert.That(secondDispatchedEvent, Is.SameAs(@event));
-            Assert.That(thirdDispatchedEvent, Is.SameAs(@event));
-        });
+            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+        }
     }
 }

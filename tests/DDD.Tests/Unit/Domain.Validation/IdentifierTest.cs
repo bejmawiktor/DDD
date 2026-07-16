@@ -1,67 +1,65 @@
-﻿using DDD.Tests.Unit.Domain.Validation.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Domain.Validation.TestDoubles;
+using DDD.Tests.Unit.Utils;
 using Utils.Validation;
+using IdentifierIncorrectDataCase = (string Value, System.AggregateException AggregateException);
 
 namespace DDD.Tests.Unit.Domain.Validation;
 
-[TestFixture]
 internal class IdentifierTest
 {
-    public static IEnumerable<TestCaseData> CreateIncorrectDataTestData(string testName)
+    public static IEnumerable<
+        Func<TestDataRow<IdentifierIncorrectDataCase>>
+    > CreateIncorrectDataTestData()
     {
-        yield return new TestCaseData(
-            "",
-            new AggregateException(
-                new ValidationException(
-                    nameof(IdentifierValidatorFake.Value),
-                    IdentifierValidatorFake.EmptyValueErrorMessage
+        yield return TestCase.Of<IdentifierIncorrectDataCase>(
+            (
+                "",
+                new AggregateException(
+                    new ValidationException(
+                        nameof(IdentifierValidatorFake.Value),
+                        IdentifierValidatorFake.EmptyValueErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty Value)");
-        yield return new TestCaseData(
-            "AB",
-            new AggregateException(
-                new ValidationException(
-                    nameof(IdentifierValidatorFake.Value),
-                    IdentifierValidatorFake.ValueCantBeABErrorMessage
-                ),
-                new ValidationException(
-                    nameof(IdentifierValidatorFake.Value),
-                    IdentifierValidatorFake.ValueLengthGreaterThanOndeErrorMessage
+            ),
+            "Empty value"
+        );
+        yield return TestCase.Of<IdentifierIncorrectDataCase>(
+            (
+                "AB",
+                new AggregateException(
+                    new ValidationException(
+                        nameof(IdentifierValidatorFake.Value),
+                        IdentifierValidatorFake.ValueCantBeABErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(IdentifierValidatorFake.Value),
+                        IdentifierValidatorFake.ValueLengthGreaterThanOndeErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Value AB, Longer than 1)");
+            ),
+            "Value AB, longer than 1"
+        );
     }
 
     [Test]
-    public void TestConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ValidatedIdentifierFake identifier = new("b");
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(identifier.Value, Is.EqualTo("b"));
-        });
+        await Assert.That(identifier.Value).IsEqualTo("b");
     }
 
     [Test]
-    public void TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ExtendedValidatedIdentifierFake identifier = new("b");
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(identifier.Value, Is.EqualTo("b"));
-        });
+        await Assert.That(identifier.Value).IsEqualTo("b");
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataTestData),
-        [
-            nameof(TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        ]
-    )]
-    public void TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataTestData))]
+    public async Task TestValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,
         AggregateException aggregateException
     )
@@ -70,37 +68,31 @@ internal class IdentifierTest
             () => new ValidatedIdentifierFake(value)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataTestData),
-        [
-            nameof(
-                TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
-            ),
-        ]
-    )]
-    public void TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataTestData))]
+    public async Task TestExtendedValidateIdentifier_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string value,
         AggregateException aggregateException
     )
@@ -109,25 +101,25 @@ internal class IdentifierTest
             () => new ExtendedValidatedIdentifierFake(value)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 }
