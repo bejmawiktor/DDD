@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +9,12 @@ namespace DDD.Domain.Validation.AspNetCore;
 
 public static class ErrorExtensions
 {
-    public static ProblemDetails ToProblemDetails<TError>(
-        this TError error,
-        HttpContext? httpContext = null
-    )
-        where TError : IError => ErrorExtensions.CreateProblemDetails((dynamic)error, httpContext);
+    extension<TError>(TError error)
+        where TError : IError
+    {
+        public ProblemDetails ToProblemDetails(HttpContext? httpContext = null) =>
+            ErrorExtensions.CreateProblemDetails((dynamic)error, httpContext);
+    }
 
     private static ProblemDetails CreateProblemDetails(IError error, HttpContext? httpContext)
     {

@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Utils" Version="6.1.0" />
+    <PackageReference Include="Utils" />
   </ItemGroup>
 
   <ItemGroup>
