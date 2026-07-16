@@ -1,96 +1,94 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Domain.TestDoubles;
+using DDD.Tests.Unit.Utils;
+using IdentifierEqualsCase = (
+    DDD.Tests.Unit.Domain.TestDoubles.StringIdFake LhsIdentifier,
+    DDD.Tests.Unit.Domain.TestDoubles.StringIdFake? RhsIdentifier,
+    bool ExpectedEqualityResult
+);
 
 namespace DDD.Tests.Unit.Domain.Model;
 
-[TestFixture]
 public class IdentifierTest
 {
-    public static IEnumerable<TestCaseData> EqualsTestData()
+    public static IEnumerable<Func<TestDataRow<IdentifierEqualsCase>>> EqualsTestData()
     {
-        yield return new TestCaseData(
-            new StringIdFake("1"),
-            new StringIdFake("1"),
-            true
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(1)");
-        yield return new TestCaseData(
-            new StringIdFake("3"),
-            new StringIdFake("3"),
-            true
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(2)");
-        yield return new TestCaseData(
-            new StringIdFake("2"),
-            new StringIdFake("2"),
-            true
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(3)");
-        yield return new TestCaseData(
-            new StringIdFake("1"),
-            new StringIdFake("2"),
-            false
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(4)");
-        yield return new TestCaseData(
-            new StringIdFake("34"),
-            new StringIdFake("3"),
-            false
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(5)");
-        yield return new TestCaseData(
-            new StringIdFake("5"),
-            new StringIdFake("2"),
-            false
-        ).SetName($"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(6)");
-        yield return new TestCaseData(new StringIdFake("5"), null, false).SetName(
-            $"{nameof(TestEquals_WhenIdentifierGiven_ThenValuesAreCompared)}(7)"
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("1"), new StringIdFake("1"), true),
+            "Equal ids"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("3"), new StringIdFake("3"), true),
+            "Equal ids (3)"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("2"), new StringIdFake("2"), true),
+            "Equal ids (2)"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("1"), new StringIdFake("2"), false),
+            "Different ids"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("34"), new StringIdFake("3"), false),
+            "Different ids with shared prefix"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("5"), new StringIdFake("2"), false),
+            "Different ids (5 vs 2)"
+        );
+        yield return TestCase.Of<IdentifierEqualsCase>(
+            (new StringIdFake("5"), null, false),
+            "Compared with null"
         );
     }
 
     [Test]
-    public void TestConstructing_WhenNullValueGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestConstructing_WhenNullValueGiven_ThenArgumentNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("value"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => new StringIdFake(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("value");
     }
 
     [Test]
-    public void TestConstructing_WhenNotValidValueGiven_ThenExceptionIsThrown()
+    public async Task TestConstructing_WhenNotValidValueGiven_ThenExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentException>().And.Message.EqualTo("Id could not be empty."),
-            () => new StringIdFake("")
-        );
+        ArgumentException? exception = Assert.Throws<ArgumentException>(() => new StringIdFake(""));
+
+        await Assert.That(exception!.Message).IsEqualTo("Id could not be empty.");
     }
 
     [Test]
-    public void TestConstructing_WhenValidValueGiven_ThenValueIsSet()
+    public async Task TestConstructing_WhenValidValueGiven_ThenValueIsSet()
     {
         StringIdFake id = new("1");
 
-        Assert.That(id.Value, Is.EqualTo("1"));
+        await Assert.That(id.Value).IsEqualTo("1");
     }
 
     [Test]
-    public void TestConstructing_WhenValidNotNullableValueGiven_ThenValueIsSet()
+    public async Task TestConstructing_WhenValidNotNullableValueGiven_ThenValueIsSet()
     {
         IntIdFake id = new(1);
 
-        Assert.That(id.Value, Is.EqualTo(1));
+        await Assert.That(id.Value).IsEqualTo(1);
     }
 
-    [TestCaseSource(nameof(EqualsTestData))]
-    public void TestEquals_WhenIdentifierGiven_ThenValuesAreCompared(
+    [Test]
+    [MethodDataSource(nameof(EqualsTestData))]
+    public async Task TestEquals_WhenIdentifierGiven_ThenValuesAreCompared(
         StringIdFake lhsIdentifier,
-        StringIdFake rhsIdentifier,
+        StringIdFake? rhsIdentifier,
         bool expectedEqualityResult
-    ) => Assert.That(lhsIdentifier.Equals(rhsIdentifier), Is.EqualTo(expectedEqualityResult));
+    ) => await Assert.That(lhsIdentifier.Equals(rhsIdentifier)).IsEqualTo(expectedEqualityResult);
 
     [Test]
-    public void TestToString_WhenValueGiven_ThenConvertedStringValueIsReturned()
+    public async Task TestToString_WhenValueGiven_ThenConvertedStringValueIsReturned()
     {
         IntIdFake id = new(1000);
 
-        Assert.That(id.ToString(), Is.EqualTo("1000"));
+        await Assert.That(id.ToString()).IsEqualTo("1000");
     }
 }

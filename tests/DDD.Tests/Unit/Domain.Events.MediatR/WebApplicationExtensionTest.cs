@@ -1,21 +1,21 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using DDD.Tests.Unit.Domain.Events.MediatR.TestDoubles;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
+[NotInParallel]
 internal class WebApplicationExtensionTest
 {
-    [TearDown]
+    [After(Test)]
     public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestUseMediatREventDispatcher_WhenUsed_ThenMediatRDispatcherIsUsedAsEventManagerDispatcher()
+    public async Task TestUseMediatREventDispatcher_WhenUsed_ThenMediatRDispatcherIsUsedAsEventManagerDispatcher()
     {
         EventNotification<EventStub>? dispatchedEvent = null;
         EventStub @event = new();
@@ -39,6 +39,6 @@ internal class WebApplicationExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        Assert.That(dispatchedEvent?.Event, Is.SameAs(@event));
+        await Assert.That(dispatchedEvent?.Event).IsSameReferenceAs(@event);
     }
 }

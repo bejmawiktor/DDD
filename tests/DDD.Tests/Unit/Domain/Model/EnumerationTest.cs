@@ -1,325 +1,225 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Domain.TestDoubles;
+using DDD.Tests.Unit.Utils;
+using EnumerationEqualsCase = (
+    object LhsEnumeration,
+    object? RhsEnumeration,
+    bool ExpectedEqualsResult
+);
+using EnumerationHashCodeCase = (object LhsValueObject, object RhsObject, bool ExpectedResult);
+using EnumerationOperatorCase = (
+    DDD.Tests.Unit.Domain.TestDoubles.FirstStringEnumerationFake? LhsEnumeration,
+    DDD.Tests.Unit.Domain.TestDoubles.FirstStringEnumerationFake? RhsEnumeration,
+    bool ExpectedResult
+);
 
 namespace DDD.Tests.Unit.Domain.Model;
 
-[TestFixture]
 public class EnumerationTest
 {
-    public static IEnumerable<TestCaseData> EqualsTestData
+    public static IEnumerable<Func<TestDataRow<EnumerationEqualsCase>>> EqualsTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.One,
-                true
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(1)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Two,
-                true
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(2)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Three,
-                true
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(3)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Zero,
-                true
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(4)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                null,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(5)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                null,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(6)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(7)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(8)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Zero,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(9)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                SecondStringEnumerationFake.Zero,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(10)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                SecondStringEnumerationFake.Three,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(11)");
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                SecondStringEnumerationFake.Null,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(12)");
-            yield return new TestCaseData(
-                SecondStringEnumerationFake.Zero,
-                SecondStringEnumerationFake.Zero,
-                true
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(13)");
-            yield return new TestCaseData(
-                SecondStringEnumerationFake.Zero,
-                SecondStringEnumerationFake.Three,
-                false
-            ).SetName($"{nameof(TestEquals_WhenEnumerationGiven_ThenValuesAreCompared)}(14)");
-        }
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.One, FirstStringEnumerationFake.One, true),
+            "Same value One"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Two, true),
+            "Same value Two"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Three, true),
+            "Same value Three"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Zero, true),
+            "Same value Zero"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Zero, null, false),
+            "Zero compared with null"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.One, null, false),
+            "One compared with null"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Three, false),
+            "Different values Two and Three"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Three, false),
+            "Different values Zero and Three"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Zero, false),
+            "Different values Three and Zero"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Zero, SecondStringEnumerationFake.Zero, false),
+            "Same value but different enumeration types (Zero)"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Three, SecondStringEnumerationFake.Three, false),
+            "Same value but different enumeration types (Three)"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (FirstStringEnumerationFake.Three, SecondStringEnumerationFake.Null, false),
+            "Different enumeration types with null value"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (SecondStringEnumerationFake.Zero, SecondStringEnumerationFake.Zero, true),
+            "Same value Zero in second enumeration"
+        );
+        yield return TestCase.Of<EnumerationEqualsCase>(
+            (SecondStringEnumerationFake.Zero, SecondStringEnumerationFake.Three, false),
+            "Different values in second enumeration"
+        );
     }
 
-    public static IEnumerable<TestCaseData> EqualsOperatorTestData
+    public static IEnumerable<Func<TestDataRow<EnumerationOperatorCase>>> EqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.One,
-                true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Two,
-                true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(2)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Three,
-                true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(3)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Zero,
-                true
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                null,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(5)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                null,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(6)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(7)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(8)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Zero,
-                false
-            ).SetName(
-                $"{nameof(TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(9)"
-            );
-        }
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.One, FirstStringEnumerationFake.One, true),
+            "Same value One"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Two, true),
+            "Same value Two"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Three, true),
+            "Same value Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Zero, true),
+            "Same value Zero"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, null, false),
+            "Zero compared with null"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.One, null, false),
+            "One compared with null"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Three, false),
+            "Different values Two and Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Three, false),
+            "Different values Zero and Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Zero, false),
+            "Different values Three and Zero"
+        );
     }
 
-    public static IEnumerable<TestCaseData> NotEqualsOperatorTestData
+    public static IEnumerable<
+        Func<TestDataRow<EnumerationOperatorCase>>
+    > NotEqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.One,
-                false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Two,
-                false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(2)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(3)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Zero,
-                false
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(4)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                null,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(5)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                null,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(6)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Three,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(7)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Three,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(8)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                FirstStringEnumerationFake.Zero,
-                true
-            ).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared)}(9)"
-            );
-        }
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.One, FirstStringEnumerationFake.One, false),
+            "Same value One"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Two, false),
+            "Same value Two"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Three, false),
+            "Same value Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Zero, false),
+            "Same value Zero"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, null, true),
+            "Zero compared with null"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.One, null, true),
+            "One compared with null"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Three, true),
+            "Different values Two and Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Three, true),
+            "Different values Zero and Three"
+        );
+        yield return TestCase.Of<EnumerationOperatorCase>(
+            (FirstStringEnumerationFake.Three, FirstStringEnumerationFake.Zero, true),
+            "Different values Three and Zero"
+        );
     }
 
-    public static IEnumerable<TestCaseData> GetHashCodeTestData
+    public static IEnumerable<Func<TestDataRow<EnumerationHashCodeCase>>> GetHashCodeTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Zero,
-                FirstStringEnumerationFake.Zero,
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.One,
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Two,
-                FirstStringEnumerationFake.Two,
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                SecondStringEnumerationFake.Three,
-                SecondStringEnumerationFake.Three,
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                SecondStringEnumerationFake.Three,
-                SecondStringEnumerationFake.Two,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.Three,
-                SecondStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                SecondStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                FirstStringEnumerationFake.One,
-                FirstStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                SecondStringEnumerationFake.One,
-                SecondStringEnumerationFake.Three,
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned)}(1)"
-            );
-        }
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.Zero, FirstStringEnumerationFake.Zero, true),
+            "Same value Zero"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.One, FirstStringEnumerationFake.One, true),
+            "Same value One"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.Two, FirstStringEnumerationFake.Two, true),
+            "Same value Two"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (SecondStringEnumerationFake.Three, SecondStringEnumerationFake.Three, true),
+            "Same value Three in second enumeration"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (SecondStringEnumerationFake.Three, SecondStringEnumerationFake.Two, false),
+            "Different values in second enumeration"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.Three, SecondStringEnumerationFake.Three, false),
+            "Same value but different enumeration types (Three)"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.One, SecondStringEnumerationFake.Three, false),
+            "Different values and enumeration types"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (FirstStringEnumerationFake.One, FirstStringEnumerationFake.Three, false),
+            "Different values One and Three"
+        );
+        yield return TestCase.Of<EnumerationHashCodeCase>(
+            (SecondStringEnumerationFake.One, SecondStringEnumerationFake.Three, false),
+            "Different values One and Three in second enumeration"
+        );
     }
 
-    [TestCaseSource(nameof(EqualsTestData))]
-    public void TestEquals_WhenEnumerationGiven_ThenValuesAreCompared(
+    [Test]
+    [MethodDataSource(nameof(EqualsTestData))]
+    public async Task TestEquals_WhenEnumerationGiven_ThenValuesAreCompared(
         object lhsEnumeration,
-        object rhsEnumeration,
+        object? rhsEnumeration,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEnumeration.Equals(rhsEnumeration), Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEnumeration.Equals(rhsEnumeration)).IsEqualTo(expectedEqualsResult);
 
     [Test]
-    public void TestCollateNull_WhenNullEnumerationGiven_ThenDefaultIsReturned()
-    {
-        Assert.That(
-            FirstStringEnumerationFake.CollateNull(null),
-            Is.EqualTo(FirstStringEnumerationFake.Default)
-        );
-    }
+    public async Task TestCollateNull_WhenNullEnumerationGiven_ThenDefaultIsReturned() =>
+        await Assert
+            .That(FirstStringEnumerationFake.CollateNull(null))
+            .IsEqualTo(FirstStringEnumerationFake.Default);
 
     [Test]
-    public void TestCollateNull_WhenEnumerationGiven_ThenGivenEnumerationIsReturned()
-    {
-        Assert.That(
-            FirstStringEnumerationFake.CollateNull(FirstStringEnumerationFake.One),
-            Is.EqualTo(FirstStringEnumerationFake.One)
-        );
-    }
+    public async Task TestCollateNull_WhenEnumerationGiven_ThenGivenEnumerationIsReturned() =>
+        await Assert
+            .That(FirstStringEnumerationFake.CollateNull(FirstStringEnumerationFake.One))
+            .IsEqualTo(FirstStringEnumerationFake.One);
 
     [Test]
-    public void TestGetValues_WhenGettingValues_ThenValuesAreReturned()
+    public async Task TestGetValues_WhenGettingValues_ThenValuesAreReturned()
     {
         IEnumerable<FirstStringEnumerationFake?> expectedValues =
         [
@@ -330,11 +230,11 @@ public class EnumerationTest
             FirstStringEnumerationFake.Null,
         ];
 
-        Assert.That(FirstStringEnumerationFake.GetValues(), Is.EquivalentTo(expectedValues));
+        await Assert.That(FirstStringEnumerationFake.GetValues()).IsEquivalentTo(expectedValues);
     }
 
     [Test]
-    public void TestGetNames_WhenGettingNames_ThenNamesOfEnumerationValuesAreReturned()
+    public async Task TestGetNames_WhenGettingNames_ThenNamesOfEnumerationValuesAreReturned()
     {
         IEnumerable<string> expectedNames =
         [
@@ -345,92 +245,92 @@ public class EnumerationTest
             nameof(FirstStringEnumerationFake.Null),
         ];
 
-        Assert.That(FirstStringEnumerationFake.GetNames(), Is.EquivalentTo(expectedNames));
+        await Assert.That(FirstStringEnumerationFake.GetNames()).IsEquivalentTo(expectedNames);
     }
 
-    [TestCaseSource(nameof(EqualsOperatorTestData))]
-    public void TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared(
-        FirstStringEnumerationFake lhsEnumeration,
-        FirstStringEnumerationFake rhsEnumeration,
+    [Test]
+    [MethodDataSource(nameof(EqualsOperatorTestData))]
+    public async Task TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared(
+        FirstStringEnumerationFake? lhsEnumeration,
+        FirstStringEnumerationFake? rhsEnumeration,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEnumeration == rhsEnumeration, Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEnumeration == rhsEnumeration).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(NotEqualsOperatorTestData))]
-    public void TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared(
-        FirstStringEnumerationFake lhsEnumeration,
-        FirstStringEnumerationFake rhsEnumeration,
+    [Test]
+    [MethodDataSource(nameof(NotEqualsOperatorTestData))]
+    public async Task TestNotEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared(
+        FirstStringEnumerationFake? lhsEnumeration,
+        FirstStringEnumerationFake? rhsEnumeration,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEnumeration != rhsEnumeration, Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEnumeration != rhsEnumeration).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(GetHashCodeTestData))]
-    public void TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned(
+    [Test]
+    [MethodDataSource(nameof(GetHashCodeTestData))]
+    public async Task TestGetHashCode_WhenTwoEntitiesHaveSameValues_ThenSameHashCodesAreReturned(
         object lhsValueObject,
         object rhsObject,
         bool expectedEqualsHashCodeResult
-    )
+    ) =>
+        await Assert
+            .That(lhsValueObject.GetHashCode() == rhsObject.GetHashCode())
+            .IsEqualTo(expectedEqualsHashCodeResult);
+
+    [Test]
+    public async Task TestCastingFromValueToEnumeration_WhenNotRecognizedValueGiven_ThenArgumentExceptionIsThrown()
     {
-        Assert.That(
-            lhsValueObject.GetHashCode() == rhsObject.GetHashCode(),
-            Is.EqualTo(expectedEqualsHashCodeResult)
-        );
+        ArgumentException? exception = Assert.Throws<ArgumentException>(() =>
+        {
+            _ = (FirstStringEnumerationFake)"Test";
+        });
+
+        await Assert
+            .That(exception!.Message)
+            .IsEqualTo($"Wrong {nameof(FirstStringEnumerationFake)} value.");
     }
 
     [Test]
-    public void TestCastingFromValueToEnumeration_WhenNotRecognizedValueGiven_ThenArgumentExceptionIsThrown()
-    {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentException>()
-                .And.Message.EqualTo($"Wrong {nameof(FirstStringEnumerationFake)} value."),
-            () =>
-            {
-                FirstStringEnumerationFake wrongValue = (FirstStringEnumerationFake)"Test";
-            }
-        );
-    }
-
-    [Test]
-    public void TestCastingFromValueToEnumeration_WhenRecognizedValueGiven_ThenEnumerationIsReturned()
+    public async Task TestCastingFromValueToEnumeration_WhenRecognizedValueGiven_ThenEnumerationIsReturned()
     {
         FirstStringEnumerationFake twoValue = (FirstStringEnumerationFake)nameof(
             FirstStringEnumerationFake.Two
         );
         FirstStringEnumerationFake nullValue = (FirstStringEnumerationFake)(string?)null;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(twoValue, Is.EqualTo(FirstStringEnumerationFake.Two));
-            Assert.That(nullValue, Is.EqualTo(FirstStringEnumerationFake.Zero));
-        });
+            await Assert.That(twoValue).IsEqualTo(FirstStringEnumerationFake.Two);
+            await Assert.That(nullValue).IsEqualTo(FirstStringEnumerationFake.Zero);
+        }
     }
 
     [Test]
-    public void TestCastingFromEnumerationToValue_WhenEnumerationGiven_ThenValueIsReturned()
+    public async Task TestCastingFromEnumerationToValue_WhenEnumerationGiven_ThenValueIsReturned()
     {
         string? twoValue = FirstStringEnumerationFake.Two;
         string? zeroValue = FirstStringEnumerationFake.Zero;
         string? nullValue = FirstStringEnumerationFake.Null;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(twoValue, Is.EqualTo(nameof(FirstStringEnumerationFake.Two)));
-            Assert.That(zeroValue, Is.EqualTo(null));
-            Assert.That(nullValue, Is.EqualTo(null));
-        });
+            await Assert.That(twoValue).IsEqualTo(nameof(FirstStringEnumerationFake.Two));
+            await Assert.That(zeroValue).IsNull();
+            await Assert.That(nullValue).IsNull();
+        }
     }
 
     [Test]
-    public void TestDefault_WhenGettingDefault_ThenDefaultValueIsReturned()
+    public async Task TestDefault_WhenGettingDefault_ThenDefaultValueIsReturned()
     {
         FirstStringEnumerationFake defaultValue = FirstStringEnumerationFake.Default;
 
-        Assert.That((string?)defaultValue, Is.EqualTo(nameof(FirstStringEnumerationFake.One)));
+        await Assert.That((string?)defaultValue).IsEqualTo(nameof(FirstStringEnumerationFake.One));
     }
 
     [Test]
-    public void TestToString_WhenConvertingNullValue_ThenNullIsReturned() =>
-        Assert.That(FirstStringEnumerationFake.Zero.ToString(), Is.Null);
+    public async Task TestToString_WhenConvertingNullValue_ThenNullIsReturned() =>
+        await Assert.That(FirstStringEnumerationFake.Zero.ToString()).IsNull();
 
     [Test]
-    public void TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() =>
-        Assert.That(FirstStringEnumerationFake.Three.ToString(), Is.EqualTo("Three"));
+    public async Task TestToString_WhenConvertingValue_ThenToStringOfValueIsReturned() =>
+        await Assert.That(FirstStringEnumerationFake.Three.ToString()).IsEqualTo("Three");
 }

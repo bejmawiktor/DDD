@@ -1,36 +1,34 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using DDD.Domain.Events.MediatR;
 using MediatR;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events.MediatR;
 
-[TestFixture]
+[NotInParallel]
 internal class EventManagerExtensionTest
 {
-    [TearDown]
+    [After(Test)]
     public void ClearEventManager() => EventManager.Instance.Dispatcher = null;
 
     [Test]
-    public void TestUseMediatREventDispatcher_WhenMediatorGiven_ThenMediatorIsSet()
+    public async Task TestUseMediatREventDispatcher_WhenMediatorGiven_ThenMediatorIsSet()
     {
         Mock<IMediator> mediatorMock = new();
         IMediator mediator = mediatorMock.Object;
 
         EventManager.Instance.UseMediatREventDispatcher(mediator);
 
-        Assert.That(EventManager.Instance.Dispatcher, Is.Not.Null);
+        await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
     }
 
     [Test]
-    public void TestUseMediatREventDispatcher_WhenNullMediatorGiven_ThenNullExceptionIsThrown()
+    public async Task TestUseMediatREventDispatcher_WhenNullMediatorGiven_ThenNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("mediator"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => EventManager.Instance.UseMediatREventDispatcher(null!)
         );
+
+        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 }

@@ -1,266 +1,328 @@
-﻿using DDD.Tests.Unit.Domain.Validation.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Domain.Validation.TestDoubles;
+using DDD.Tests.Unit.Utils;
 using Utils.Validation;
+using AggregateRootIncorrectDataCase = (
+    string TextField,
+    int IntField,
+    System.AggregateException AggregateException
+);
+using AggregateRootOneOfExtendedValidatorsCase = (
+    string TextField,
+    int IntField,
+    System.Action<DDD.Tests.Unit.Domain.Validation.TestDoubles.ExtendedValidatedAggregateRootFake> UpdateAction,
+    System.AggregateException AggregateException
+);
+using AggregateRootOneOfValidatorsCase = (
+    string TextField,
+    int IntField,
+    System.Action<DDD.Tests.Unit.Domain.Validation.TestDoubles.ValidatedAggregateRootFake> UpdateAction,
+    System.AggregateException AggregateException
+);
 
 namespace DDD.Tests.Unit.Domain.Validation;
 
 internal class AggregateRootTest
 {
-    public static IEnumerable<TestCaseData> CreateIncorrectDataTestData(string testName)
+    public static IEnumerable<
+        Func<TestDataRow<AggregateRootIncorrectDataCase>>
+    > CreateIncorrectDataTestData()
     {
-        yield return new TestCaseData(
-            "",
-            5,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.TextField),
-                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "",
+                5,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.TextField),
+                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField)");
-        yield return new TestCaseData(
-            "example text",
-            -1,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+            ),
+            "Empty text field"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "example text",
+                -1,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero IntField)");
-        yield return new TestCaseData(
-            "example text",
-            -5,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+            ),
+            "Int field less than zero"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "example text",
+                -5,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
-        yield return new TestCaseData(
-            "example text",
-            11,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+            ),
+            "Int field less than zero and forbidden value"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "example text",
+                11,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Greater Than Ten IntField)");
-        yield return new TestCaseData(
-            "",
-            11,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.TextField),
-                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+            ),
+            "Int field greater than ten"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "",
+                11,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.TextField),
+                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField and Greater Than Ten IntField)");
-        yield return new TestCaseData(
-            "",
-            -11,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.TextField),
-                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+            ),
+            "Empty text field and int field greater than ten"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "",
+                -11,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.TextField),
+                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField and Less Than Zero IntField)");
-        yield return new TestCaseData(
-            "",
-            -5,
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.TextField),
-                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+            ),
+            "Empty text field and int field less than zero"
+        );
+        yield return TestCase.Of<AggregateRootIncorrectDataCase>(
+            (
+                "",
+                -5,
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.TextField),
+                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField and Less Than Zero Forbidden Value IntField)");
+            ),
+            "Empty text field and int field less than zero and forbidden value"
+        );
     }
 
-    public static IEnumerable<TestCaseData> CreateIncorrectDataForOneOfValidatorsTestData(
-        string testName
-    )
+    public static IEnumerable<
+        Func<TestDataRow<AggregateRootOneOfValidatorsCase>>
+    > CreateIncorrectDataForOneOfValidatorsTestData()
     {
-        yield return new TestCaseData(
-            "my example text",
-            5,
-            (ValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.TextField = "";
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.TextField),
-                    AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+        yield return TestCase.Of<AggregateRootOneOfValidatorsCase>(
+            (
+                "my example text",
+                5,
+                (ValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.TextField = "";
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.TextField),
+                        AggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = -1;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+            ),
+            "Empty text field"
+        );
+        yield return TestCase.Of<AggregateRootOneOfValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = -1;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero IntField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = -5;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+            ),
+            "Int field less than zero"
+        );
+        yield return TestCase.Of<AggregateRootOneOfValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = -5;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = 11;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidatorFake.IntField),
-                    AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+            ),
+            "Int field less than zero and forbidden value"
+        );
+        yield return TestCase.Of<AggregateRootOneOfValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = 11;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidatorFake.IntField),
+                        AggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Greater Than Ten IntField)");
+            ),
+            "Int field greater than ten"
+        );
     }
 
-    public static IEnumerable<TestCaseData> CreateIncorrectDataForOneOfExtendedValidatorsTestData(
-        string testName
-    )
+    public static IEnumerable<
+        Func<TestDataRow<AggregateRootOneOfExtendedValidatorsCase>>
+    > CreateIncorrectDataForOneOfExtendedValidatorsTestData()
     {
-        yield return new TestCaseData(
-            "my example text",
-            5,
-            (ExtendedValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.TextField = "";
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidationSource.TextField),
-                    ExtendedAggregateRootValidatorFake.EmptyTextFieldErrorMessage
+        yield return TestCase.Of<AggregateRootOneOfExtendedValidatorsCase>(
+            (
+                "my example text",
+                5,
+                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.TextField = "";
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidationSource.TextField),
+                        ExtendedAggregateRootValidatorFake.EmptyTextFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Empty TextField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ExtendedValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = -1;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidationSource.IntField),
-                    ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+            ),
+            "Empty text field"
+        );
+        yield return TestCase.Of<AggregateRootOneOfExtendedValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = -1;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidationSource.IntField),
+                        ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero IntField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ExtendedValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = -5;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidationSource.IntField),
-                    ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
-                ),
-                new ValidationException(
-                    nameof(AggregateRootValidationSource.IntField),
-                    ExtendedAggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+            ),
+            "Int field less than zero"
+        );
+        yield return TestCase.Of<AggregateRootOneOfExtendedValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = -5;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidationSource.IntField),
+                        ExtendedAggregateRootValidatorFake.LessThanZeroIntFieldErrorMessage
+                    ),
+                    new ValidationException(
+                        nameof(AggregateRootValidationSource.IntField),
+                        ExtendedAggregateRootValidatorFake.MinusFiveIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Less Than Zero And Forbbiden Value IntField)");
-        yield return new TestCaseData(
-            "example text",
-            5,
-            (ExtendedValidatedAggregateRootFake aggregateRoot) =>
-            {
-                aggregateRoot.IntField = 11;
-            },
-            new AggregateException(
-                new ValidationException(
-                    nameof(AggregateRootValidationSource.IntField),
-                    ExtendedAggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+            ),
+            "Int field less than zero and forbidden value"
+        );
+        yield return TestCase.Of<AggregateRootOneOfExtendedValidatorsCase>(
+            (
+                "example text",
+                5,
+                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                {
+                    aggregateRoot.IntField = 11;
+                },
+                new AggregateException(
+                    new ValidationException(
+                        nameof(AggregateRootValidationSource.IntField),
+                        ExtendedAggregateRootValidatorFake.GreaterThanTenIntFieldErrorMessage
+                    )
                 )
-            )
-        ).SetName($"{testName}(Greater Than Ten IntField)");
+            ),
+            "Int field greater than ten"
+        );
     }
 
     [Test]
-    public void TestConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ValidatedAggregateRootFake aggregateRoot = new(10, "example text", 5);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(aggregateRoot.TextField, Is.EqualTo("example text"));
-            Assert.That(aggregateRoot.IntField, Is.EqualTo(5));
-        });
+            await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
+            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+        }
     }
 
     [Test]
-    public void TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestExtendedConstructing_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ExtendedValidatedAggregateRootFake aggregateRoot = new(10, "example text", 5);
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(aggregateRoot.TextField, Is.EqualTo("example text"));
-            Assert.That(aggregateRoot.IntField, Is.EqualTo(5));
-        });
+            await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
+            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataTestData),
-        [nameof(TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown)]
-    )]
-    public void TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataTestData))]
+    public async Task TestValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
         int intField,
         AggregateException aggregateException
@@ -270,35 +332,31 @@ internal class AggregateRootTest
             () => new ValidatedAggregateRootFake(10, textField, intField)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataTestData),
-        [
-            nameof(TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown),
-        ]
-    )]
-    public void TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataTestData))]
+    public async Task TestExtendedValidate_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
         int intField,
         AggregateException aggregateException
@@ -308,63 +366,57 @@ internal class AggregateRootTest
             () => new ExtendedValidatedAggregateRootFake(10, textField, intField)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 
     [Test]
-    public void TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ValidatedAggregateRootFake aggregateRoot =
             new(10, "example text", 5) { TextField = "second text", IntField = 5 };
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(aggregateRoot.TextField, Is.EqualTo("second text"));
-            Assert.That(aggregateRoot.IntField, Is.EqualTo(5));
-        });
+            await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
+            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+        }
     }
 
     [Test]
-    public void TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
+    public async Task TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
         ExtendedValidatedAggregateRootFake aggregateRoot =
             new(10, "example text", 5) { TextField = "second text", IntField = 5 };
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(aggregateRoot.TextField, Is.EqualTo("second text"));
-            Assert.That(aggregateRoot.IntField, Is.EqualTo(5));
-        });
+            await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
+            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataForOneOfValidatorsTestData),
-        [
-            nameof(
-                TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
-            ),
-        ]
-    )]
-    public void TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataForOneOfValidatorsTestData))]
+    public async Task TestValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
         int intField,
         Action<ValidatedAggregateRootFake> updateAction,
@@ -377,37 +429,31 @@ internal class AggregateRootTest
             () => updateAction(aggregateRoot)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateIncorrectDataForOneOfExtendedValidatorsTestData),
-        [
-            nameof(
-                TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown
-            ),
-        ]
-    )]
-    public void TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
+    [Test]
+    [MethodDataSource(nameof(CreateIncorrectDataForOneOfExtendedValidatorsTestData))]
+    public async Task TestExtendedValidateWithOneOfValidators_WhenIncorrectDataGiven_ThenAggregateExceptionIsThrown(
         string textField,
         int intField,
         Action<ExtendedValidatedAggregateRootFake> updateAction,
@@ -420,25 +466,25 @@ internal class AggregateRootTest
             () => updateAction(aggregateRoot)
         );
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(exception, Is.Not.Null);
-            Assert.That(
-                exception?.Flatten().InnerExceptions.Select(exception => exception.ToString()),
-                Is.EquivalentTo(
+            await Assert.That(exception).IsNotNull();
+            await Assert
+                .That(
+                    exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
+                )
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
-                )
-            );
-            Assert.That(
-                exception?.InnerExceptions.Select(exception => exception.GetType()),
-                Is.EquivalentTo(
+                );
+            await Assert
+                .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
+                .IsEquivalentTo(
                     aggregateException
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.GetType())
-                )
-            );
-        });
+                );
+        }
     }
 }

@@ -1,256 +1,219 @@
-﻿using DDD.Tests.Unit.Domain.TestDoubles;
-using NUnit.Framework;
+using DDD.Tests.Unit.Domain.TestDoubles;
+using DDD.Tests.Unit.Utils;
+using EntityEqualsCase = (object LhsEntity, object? RhsEntity, bool ExpectedEqualsResult);
+using EntityOperatorCase = (
+    DDD.Tests.Unit.Domain.TestDoubles.StringEntityStub? LhsEntity,
+    DDD.Tests.Unit.Domain.TestDoubles.StringEntityStub? RhsEntity,
+    bool ExpectedResult
+);
+using HashCodeCase = (object LhsEntity, object RhsEntity, bool ExpectedResult);
 
 namespace DDD.Tests.Unit.Domain.Model;
 
 public class EntityTest
 {
-    public static IEnumerable<TestCaseData> ObjectEqualsTestData
+    public static IEnumerable<Func<TestDataRow<EntityEqualsCase>>> ObjectEqualsTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new IntIdEntityStub(1),
-                true
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(1)");
-            yield return new TestCaseData(
-                new IntIdEntityStub(123),
-                new IntIdEntityStub(123),
-                true
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(2)");
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("1"),
-                true
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(3)");
-            yield return new TestCaseData(
-                new StringEntityStub("123"),
-                new StringEntityStub("123"),
-                true
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(4)");
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new IntIdEntityStub(2),
-                false
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(5)");
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new StringEntityStub("1"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(6)");
-            yield return new TestCaseData(new IntIdEntityStub(1), null, false).SetName(
-                $"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(7)"
-            );
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("12"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(8)");
-            yield return new TestCaseData(new StringEntityStub("1"), null, false).SetName(
-                $"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(9)"
-            );
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new OtherStringEntityStub("1"),
-                false
-            ).SetName($"{nameof(TestEquals_WhenEntityGiven_ThenIdsAreCompared)}(10)");
-        }
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new IntIdEntityStub(1), new IntIdEntityStub(1), true),
+            "Same int ids"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new IntIdEntityStub(123), new IntIdEntityStub(123), true),
+            "Same int ids (123)"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new StringEntityStub("1"), new StringEntityStub("1"), true),
+            "Same string ids"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new StringEntityStub("123"), new StringEntityStub("123"), true),
+            "Same string ids (123)"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new IntIdEntityStub(1), new IntIdEntityStub(2), false),
+            "Different int ids"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new IntIdEntityStub(1), new StringEntityStub("1"), false),
+            "Different entity types with int and string id"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new IntIdEntityStub(1), null, false),
+            "Int entity compared with null"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new StringEntityStub("1"), new StringEntityStub("12"), false),
+            "Different string ids"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new StringEntityStub("1"), null, false),
+            "String entity compared with null"
+        );
+        yield return TestCase.Of<EntityEqualsCase>(
+            (new StringEntityStub("1"), new OtherStringEntityStub("1"), false),
+            "Different entity types with same string id"
+        );
     }
 
-    public static IEnumerable<TestCaseData> EqualsOperatorTestData
+    public static IEnumerable<Func<TestDataRow<EntityOperatorCase>>> EqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("1"),
-                true
-            ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(1)");
-            yield return new TestCaseData(
-                new StringEntityStub("123"),
-                new StringEntityStub("123"),
-                true
-            ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(2)");
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("12"),
-                false
-            ).SetName($"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-            yield return new TestCaseData(new StringEntityStub("1"), null, false).SetName(
-                $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)"
-            );
-            yield return new TestCaseData(null, new StringEntityStub("1"), false).SetName(
-                $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)"
-            );
-            yield return new TestCaseData(null, null, true).SetName(
-                $"{nameof(TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(6)"
-            );
-        }
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), new StringEntityStub("1"), true),
+            "Same string ids"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("123"), new StringEntityStub("123"), true),
+            "Same string ids (123)"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), new StringEntityStub("12"), false),
+            "Different string ids"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), null, false),
+            "Right side is null"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (null, new StringEntityStub("1"), false),
+            "Left side is null"
+        );
+        yield return TestCase.Of<EntityOperatorCase>((null, null, true), "Both sides are null");
     }
 
-    public static IEnumerable<TestCaseData> NotEqualsOperatorTestData
+    public static IEnumerable<Func<TestDataRow<EntityOperatorCase>>> NotEqualsOperatorTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("1"),
-                false
-            ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(1)");
-            yield return new TestCaseData(
-                new StringEntityStub("123"),
-                new StringEntityStub("123"),
-                false
-            ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(2)");
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("12"),
-                true
-            ).SetName($"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(3)");
-            yield return new TestCaseData(new StringEntityStub("1"), null, true).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(4)"
-            );
-            yield return new TestCaseData(null, new StringEntityStub("1"), true).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(5)"
-            );
-            yield return new TestCaseData(null, null, false).SetName(
-                $"{nameof(TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared)}(6)"
-            );
-        }
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), new StringEntityStub("1"), false),
+            "Same string ids"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("123"), new StringEntityStub("123"), false),
+            "Same string ids (123)"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), new StringEntityStub("12"), true),
+            "Different string ids"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (new StringEntityStub("1"), null, true),
+            "Right side is null"
+        );
+        yield return TestCase.Of<EntityOperatorCase>(
+            (null, new StringEntityStub("1"), true),
+            "Left side is null"
+        );
+        yield return TestCase.Of<EntityOperatorCase>((null, null, false), "Both sides are null");
     }
 
-    public static IEnumerable<TestCaseData> GetHashCodeTestData
+    public static IEnumerable<Func<TestDataRow<HashCodeCase>>> GetHashCodeTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new IntIdEntityStub(1),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(1)"
-            );
-            yield return new TestCaseData(
-                new IntIdEntityStub(123),
-                new IntIdEntityStub(123),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(2)"
-            );
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("1"),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(3)"
-            );
-            yield return new TestCaseData(
-                new StringEntityStub("123"),
-                new StringEntityStub("123"),
-                true
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(4)"
-            );
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new IntIdEntityStub(2),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(5)"
-            );
-            yield return new TestCaseData(
-                new IntIdEntityStub(1),
-                new StringEntityStub("1"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(6)"
-            );
-            yield return new TestCaseData(
-                new StringEntityStub("1"),
-                new StringEntityStub("12"),
-                false
-            ).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(7)"
-            );
-            yield return new TestCaseData(new StringEntityStub("1"), "1", false).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(8)"
-            );
-            yield return new TestCaseData(new StringEntityStub("1"), 2, false).SetName(
-                $"{nameof(TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned)}(9)"
-            );
-        }
+        yield return TestCase.Of<HashCodeCase>(
+            (new IntIdEntityStub(1), new IntIdEntityStub(1), true),
+            "Same int ids"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new IntIdEntityStub(123), new IntIdEntityStub(123), true),
+            "Same int ids (123)"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new StringEntityStub("1"), new StringEntityStub("1"), true),
+            "Same string ids"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new StringEntityStub("123"), new StringEntityStub("123"), true),
+            "Same string ids (123)"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new IntIdEntityStub(1), new IntIdEntityStub(2), false),
+            "Different int ids"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new IntIdEntityStub(1), new StringEntityStub("1"), false),
+            "Different entity types"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new StringEntityStub("1"), new StringEntityStub("12"), false),
+            "Different string ids"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new StringEntityStub("1"), "1", false),
+            "Entity compared with raw string"
+        );
+        yield return TestCase.Of<HashCodeCase>(
+            (new StringEntityStub("1"), 2, false),
+            "Entity compared with raw int"
+        );
     }
 
     [Test]
-    public void TestConstructing_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestConstructing_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("id"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => new StringEntityStub(null!)
         );
+
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("id");
     }
 
     [Test]
-    public void TestSet_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
+    public async Task TestSet_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        _ = Assert.Throws(
-            Is.InstanceOf<ArgumentNullException>()
-                .And.Property(nameof(ArgumentNullException.ParamName))
-                .EqualTo("value"),
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
             () => new StringEntityStub("AAA").Id = null!
         );
+
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("value");
     }
 
     [Test]
-    public void TestSet_WhenProperIdGiven_ThenIdIsSet()
+    public async Task TestSet_WhenProperIdGiven_ThenIdIsSet()
     {
         StringEntityStub entity = new("AAA") { Id = "BBB" };
 
-        Assert.That(entity.Id, Is.EqualTo("BBB"));
+        _ = await Assert.That(entity.Id).IsEqualTo("BBB");
     }
 
     [Test]
-    public void TestConstructing_WhenIdGiven_ThenIdIsSet()
+    public async Task TestConstructing_WhenIdGiven_ThenIdIsSet()
     {
         StringEntityStub stringEntityStub = new("1");
 
-        Assert.That(stringEntityStub.Id, Is.EqualTo("1"));
+        _ = await Assert.That(stringEntityStub.Id).IsEqualTo("1");
     }
 
-    [TestCaseSource(nameof(ObjectEqualsTestData))]
-    public void TestEquals_WhenEntityGiven_ThenIdsAreCompared(
+    [Test]
+    [MethodDataSource(nameof(ObjectEqualsTestData))]
+    public async Task TestEquals_WhenEntityGiven_ThenIdsAreCompared(
         object lhsEntity,
-        object rhsEntity,
+        object? rhsEntity,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEntity.Equals(rhsEntity), Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEntity.Equals(rhsEntity)).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(EqualsOperatorTestData))]
-    public void TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
-        StringEntityStub lhsEntity,
-        StringEntityStub rhsEntity,
+    [Test]
+    [MethodDataSource(nameof(EqualsOperatorTestData))]
+    public async Task TestEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
+        StringEntityStub? lhsEntity,
+        StringEntityStub? rhsEntity,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEntity == rhsEntity, Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEntity == rhsEntity).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(NotEqualsOperatorTestData))]
-    public void TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
-        StringEntityStub lhsEntity,
-        StringEntityStub rhsEntity,
+    [Test]
+    [MethodDataSource(nameof(NotEqualsOperatorTestData))]
+    public async Task TestNotEqualsOperator_WhenEntitiesGiven_ThenIdsAreCompared(
+        StringEntityStub? lhsEntity,
+        StringEntityStub? rhsEntity,
         bool expectedEqualsResult
-    ) => Assert.That(lhsEntity != rhsEntity, Is.EqualTo(expectedEqualsResult));
+    ) => await Assert.That(lhsEntity != rhsEntity).IsEqualTo(expectedEqualsResult);
 
-    [TestCaseSource(nameof(GetHashCodeTestData))]
-    public void TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned(
+    [Test]
+    [MethodDataSource(nameof(GetHashCodeTestData))]
+    public async Task TestGetHashCode_WhenTwoEntitiesHaveSameIds_ThenSameHashCodesAreReturned(
         object lhsEntity,
         object rhsEntity,
         bool expectedEqualsHashCodeResult
-    )
-    {
-        Assert.That(
-            lhsEntity.GetHashCode() == rhsEntity.GetHashCode(),
-            Is.EqualTo(expectedEqualsHashCodeResult)
-        );
-    }
+    ) =>
+        await Assert
+            .That(lhsEntity.GetHashCode() == rhsEntity.GetHashCode())
+            .IsEqualTo(expectedEqualsHashCodeResult);
 }

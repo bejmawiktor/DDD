@@ -1,19 +1,31 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using DDD.Domain.Validation.AspNetCore;
+using DDD.Tests.Unit.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework;
 using Utils.Functional;
 using Utils.Validation;
+using OkCase = (string? Path, string[]? MediaTypes, string[]? ExpectedMediaTypes);
+using ResultErrorCase = (
+    string? Path,
+    string Error,
+    Microsoft.AspNetCore.Mvc.ObjectResult ExpectedActionResult
+);
+using ResultErrorWithReasonsCase = (
+    string? Path,
+    object Error,
+    Microsoft.AspNetCore.Mvc.ObjectResult ExpectedActionResult
+);
 
 namespace DDD.Tests.Unit.Domain.Validation.AspNetCore;
 
-[TestFixture]
 public class ResultExtensionsTest
 {
-    public static IEnumerable<TestCaseData> CreateErrorWithReasonsTestData(string testName)
+    public static IEnumerable<
+        Func<TestDataRow<ResultErrorWithReasonsCase>>
+    > CreateErrorWithReasonsTestData()
     {
         Error simpleError = new("my error");
         ValidationError withFieldNameValidationError = new("fieldName", "my validation error");
@@ -26,348 +38,391 @@ public class ResultExtensionsTest
         NotFoundError notFoundError = new("not found error");
         NotFoundError secondNotFoundError = new("not found exception 2");
 
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>(simpleError),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>() { { "", [simpleError.Message] } }
-                )
-                {
-                    Detail = simpleError.Message,
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.BadRequest,
-                }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(1)");
-        yield return new TestCaseData(
-            "/test2",
-            new AggregateError<IError>(withFieldNameValidationError),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(simpleError),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>() { { "", [simpleError.Message] } }
+                    )
                     {
-                        {
-                            withFieldNameValidationError.FieldName!,
-                            [withFieldNameValidationError.Message]
-                        },
+                        Detail = simpleError.Message,
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = withFieldNameValidationError.Message,
-                    Instance = "/test2",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(2)");
-        yield return new TestCaseData(
-            null,
-            new AggregateError<IError>(simpleError, argumentError),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
-                    {
-                        { "", [simpleError.Message, argumentError.Message] },
-                    }
-                )
-                {
-                    Detail = $"""
-                    Multiple errors found:
-                      - {simpleError.Message}
-                      - {argumentError.Message}
-                    """,
-                    Instance = null,
-                    Status = (int)HttpStatusCode.BadRequest,
-                }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(3)");
-        yield return new TestCaseData(
-            "/test2",
-            new AggregateError<IError>(
-                withFieldNameValidationError,
-                simpleError,
-                argumentError,
-                messageOnlyValidationError,
-                notFoundError
             ),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
+            "Single error"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test2",
+                new AggregateError<IError>(withFieldNameValidationError),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
+                        {
+                            {
+                                withFieldNameValidationError.FieldName!,
+                                [withFieldNameValidationError.Message]
+                            },
+                        }
+                    )
                     {
-                        {
-                            "",
-
-                            [
-                                simpleError.Message,
-                                argumentError.Message,
-                                messageOnlyValidationError.Message,
-                                notFoundError.Message,
-                            ]
-                        },
-                        {
-                            withFieldNameValidationError.FieldName,
-                            [withFieldNameValidationError.Message]
-                        },
+                        Detail = withFieldNameValidationError.Message,
+                        Instance = "/test2",
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = $"""
-                    Multiple errors found:
-                      - {withFieldNameValidationError.Message}
-                      - {simpleError.Message}
-                      - {argumentError.Message}
-                      - {messageOnlyValidationError.Message}
-                      - {notFoundError.Message}
-                    """,
-                    Instance = "/test2",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(4)");
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>(
-                withFieldNameValidationError,
-                secondWithFieldNameValidationError,
-                simpleError,
-                argumentError
             ),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
-                    {
-                        { "", [simpleError.Message, argumentError.Message] },
+            "Field name validation error"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                null,
+                new AggregateError<IError>(simpleError, argumentError),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
                         {
-                            withFieldNameValidationError.FieldName,
-
-                            [
-                                withFieldNameValidationError.Message,
-                                secondWithFieldNameValidationError.Message,
-                            ]
-                        },
+                            { "", [simpleError.Message, argumentError.Message] },
+                        }
+                    )
+                    {
+                        Detail = $"""
+                        Multiple errors found:
+                          - {simpleError.Message}
+                          - {argumentError.Message}
+                        """,
+                        Instance = null,
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = $"""
-                    Multiple errors found:
-                      - {withFieldNameValidationError.Message}
-                      - {secondWithFieldNameValidationError.Message}
-                      - {simpleError.Message}
-                      - {argumentError.Message}
-                    """,
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(5)");
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>(
-                withFieldNameValidationError,
-                thirdWithFieldNameValidationError,
-                secondWithFieldNameValidationError,
-                simpleError,
-                argumentError
             ),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
-                    {
-                        { "", [simpleError.Message, argumentError.Message] },
+            "Two errors"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test2",
+                new AggregateError<IError>(
+                    withFieldNameValidationError,
+                    simpleError,
+                    argumentError,
+                    messageOnlyValidationError,
+                    notFoundError
+                ),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
                         {
-                            withFieldNameValidationError.FieldName,
+                            {
+                                "",
 
-                            [
-                                withFieldNameValidationError.Message,
-                                secondWithFieldNameValidationError.Message,
-                            ]
-                        },
-                        {
-                            thirdWithFieldNameValidationError.FieldName,
-                            [thirdWithFieldNameValidationError.Message]
-                        },
+                                [
+                                    simpleError.Message,
+                                    argumentError.Message,
+                                    messageOnlyValidationError.Message,
+                                    notFoundError.Message,
+                                ]
+                            },
+                            {
+                                withFieldNameValidationError.FieldName,
+                                [withFieldNameValidationError.Message]
+                            },
+                        }
+                    )
+                    {
+                        Detail = $"""
+                        Multiple errors found:
+                          - {withFieldNameValidationError.Message}
+                          - {simpleError.Message}
+                          - {argumentError.Message}
+                          - {messageOnlyValidationError.Message}
+                          - {notFoundError.Message}
+                        """,
+                        Instance = "/test2",
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = $"""
-                    Multiple errors found:
-                      - {withFieldNameValidationError.Message}
-                      - {thirdWithFieldNameValidationError.Message}
-                      - {secondWithFieldNameValidationError.Message}
-                      - {simpleError.Message}
-                      - {argumentError.Message}
-                    """,
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(6)");
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>(
-                withFieldNameValidationError,
-                thirdWithFieldNameValidationError,
-                secondWithFieldNameValidationError,
-                fourthWithFieldNameValidationError,
-                simpleError,
-                argumentError
             ),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
+            "Multiple errors with field name"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    withFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    simpleError,
+                    argumentError
+                ),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
+                        {
+                            { "", [simpleError.Message, argumentError.Message] },
+                            {
+                                withFieldNameValidationError.FieldName,
+
+                                [
+                                    withFieldNameValidationError.Message,
+                                    secondWithFieldNameValidationError.Message,
+                                ]
+                            },
+                        }
+                    )
                     {
-                        { "", [simpleError.Message, argumentError.Message] },
-                        {
-                            withFieldNameValidationError.FieldName,
-
-                            [
-                                withFieldNameValidationError.Message,
-                                secondWithFieldNameValidationError.Message,
-                            ]
-                        },
-                        {
-                            thirdWithFieldNameValidationError.FieldName,
-
-                            [
-                                thirdWithFieldNameValidationError.Message,
-                                fourthWithFieldNameValidationError.Message,
-                            ]
-                        },
+                        Detail = $"""
+                        Multiple errors found:
+                          - {withFieldNameValidationError.Message}
+                          - {secondWithFieldNameValidationError.Message}
+                          - {simpleError.Message}
+                          - {argumentError.Message}
+                        """,
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = $"""
-                    Multiple errors found:
-                      - {withFieldNameValidationError.Message}
-                      - {secondWithFieldNameValidationError.Message}
-                      - {thirdWithFieldNameValidationError.Message}
-                      - {fourthWithFieldNameValidationError.Message}
-                      - {simpleError.Message}
-                      - {argumentError.Message}
-                    """,
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(7)");
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>("not found", notFoundError),
-            new ObjectResult(
-                new ProblemDetails()
-                {
-                    Detail = "not found",
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.NotFound,
-                }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.NotFound,
-            }
-        ).SetName($"{testName}(8)");
-        yield return new TestCaseData(
-            "/test",
-            new AggregateError<IError>("not found", notFoundError, secondNotFoundError),
-            new ObjectResult(
-                new ValidationProblemDetails(
-                    new Dictionary<string, string[]>()
+            ),
+            "Same field name errors"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    withFieldNameValidationError,
+                    thirdWithFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    simpleError,
+                    argumentError
+                ),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
+                        {
+                            { "", [simpleError.Message, argumentError.Message] },
+                            {
+                                withFieldNameValidationError.FieldName,
+
+                                [
+                                    withFieldNameValidationError.Message,
+                                    secondWithFieldNameValidationError.Message,
+                                ]
+                            },
+                            {
+                                thirdWithFieldNameValidationError.FieldName,
+                                [thirdWithFieldNameValidationError.Message]
+                            },
+                        }
+                    )
                     {
-                        { "", [notFoundError.Message, secondNotFoundError.Message] },
+                        Detail = $"""
+                        Multiple errors found:
+                          - {withFieldNameValidationError.Message}
+                          - {thirdWithFieldNameValidationError.Message}
+                          - {secondWithFieldNameValidationError.Message}
+                          - {simpleError.Message}
+                          - {argumentError.Message}
+                        """,
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.BadRequest,
                     }
                 )
                 {
-                    Detail = "not found",
-                    Instance = "/test",
-                    Status = (int)HttpStatusCode.BadRequest,
+                    StatusCode = (int)HttpStatusCode.BadRequest,
                 }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(9)");
+            ),
+            "Multiple field name errors"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    withFieldNameValidationError,
+                    thirdWithFieldNameValidationError,
+                    secondWithFieldNameValidationError,
+                    fourthWithFieldNameValidationError,
+                    simpleError,
+                    argumentError
+                ),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
+                        {
+                            { "", [simpleError.Message, argumentError.Message] },
+                            {
+                                withFieldNameValidationError.FieldName,
+
+                                [
+                                    withFieldNameValidationError.Message,
+                                    secondWithFieldNameValidationError.Message,
+                                ]
+                            },
+                            {
+                                thirdWithFieldNameValidationError.FieldName,
+
+                                [
+                                    thirdWithFieldNameValidationError.Message,
+                                    fourthWithFieldNameValidationError.Message,
+                                ]
+                            },
+                        }
+                    )
+                    {
+                        Detail = $"""
+                        Multiple errors found:
+                          - {withFieldNameValidationError.Message}
+                          - {secondWithFieldNameValidationError.Message}
+                          - {thirdWithFieldNameValidationError.Message}
+                          - {fourthWithFieldNameValidationError.Message}
+                          - {simpleError.Message}
+                          - {argumentError.Message}
+                        """,
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.BadRequest,
+                    }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Multiple field name errors with multiple messages"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>("not found", notFoundError),
+                new ObjectResult(
+                    new ProblemDetails()
+                    {
+                        Detail = "not found",
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.NotFound,
+                    }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.NotFound,
+                }
+            ),
+            "Single not found error"
+        );
+        yield return TestCase.Of<ResultErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>("not found", notFoundError, secondNotFoundError),
+                new ObjectResult(
+                    new ValidationProblemDetails(
+                        new Dictionary<string, string[]>()
+                        {
+                            { "", [notFoundError.Message, secondNotFoundError.Message] },
+                        }
+                    )
+                    {
+                        Detail = "not found",
+                        Instance = "/test",
+                        Status = (int)HttpStatusCode.BadRequest,
+                    }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Multiple not found errors"
+        );
     }
 
-    public static IEnumerable<TestCaseData> CreateErrorTestData(string testName)
+    public static IEnumerable<Func<TestDataRow<ResultErrorCase>>> CreateErrorTestData()
     {
-        yield return new TestCaseData(
-            "/test",
-            "my error test",
-            new ObjectResult(new ProblemDetails() { Detail = "my error test", Instance = "/test" })
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(1)");
-        yield return new TestCaseData(
-            "/test2",
-            "my error test 2",
-            new ObjectResult(
-                new ProblemDetails() { Detail = "my error test 2", Instance = "/test2" }
-            )
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(2)");
-        yield return new TestCaseData(
-            null,
-            "my error test 2",
-            new ObjectResult(new ProblemDetails() { Detail = "my error test 2", Instance = null })
-            {
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            }
-        ).SetName($"{testName}(3)");
+        yield return TestCase.Of<ResultErrorCase>(
+            (
+                "/test",
+                "my error test",
+                new ObjectResult(
+                    new ProblemDetails() { Detail = "my error test", Instance = "/test" }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Error with path"
+        );
+        yield return TestCase.Of<ResultErrorCase>(
+            (
+                "/test2",
+                "my error test 2",
+                new ObjectResult(
+                    new ProblemDetails() { Detail = "my error test 2", Instance = "/test2" }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Error with different path"
+        );
+        yield return TestCase.Of<ResultErrorCase>(
+            (
+                null,
+                "my error test 2",
+                new ObjectResult(
+                    new ProblemDetails() { Detail = "my error test 2", Instance = null }
+                )
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Error with null path"
+        );
     }
 
-    public static IEnumerable<TestCaseData> OkTestData
+    public static IEnumerable<Func<TestDataRow<OkCase>>> OkTestData()
     {
-        get
-        {
-            yield return new TestCaseData(
+        yield return TestCase.Of<OkCase>(
+            (
                 null,
                 new string[] { "application/json", "multipart/form-data" },
                 new string[] { "application/json", "multipart/form-data" }
-            );
-            yield return new TestCaseData(
+            ),
+            "Multiple media types without path"
+        );
+        yield return TestCase.Of<OkCase>(
+            (
                 "/path",
                 new string[] { "multipart/form-data" },
                 new string[] { "multipart/form-data" }
-            );
-            yield return new TestCaseData(null, null, new string[] { "application/json" });
-        }
+            ),
+            "Single media type with path"
+        );
+        yield return TestCase.Of<OkCase>(
+            (null, null, new string[] { "application/json" }),
+            "No media types defaults to json"
+        );
     }
 
-    [TestCaseSource(
-        nameof(CreateErrorWithReasonsTestData),
-        [
-            nameof(TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned),
-        ]
-    )]
-    public void TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(CreateErrorWithReasonsTestData))]
+    public async Task TestToActionResult_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        AggregateError<IError> error,
+        object errorValue,
         ObjectResult expectedActionResult
     )
     {
+        AggregateError<IError> error = (AggregateError<IError>)errorValue;
         Guid traceId = Guid.NewGuid();
         Mock<HttpRequest> httpRequestMock = new();
         _ = httpRequestMock
@@ -387,33 +442,33 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as ObjectResult;
         ProblemDetails? problemDetails = actionResult?.Value as ProblemDetails;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult?.StatusCode, Is.EqualTo(expectedActionResult.StatusCode));
+            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
             if (problemDetails is ValidationProblemDetails validationProblemDetails)
             {
-                Assert.That(
-                    validationProblemDetails.Errors,
-                    Is.EquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors)
-                );
+                await Assert
+                    .That(validationProblemDetails.Errors)
+                    .IsEquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors);
             }
 
-            Assert.That(
-                problemDetails?.Detail?.Replace("\r\n", "\n"),
-                Is.EqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"))
-            );
-            Assert.That(problemDetails?.Status, Is.EqualTo(expectedProblemDetails?.Status));
-            Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
-            Assert.That(
-                problemDetails?.Extensions["traceId"],
-                Is.EqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null))
-            );
-        });
+            await Assert
+                .That(problemDetails?.Detail?.Replace("\r\n", "\n"))
+                .IsEqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"));
+            await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
+            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
+            await Assert
+                .That(problemDetails?.Extensions["traceId"])
+                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
+        }
     }
 
-    [TestCase(null)]
-    [TestCase("/test")]
-    public void TestToActionResultWithReason_WhenValueGiven_ThenOkResultIsReturned(string? path)
+    [Test]
+    [Arguments((string?)null)]
+    [Arguments("/test")]
+    public async Task TestToActionResultWithReason_WhenValueGiven_ThenOkResultIsReturned(
+        string? path
+    )
     {
         Guid traceId = Guid.NewGuid();
         Mock<HttpRequest> httpRequestMock = new();
@@ -432,18 +487,16 @@ public class ResultExtensionsTest
         OkResult? actionResult =
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as OkResult;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult?.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-        });
+            await Assert.That(actionResult).IsNotNull();
+            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateErrorTestData),
-        [nameof(TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned)]
-    )]
-    public void TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(CreateErrorTestData))]
+    public async Task TestToActionResult_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,
         string error,
         ObjectResult expectedActionResult
@@ -470,23 +523,25 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as ObjectResult;
         ProblemDetails? problemDetails = actionResult?.Value as ProblemDetails;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult?.StatusCode, Is.EqualTo(expectedActionResult.StatusCode));
-            Assert.That(actionResult?.ContentTypes, Is.EqualTo(expectedActionResult.ContentTypes));
-            Assert.That(problemDetails?.Detail, Is.EqualTo(expectedProblemDetails?.Detail));
-            Assert.That(problemDetails?.Status, Is.EqualTo(expectedActionResult.StatusCode));
-            Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
-            Assert.That(
-                problemDetails?.Extensions["traceId"],
-                Is.EqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null))
-            );
-        });
+            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
+            await Assert
+                .That(actionResult?.ContentTypes)
+                .IsEquivalentTo(expectedActionResult.ContentTypes);
+            await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
+            await Assert.That(problemDetails?.Status).IsEqualTo(expectedActionResult.StatusCode);
+            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
+            await Assert
+                .That(problemDetails?.Extensions["traceId"])
+                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
+        }
     }
 
-    [TestCase(null)]
-    [TestCase("/test")]
-    public void TestToActionResult_WhenValueGiven_ThenOkResultIsReturned(string? path)
+    [Test]
+    [Arguments((string?)null)]
+    [Arguments("/test")]
+    public async Task TestToActionResult_WhenValueGiven_ThenOkResultIsReturned(string? path)
     {
         Guid traceId = Guid.NewGuid();
         Mock<HttpRequest> httpRequestMock = new();
@@ -505,27 +560,22 @@ public class ResultExtensionsTest
         OkResult? actionResult =
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as OkResult;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult?.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-        });
+            await Assert.That(actionResult).IsNotNull();
+            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateErrorWithReasonsTestData),
-        [
-            nameof(
-                TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned
-            ),
-        ]
-    )]
-    public void TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(CreateErrorWithReasonsTestData))]
+    public async Task TestToActionResultWithValue_WhenErrorWithReasonsGiven_ThenActionResultIsReturned(
         string? path,
-        AggregateError<IError> error,
+        object errorValue,
         ObjectResult expectedActionResult
     )
     {
+        AggregateError<IError> error = (AggregateError<IError>)errorValue;
         Guid traceId = Guid.NewGuid();
         Mock<HttpRequest> httpRequestMock = new();
         _ = httpRequestMock
@@ -545,32 +595,30 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as ObjectResult;
         ProblemDetails? problemDetails = actionResult?.Value as ProblemDetails;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult?.StatusCode, Is.EqualTo(expectedActionResult.StatusCode));
+            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
             if (problemDetails is ValidationProblemDetails validationProblemDetails)
             {
-                Assert.That(
-                    validationProblemDetails.Errors,
-                    Is.EquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors)
-                );
+                await Assert
+                    .That(validationProblemDetails.Errors)
+                    .IsEquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors);
             }
 
-            Assert.That(
-                problemDetails?.Detail?.Replace("\r\n", "\n"),
-                Is.EqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"))
-            );
-            Assert.That(problemDetails?.Status, Is.EqualTo(expectedProblemDetails?.Status));
-            Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
-            Assert.That(
-                problemDetails?.Extensions["traceId"],
-                Is.EqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null))
-            );
-        });
+            await Assert
+                .That(problemDetails?.Detail?.Replace("\r\n", "\n"))
+                .IsEqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"));
+            await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
+            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
+            await Assert
+                .That(problemDetails?.Extensions["traceId"])
+                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
+        }
     }
 
-    [TestCaseSource(nameof(OkTestData))]
-    public void TestToActionResultWithValue_WhenValueGiven_ThenOkResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(OkTestData))]
+    public async Task TestToActionResultWithValue_WhenValueGiven_ThenOkResultIsReturned(
         string? path,
         string[]? mediaTypes,
         string[]? expectedMediaTypes
@@ -594,24 +642,18 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null, mediaTypes)
             as OkObjectResult;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult?.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.That(actionResult?.Value, Is.EqualTo("my result"));
-            Assert.That(actionResult?.ContentTypes, Is.EquivalentTo(expectedMediaTypes ?? []));
-        });
+            await Assert.That(actionResult).IsNotNull();
+            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            await Assert.That(actionResult?.Value).IsEqualTo("my result");
+            await Assert.That(actionResult?.ContentTypes).IsEquivalentTo(expectedMediaTypes ?? []);
+        }
     }
 
-    [TestCaseSource(
-        nameof(CreateErrorTestData),
-        [
-            nameof(
-                TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned
-            ),
-        ]
-    )]
-    public void TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(CreateErrorTestData))]
+    public async Task TestToActionResultWithValueWithReasons_WhenErrorGiven_ThenActionResultIsReturned(
         string? path,
         string error,
         ObjectResult expectedActionResult
@@ -638,22 +680,24 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null) as ObjectResult;
         ProblemDetails? problemDetails = actionResult?.Value as ProblemDetails;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult?.StatusCode, Is.EqualTo(expectedActionResult.StatusCode));
-            Assert.That(actionResult?.ContentTypes, Is.EqualTo(expectedActionResult.ContentTypes));
-            Assert.That(problemDetails?.Detail, Is.EqualTo(expectedProblemDetails?.Detail));
-            Assert.That(problemDetails?.Status, Is.EqualTo((int)HttpStatusCode.BadRequest));
-            Assert.That(problemDetails?.Instance, Is.EqualTo(expectedProblemDetails?.Instance));
-            Assert.That(
-                problemDetails?.Extensions["traceId"],
-                Is.EqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null))
-            );
-        });
+            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
+            await Assert
+                .That(actionResult?.ContentTypes)
+                .IsEquivalentTo(expectedActionResult.ContentTypes);
+            await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
+            await Assert.That(problemDetails?.Status).IsEqualTo((int)HttpStatusCode.BadRequest);
+            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
+            await Assert
+                .That(problemDetails?.Extensions["traceId"])
+                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
+        }
     }
 
-    [TestCaseSource(nameof(OkTestData))]
-    public void TestToActionResultWithValueWithReasons_WhenValueGiven_ThenOkResultIsReturned(
+    [Test]
+    [MethodDataSource(nameof(OkTestData))]
+    public async Task TestToActionResultWithValueWithReasons_WhenValueGiven_ThenOkResultIsReturned(
         string? path,
         string[]? mediaTypes,
         string[]? expectedMediaTypes
@@ -677,12 +721,12 @@ public class ResultExtensionsTest
             result.ToActionResult(path is not null ? httpContextMock.Object : null, mediaTypes)
             as OkObjectResult;
 
-        Assert.Multiple(() =>
+        using (Assert.Multiple())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult?.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.That(actionResult?.Value, Is.EqualTo("my result"));
-            Assert.That(actionResult?.ContentTypes, Is.EquivalentTo(expectedMediaTypes ?? []));
-        });
+            await Assert.That(actionResult).IsNotNull();
+            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            await Assert.That(actionResult?.Value).IsEqualTo("my result");
+            await Assert.That(actionResult?.ContentTypes).IsEquivalentTo(expectedMediaTypes ?? []);
+        }
     }
 }

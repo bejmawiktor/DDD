@@ -1,38 +1,32 @@
-﻿using DDD.Domain.Events;
+using DDD.Domain.Events;
 using Moq;
-using NUnit.Framework;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
-[TestFixture]
 public class EventTest
 {
     [Test]
-    public void TestConstructing_WhenConstructing_ThenGuidIsSet()
+    public async Task TestConstructing_WhenConstructing_ThenGuidIsSet()
     {
         Event @event = new Mock<Event>().Object;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(@event.Id, Is.Not.Null);
-            Assert.That(@event.Id, Is.Not.EqualTo(Guid.Empty));
-        });
+        await Assert.That(@event.Id).IsNotEqualTo(Guid.Empty);
     }
 
     [Test]
-    public void TestConstructing_WhenConstructing_ThenCreatedAtIsSet()
+    public async Task TestConstructing_WhenConstructing_ThenCreatedAtIsSet()
     {
         Event @event = new Mock<Event>().Object;
 
-        Assert.That(@event.CreatedAt, Is.EqualTo(DateTime.UtcNow).Within(1).Minutes);
+        await Assert.That(@event.CreatedAt).IsEqualTo(DateTime.UtcNow).Within(TimeSpan.FromMinutes(1));
     }
 
     [Test]
-    public void TestConstructing_WhenConstructingMultipleEvents_ThenIdHasDiffrentValues()
+    public async Task TestConstructing_WhenConstructingMultipleEvents_ThenIdHasDiffrentValues()
     {
         Event firstEvent = new Mock<Event>().Object;
         Event secondEvent = new Mock<Event>().Object;
 
-        Assert.That(firstEvent.Id, Is.Not.EqualTo(secondEvent));
+        await Assert.That(firstEvent.Id).IsNotEqualTo(secondEvent.Id);
     }
 }
