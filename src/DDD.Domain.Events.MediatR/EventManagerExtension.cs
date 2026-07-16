@@ -1,11 +1,12 @@
-﻿using MediatR;
+using MediatR;
 
 namespace DDD.Domain.Events.MediatR;
 
 public static class EventManagerExtension
 {
-    public static void UseMediatREventDispatcher(
-        this EventManager eventManger,
-        IMediator mediator
-    ) => eventManger.Dispatcher = new EventDispatcher(mediator);
+    extension(EventManager eventManager)
+    {
+        public void UseMediatREventDispatcher(IMediator mediator) =>
+            eventManager.Dispatcher = new EventDispatcher(mediator);
+    }
 }

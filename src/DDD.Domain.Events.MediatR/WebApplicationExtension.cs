@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,10 +6,13 @@ namespace DDD.Domain.Events.MediatR;
 
 public static class WebApplicationExtension
 {
-    public static void UseMediatREventDispatcher(this WebApplication application)
+    extension(WebApplication application)
     {
-        EventManager.Instance.UseMediatREventDispatcher(
-            application.Services.GetRequiredService<IMediator>()
-        );
+        public void UseMediatREventDispatcher()
+        {
+            EventManager.Instance.UseMediatREventDispatcher(
+                application.Services.GetRequiredService<IMediator>()
+            );
+        }
     }
 }

@@ -1,21 +1,23 @@
-﻿namespace DDD.Domain.Events;
+namespace DDD.Domain.Events;
 
 public static class EventManagerExtension
 {
-    public static void UseCompositeDispatcher(
-        this EventManager eventManager,
-        Action<CompositeEventDispatcherConfiguration>? configureDispatcherFunc = null
-    )
+    extension(EventManager eventManager)
     {
-        CompositeEventDispatcher compositeEventDispatcher = new();
-        CompositeEventDispatcherConfiguration configuration = new();
-
-        if (configureDispatcherFunc is not null)
+        public void UseCompositeDispatcher(
+            Action<CompositeEventDispatcherConfiguration>? configureDispatcherFunc = null
+        )
         {
-            configureDispatcherFunc(configuration);
-            compositeEventDispatcher.AddRange(configuration.Dispatchers);
-        }
+            CompositeEventDispatcher compositeEventDispatcher = new();
+            CompositeEventDispatcherConfiguration configuration = new();
 
-        eventManager.Dispatcher = compositeEventDispatcher;
+            if (configureDispatcherFunc is not null)
+            {
+                configureDispatcherFunc(configuration);
+                compositeEventDispatcher.AddRange(configuration.Dispatchers);
+            }
+
+            eventManager.Dispatcher = compositeEventDispatcher;
+        }
     }
 }

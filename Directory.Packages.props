@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="*" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="TUnit" Version="*" />
+    <PackageVersion Include="Utils" Version="6.1.1" />
+  </ItemGroup>
+
+</Project>
