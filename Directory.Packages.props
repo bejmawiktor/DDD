@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Allow floating ("*") versions below (TUnit, code coverage), matching
+         the versioning the projects used before central management. -->
     <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
 
@@ -11,7 +13,7 @@
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="*" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="TUnit" Version="*" />
-    <PackageVersion Include="Utils" Version="6.1.1" />
+    <PackageVersion Include="Utils" Version="6.2.0" />
   </ItemGroup>
 
 </Project>
