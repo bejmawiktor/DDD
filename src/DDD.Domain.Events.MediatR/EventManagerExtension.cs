@@ -8,13 +8,13 @@ namespace DDD.Domain.Events.MediatR;
 /// </summary>
 public static class EventManagerExtension
 {
-    /// <summary>
-    /// Configures the event manager to dispatch domain events through MediatR.
-    /// </summary>
-    /// <param name="eventManger">The event manager to configure.</param>
-    /// <param name="mediator">The MediatR mediator used to publish events.</param>
-    public static void UseMediatREventDispatcher(
-        this EventManager eventManger,
-        IMediator mediator
-    ) => eventManger.Dispatcher = new EventDispatcher(mediator);
+    extension(EventManager eventManger)
+    {
+        /// <summary>
+        /// Configures the event manager to dispatch domain events through MediatR.
+        /// </summary>
+        /// <param name="mediator">The MediatR mediator used to publish events.</param>
+        public void UseMediatREventDispatcher(IMediator mediator) =>
+            eventManger.Dispatcher = new EventDispatcher(mediator);
+    }
 }

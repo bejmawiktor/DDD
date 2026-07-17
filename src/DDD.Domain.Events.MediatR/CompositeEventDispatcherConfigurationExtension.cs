@@ -8,22 +8,21 @@ namespace DDD.Domain.Events.MediatR;
 /// </summary>
 public static class CompositeEventDispatcherConfigurationExtension
 {
-    /// <summary>
-    /// Adds a MediatR-based dispatcher to the composite configuration.
-    /// </summary>
-    /// <param name="configuration">The composite configuration to extend.</param>
-    /// <param name="mediator">The MediatR mediator used to publish events.</param>
-    /// <returns>The same configuration instance, for fluent chaining.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="mediator"/> is <see langword="null"/>.
-    /// </exception>
-    public static CompositeEventDispatcherConfiguration WithMediatRDispatcher(
-        this CompositeEventDispatcherConfiguration configuration,
-        IMediator mediator
-    )
+    extension(CompositeEventDispatcherConfiguration configuration)
     {
-        ArgumentNullException.ThrowIfNull(mediator);
+        /// <summary>
+        /// Adds a MediatR-based dispatcher to the composite configuration.
+        /// </summary>
+        /// <param name="mediator">The MediatR mediator used to publish events.</param>
+        /// <returns>The same configuration instance, for fluent chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="mediator"/> is <see langword="null"/>.
+        /// </exception>
+        public CompositeEventDispatcherConfiguration WithMediatRDispatcher(IMediator mediator)
+        {
+            ArgumentNullException.ThrowIfNull(mediator);
 
-        return configuration.WithDispatcher(new EventDispatcher(mediator));
+            return configuration.WithDispatcher(new EventDispatcher(mediator));
+        }
     }
 }

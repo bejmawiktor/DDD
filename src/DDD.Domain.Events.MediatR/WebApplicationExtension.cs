@@ -10,16 +10,18 @@ namespace DDD.Domain.Events.MediatR;
 /// </summary>
 public static class WebApplicationExtension
 {
-    /// <summary>
-    /// Resolves the registered <see cref="IMediator"/> from the application's
-    /// service provider and configures the shared event manager to dispatch
-    /// events through it.
-    /// </summary>
-    /// <param name="application">The web application whose event manager is configured.</param>
-    public static void UseMediatREventDispatcher(this WebApplication application)
+    extension(WebApplication application)
     {
-        EventManager.Instance.UseMediatREventDispatcher(
-            application.Services.GetRequiredService<IMediator>()
-        );
+        /// <summary>
+        /// Resolves the registered <see cref="IMediator"/> from the application's
+        /// service provider and configures the shared event manager to dispatch
+        /// events through it.
+        /// </summary>
+        public void UseMediatREventDispatcher()
+        {
+            EventManager.Instance.UseMediatREventDispatcher(
+                application.Services.GetRequiredService<IMediator>()
+            );
+        }
     }
 }

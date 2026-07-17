@@ -12,62 +12,59 @@ namespace DDD.Domain.Validation.AspNetCore;
 /// </summary>
 public static class ResultExtensions
 {
-    /// <summary>
-    /// Converts a value-less result into an action result: a problem-details
-    /// response when the result carries an error, otherwise an empty
-    /// <c>200 OK</c>.
-    /// </summary>
-    /// <typeparam name="TError">The error type carried by the result.</typeparam>
-    /// <param name="result">The result to convert.</param>
-    /// <param name="httpContext">The current HTTP context, used for error details. Optional.</param>
-    /// <returns>The corresponding action result.</returns>
-    public static IActionResult ToActionResult<TError>(
-        this IResult<TError> result,
-        HttpContext? httpContext = null
-    )
+    extension<TError>(IResult<TError> result)
         where TError : IError
     {
-        if (result.Error is not null)
+        /// <summary>
+        /// Converts a value-less result into an action result: a problem-details
+        /// response when the result carries an error, otherwise an empty
+        /// <c>200 OK</c>.
+        /// </summary>
+        /// <param name="httpContext">The current HTTP context, used for error details. Optional.</param>
+        /// <returns>The corresponding action result.</returns>
+        public IActionResult ToActionResult(HttpContext? httpContext = null)
         {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
+            if (result.Error is not null)
+            {
+                ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
 
-            return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
+                return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
+            }
+
+            return new OkResult();
         }
-
-        return new OkResult();
     }
 
-    /// <summary>
-    /// Converts a value-carrying result into an action result: a problem-details
-    /// response when the result carries an error, otherwise a <c>200 OK</c>
-    /// wrapping the value with the requested content types.
-    /// </summary>
-    /// <typeparam name="TValue">The success value type carried by the result.</typeparam>
-    /// <typeparam name="TError">The error type carried by the result.</typeparam>
-    /// <param name="result">The result to convert.</param>
-    /// <param name="httpContext">The current HTTP context, used for error details. Optional.</param>
-    /// <param name="mediaTypes">
-    /// The content types to advertise on a successful response. Defaults to
-    /// <c>application/json</c> when <see langword="null"/>.
-    /// </param>
-    /// <returns>The corresponding action result.</returns>
-    public static IActionResult ToActionResult<TValue, TError>(
-        this IResult<TValue, TError> result,
-        HttpContext? httpContext = null,
-        string[]? mediaTypes = null
-    )
+    extension<TValue, TError>(IResult<TValue, TError> result)
         where TError : IError
     {
-        if (result.Error is not null)
+        /// <summary>
+        /// Converts a value-carrying result into an action result: a problem-details
+        /// response when the result carries an error, otherwise a <c>200 OK</c>
+        /// wrapping the value with the requested content types.
+        /// </summary>
+        /// <param name="httpContext">The current HTTP context, used for error details. Optional.</param>
+        /// <param name="mediaTypes">
+        /// The content types to advertise on a successful response. Defaults to
+        /// <c>application/json</c> when <see langword="null"/>.
+        /// </param>
+        /// <returns>The corresponding action result.</returns>
+        public IActionResult ToActionResult(
+            HttpContext? httpContext = null,
+            string[]? mediaTypes = null
+        )
         {
-            ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
+            if (result.Error is not null)
+            {
+                ProblemDetails problemDetails = result.Error.ToProblemDetails(httpContext);
 
-            return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
+                return new ObjectResult(problemDetails) { StatusCode = problemDetails.Status };
+            }
+
+            MediaTypeCollection mediaTypeCollection = [];
+            (mediaTypes ?? ["application/json"]).ToList().ForEach(mediaTypeCollection.Add);
+
+            return new OkObjectResult(result.Value) { ContentTypes = mediaTypeCollection };
         }
-
-        MediaTypeCollection mediaTypeCollection = [];
-        (mediaTypes ?? ["application/json"]).ToList().ForEach(mediaTypeCollection.Add);
-
-        return new OkObjectResult(result.Value) { ContentTypes = mediaTypeCollection };
     }
 }
