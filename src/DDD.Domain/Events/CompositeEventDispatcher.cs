@@ -1,14 +1,32 @@
-﻿namespace DDD.Domain.Events;
+namespace DDD.Domain.Events;
 
+/// <summary>
+/// Default <see cref="ICompositeEventDispatcher"/> implementation that forwards
+/// each event to every registered inner dispatcher — synchronously in
+/// declaration order, or asynchronously in parallel.
+/// </summary>
 public class CompositeEventDispatcher : ICompositeEventDispatcher
 {
+    /// <summary>
+    /// Gets the inner dispatchers that receive every dispatched event.
+    /// </summary>
     protected internal List<IEventDispatcher> Dispatchers { get; }
 
+    /// <summary>
+    /// Initializes a new, empty <see cref="CompositeEventDispatcher"/>.
+    /// </summary>
     public CompositeEventDispatcher()
     {
         this.Dispatchers = [];
     }
 
+    /// <summary>
+    /// Adds a single inner dispatcher.
+    /// </summary>
+    /// <param name="dispatcher">The dispatcher to add.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="dispatcher"/> is <see langword="null"/>.
+    /// </exception>
     public void Add(IEventDispatcher dispatcher)
     {
         ArgumentNullException.ThrowIfNull(dispatcher);
@@ -16,6 +34,13 @@ public class CompositeEventDispatcher : ICompositeEventDispatcher
         this.Dispatchers.Add(dispatcher);
     }
 
+    /// <summary>
+    /// Adds several inner dispatchers at once.
+    /// </summary>
+    /// <param name="dispatchers">The dispatchers to add.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="dispatchers"/> is <see langword="null"/>.
+    /// </exception>
     public void AddRange(IEnumerable<IEventDispatcher> dispatchers)
     {
         ArgumentNullException.ThrowIfNull(dispatchers);
@@ -23,10 +48,23 @@ public class CompositeEventDispatcher : ICompositeEventDispatcher
         this.Dispatchers.AddRange(dispatchers);
     }
 
+    /// <summary>
+    /// Dispatches an event to every inner dispatcher, synchronously and in
+    /// registration order.
+    /// </summary>
+    /// <typeparam name="TItem">The concrete event type.</typeparam>
+    /// <param name="item">The event to dispatch.</param>
     public void Dispatch<TItem>(TItem item)
         where TItem : notnull, IEvent =>
         this.Dispatchers.ForEach(dispatcher => dispatcher.Dispatch(item));
 
+    /// <summary>
+    /// Dispatches an event to every inner dispatcher asynchronously and in
+    /// parallel.
+    /// </summary>
+    /// <typeparam name="TItem">The concrete event type.</typeparam>
+    /// <param name="item">The event to dispatch.</param>
+    /// <returns>A task that completes once every inner dispatcher has handled the event.</returns>
     public Task DispatchAsync<TItem>(TItem item)
         where TItem : notnull, IEvent =>
         Parallel.ForEachAsync(

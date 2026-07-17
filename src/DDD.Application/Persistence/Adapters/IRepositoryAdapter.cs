@@ -5,6 +5,23 @@ using DDD.Domain.Persistence;
 
 namespace DDD.Application.Persistence.Adapters;
 
+/// <summary>
+/// Adapts a DTO-based <see cref="IDtoRepository{TDto, TDtoIdentifier}"/> to the
+/// domain-facing <see cref="IRepository{TAggregateRoot, TIdentifier}"/>. It
+/// implements the domain repository operations by converting aggregate roots to
+/// DTOs (and back) through the supplied converter, so the domain layer stays
+/// unaware of the storage representation. Provide the backing store by
+/// overriding <see cref="DtoRepository"/>.
+/// </summary>
+/// <typeparam name="TDto">The aggregate root DTO type used for storage.</typeparam>
+/// <typeparam name="TDtoIdentifier">Type of the identifier used by the DTO store.</typeparam>
+/// <typeparam name="TDtoRepository">The concrete DTO repository type.</typeparam>
+/// <typeparam name="TDtoAggregateRootConverter">
+/// Converter between the aggregate root and its DTO. Must have a public
+/// parameterless constructor.
+/// </typeparam>
+/// <typeparam name="TAggregateRoot">The domain aggregate root type.</typeparam>
+/// <typeparam name="TIdentifier">Type of the aggregate root identifier.</typeparam>
 public interface IRepositoryAdapter<
     TDto,
     TDtoIdentifier,
@@ -25,6 +42,9 @@ public interface IRepositoryAdapter<
         >,
         new()
 {
+    /// <summary>
+    /// Gets the underlying DTO repository that performs the actual storage work.
+    /// </summary>
     protected abstract TDtoRepository DtoRepository { get; }
 
     private static TDtoAggregateRootConverter Converter => new();
