@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Title>DDD Tactical Patterns</Title>
     <Authors>Wiktor Bejma</Authors>
@@ -10,5 +9,4 @@
   <ItemGroup>
     <PackageReference Include="Utils" />
   </ItemGroup>
-
 </Project>

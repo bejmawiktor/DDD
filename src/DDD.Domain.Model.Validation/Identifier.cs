@@ -19,7 +19,9 @@ namespace DDD.Domain.Model;
 /// constructor.
 /// </typeparam>
 /// <param name="value">The underlying identifier value. Cannot be <see langword="null"/>.</param>
-public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier, TValidator>(TIdentifierValue value)
+public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier, TValidator>(
+    TIdentifierValue value
+)
     : Identifier<TIdentifierValue, TDeriviedIdentifier>(value),
         IValidationTarget<TDeriviedIdentifier, TValidator>
     where TValidator : DomainObjectValidator<TValidator, TDeriviedIdentifier>, new()

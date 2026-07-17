@@ -23,9 +23,9 @@ namespace DDD.Domain.Model.Extended;
 /// constructor.
 /// </typeparam>
 /// <param name="id">The identifier of the entity. Cannot be <see langword="null"/>.</param>
-public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>(TIdentifier id)
-    : Entity<TIdentifier>(id),
-        IValidationTarget<TDeriviedEntity, TValidationSource>
+public abstract class Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>(
+    TIdentifier id
+) : Entity<TIdentifier>(id), IValidationTarget<TDeriviedEntity, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedEntity>, new()
     where TDeriviedEntity : Entity<TIdentifier, TDeriviedEntity, TValidator, TValidationSource>
     where TValidationSource : new()

@@ -39,6 +39,6 @@ internal class WebApplicationExtensionTest
 
         EventManager.Instance.Notify(@event);
 
-        await Assert.That(dispatchedEvent?.Event).IsSameReferenceAs(@event);
+        _ = await Assert.That(dispatchedEvent?.Event).IsSameReferenceAs(@event);
     }
 }

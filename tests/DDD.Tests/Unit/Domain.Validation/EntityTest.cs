@@ -148,7 +148,7 @@ internal class EntityTest
             (
                 "my example text",
                 5,
-                (ValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.TextField = "";
                 },
@@ -165,7 +165,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = -1;
                 },
@@ -182,7 +182,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = -5;
                 },
@@ -203,7 +203,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = 11;
                 },
@@ -226,7 +226,7 @@ internal class EntityTest
             (
                 "my example text",
                 5,
-                (ExtendedValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.TextField = "";
                 },
@@ -243,7 +243,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = -1;
                 },
@@ -260,7 +260,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = -5;
                 },
@@ -281,7 +281,7 @@ internal class EntityTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedEntityFake entity) =>
+                entity =>
                 {
                     entity.IntField = 11;
                 },
@@ -328,8 +328,8 @@ internal class EntityTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ValidatedEntityFake(10, textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ValidatedEntityFake(10, textField, intField)
         );
 
         using (Assert.Multiple())
@@ -362,8 +362,8 @@ internal class EntityTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ExtendedValidatedEntityFake(10, textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ExtendedValidatedEntityFake(10, textField, intField)
         );
 
         using (Assert.Multiple())
@@ -391,8 +391,11 @@ internal class EntityTest
     [Test]
     public async Task TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ValidatedEntityFake entity =
-            new(10, "example text", 5) { TextField = "second text", IntField = 5 };
+        ValidatedEntityFake entity = new(10, "example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
@@ -404,8 +407,11 @@ internal class EntityTest
     [Test]
     public async Task TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ExtendedValidatedEntityFake entity =
-            new(10, "example text", 5) { TextField = "second text", IntField = 5 };
+        ExtendedValidatedEntityFake entity = new(10, "example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
@@ -425,8 +431,8 @@ internal class EntityTest
     {
         ValidatedEntityFake entity = new(10, textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(entity)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(entity)
         );
 
         using (Assert.Multiple())
@@ -462,8 +468,8 @@ internal class EntityTest
     {
         ExtendedValidatedEntityFake entity = new(10, textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(entity)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(entity)
         );
 
         using (Assert.Multiple())

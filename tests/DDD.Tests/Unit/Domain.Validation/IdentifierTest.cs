@@ -46,7 +46,7 @@ internal class IdentifierTest
     {
         ValidatedIdentifierFake identifier = new("b");
 
-        await Assert.That(identifier.Value).IsEqualTo("b");
+        _ = await Assert.That(identifier.Value).IsEqualTo("b");
     }
 
     [Test]
@@ -54,7 +54,7 @@ internal class IdentifierTest
     {
         ExtendedValidatedIdentifierFake identifier = new("b");
 
-        await Assert.That(identifier.Value).IsEqualTo("b");
+        _ = await Assert.That(identifier.Value).IsEqualTo("b");
     }
 
     [Test]
@@ -64,14 +64,14 @@ internal class IdentifierTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ValidatedIdentifierFake(value)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ValidatedIdentifierFake(value)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -80,7 +80,7 @@ internal class IdentifierTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException
@@ -97,14 +97,14 @@ internal class IdentifierTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ExtendedValidatedIdentifierFake(value)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ExtendedValidatedIdentifierFake(value)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -113,7 +113,7 @@ internal class IdentifierTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException

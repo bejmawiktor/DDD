@@ -66,19 +66,19 @@ public class CompositeEventManagerConfigurationExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent?.Event).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent?.Event).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent?.Event).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent?.Event).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent?.Event).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent?.Event).IsSameReferenceAs(@event);
         }
     }
 
     [Test]
     public async Task TestWithMediatRDispatcher_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new CompositeEventDispatcherConfiguration().WithMediatRDispatcher(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new CompositeEventDispatcherConfiguration().WithMediatRDispatcher(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 }

@@ -27,7 +27,7 @@ public class EventManagerTest
 
         EventManager.Instance.Notify(new EventStub());
 
-        await Assert.That(dispatched).IsTrue();
+        _ = await Assert.That(dispatched).IsTrue();
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class EventManagerTest
             EventManager.Instance.Notify(eventMock.Object);
         }
 
-        await Assert.That(dispatched).IsFalse();
+        _ = await Assert.That(dispatched).IsFalse();
     }
 
     [Test]
@@ -69,21 +69,21 @@ public class EventManagerTest
         using EventsScope eventsScope = new();
         EventManager.Instance.Notify(eventMock.Object);
 
-        await Assert.That(events.Contains(@event)).IsFalse();
+        _ = await Assert.That(events.Contains(@event)).IsFalse();
 
         eventsScope.Publish();
 
-        await Assert.That(events.Contains(@event)).IsTrue();
+        _ = await Assert.That(events.Contains(@event)).IsTrue();
     }
 
     [Test]
     public async Task TestNotify_WhenScopeWasntCreatedAndDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
     {
-        InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(
-            () => EventManager.Instance.Notify(new EventStub())
+        InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(() =>
+            EventManager.Instance.Notify(new EventStub())
         );
 
-        await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
     }
 
     [Test]
@@ -102,7 +102,7 @@ public class EventManagerTest
             await EventManager.Instance.NotifyAsync(eventMock.Object);
         }
 
-        await Assert.That(dispatched).IsFalse();
+        _ = await Assert.That(dispatched).IsFalse();
     }
 
     [Test]
@@ -125,11 +125,11 @@ public class EventManagerTest
         using EventsScope eventsScope = new();
         await EventManager.Instance.NotifyAsync(eventMock.Object);
 
-        await Assert.That(events.Contains(@event)).IsFalse();
+        _ = await Assert.That(events.Contains(@event)).IsFalse();
 
         eventsScope.Publish();
 
-        await Assert.That(events.Contains(@event)).IsTrue();
+        _ = await Assert.That(events.Contains(@event)).IsTrue();
     }
 
     [Test]
@@ -144,16 +144,17 @@ public class EventManagerTest
 
         await EventManager.Instance.NotifyAsync(new EventStub());
 
-        await Assert.That(dispatched).IsTrue();
+        _ = await Assert.That(dispatched).IsTrue();
     }
 
     [Test]
     public async Task TestNotifyAsync_WhenScopeWasntCreatedAndDispatcherIsUninitialized_ThenInvalidOperationExceptionIsThrown()
     {
         InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await EventManager.Instance.NotifyAsync(new EventStub())
+            async () =>
+                await EventManager.Instance.NotifyAsync(new EventStub())
         );
 
-        await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
     }
 }

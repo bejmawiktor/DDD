@@ -45,11 +45,11 @@ public class IdentifierTest
     [Test]
     public async Task TestConstructing_WhenNullValueGiven_ThenArgumentNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new StringIdFake(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new StringIdFake(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("value");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("value");
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class IdentifierTest
     {
         ArgumentException? exception = Assert.Throws<ArgumentException>(() => new StringIdFake(""));
 
-        await Assert.That(exception!.Message).IsEqualTo("Id could not be empty.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Id could not be empty.");
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class IdentifierTest
     {
         StringIdFake id = new("1");
 
-        await Assert.That(id.Value).IsEqualTo("1");
+        _ = await Assert.That(id.Value).IsEqualTo("1");
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class IdentifierTest
     {
         IntIdFake id = new(1);
 
-        await Assert.That(id.Value).IsEqualTo(1);
+        _ = await Assert.That(id.Value).IsEqualTo(1);
     }
 
     [Test]
@@ -89,6 +89,6 @@ public class IdentifierTest
     {
         IntIdFake id = new(1000);
 
-        await Assert.That(id.ToString()).IsEqualTo("1000");
+        _ = await Assert.That(id.ToString()).IsEqualTo("1000");
     }
 }

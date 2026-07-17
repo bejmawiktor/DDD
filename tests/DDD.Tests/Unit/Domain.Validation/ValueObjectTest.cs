@@ -165,7 +165,7 @@ internal class ValueObjectTest
             (
                 "my example text",
                 5,
-                (ValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.TextField = "";
                 },
@@ -182,7 +182,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = -1;
                 },
@@ -199,7 +199,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = -5;
                 },
@@ -220,7 +220,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = 11;
                 },
@@ -243,7 +243,7 @@ internal class ValueObjectTest
             (
                 "my example text",
                 5,
-                (ExtendedValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.TextField = "";
                 },
@@ -260,7 +260,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = -1;
                 },
@@ -277,7 +277,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = -5;
                 },
@@ -298,7 +298,7 @@ internal class ValueObjectTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.IntField = 11;
                 },
@@ -383,7 +383,7 @@ internal class ValueObjectTest
             (
                 1,
                 1,
-                (SingleValueValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.NextValue = -1;
                 },
@@ -406,7 +406,7 @@ internal class ValueObjectTest
             (
                 1,
                 1,
-                (ExtendedSingleValueValidatedValueObjectFake valueObject) =>
+                valueObject =>
                 {
                     valueObject.NextValue = -1;
                 },
@@ -453,8 +453,8 @@ internal class ValueObjectTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ValidatedValueObjectFake(textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ValidatedValueObjectFake(textField, intField)
         );
 
         using (Assert.Multiple())
@@ -487,8 +487,8 @@ internal class ValueObjectTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ExtendedValidatedValueObjectFake(textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ExtendedValidatedValueObjectFake(textField, intField)
         );
 
         using (Assert.Multiple())
@@ -516,8 +516,11 @@ internal class ValueObjectTest
     [Test]
     public async Task TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ValidatedValueObjectFake valueObject =
-            new("example text", 5) { TextField = "second text", IntField = 5 };
+        ValidatedValueObjectFake valueObject = new("example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
@@ -529,8 +532,11 @@ internal class ValueObjectTest
     [Test]
     public async Task TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ExtendedValidatedValueObjectFake valueObject =
-            new("example text", 5) { TextField = "second text", IntField = 5 };
+        ExtendedValidatedValueObjectFake valueObject = new("example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
@@ -550,8 +556,8 @@ internal class ValueObjectTest
     {
         ValidatedValueObjectFake valueObject = new(textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(valueObject)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(valueObject)
         );
 
         using (Assert.Multiple())
@@ -587,8 +593,8 @@ internal class ValueObjectTest
     {
         ExtendedValidatedValueObjectFake valueObject = new(textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(valueObject)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(valueObject)
         );
 
         using (Assert.Multiple())
@@ -645,8 +651,8 @@ internal class ValueObjectTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new SingleValueValidatedValueObjectFake(value, nextValue)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new SingleValueValidatedValueObjectFake(value, nextValue)
         );
 
         using (Assert.Multiple())
@@ -679,8 +685,8 @@ internal class ValueObjectTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ExtendedSingleValueValidatedValueObjectFake(value, nextValue)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ExtendedSingleValueValidatedValueObjectFake(value, nextValue)
         );
 
         using (Assert.Multiple())
@@ -732,8 +738,8 @@ internal class ValueObjectTest
     {
         SingleValueValidatedValueObjectFake valueObject = new(value, nextValue);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(valueObject)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(valueObject)
         );
 
         using (Assert.Multiple())
@@ -769,8 +775,8 @@ internal class ValueObjectTest
     {
         ExtendedSingleValueValidatedValueObjectFake valueObject = new(value, nextValue);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(valueObject)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(valueObject)
         );
 
         using (Assert.Multiple())

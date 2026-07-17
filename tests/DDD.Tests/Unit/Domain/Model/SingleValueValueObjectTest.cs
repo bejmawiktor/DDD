@@ -45,8 +45,8 @@ public class SingleValueValueObjectTest
     [Test]
     public async Task TestConstructing_WhenValueIsNotValid_ThenValidationExceptionsAreThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new SingleValueValueObjectFake(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new SingleValueValueObjectFake(null!)
         );
 
         _ = await Assert.That(exception!.ParamName).IsEqualTo("value");

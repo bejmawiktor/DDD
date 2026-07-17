@@ -149,8 +149,8 @@ public class EntityTest
     [Test]
     public async Task TestConstructing_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new StringEntityStub(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new StringEntityStub(null!)
         );
 
         _ = await Assert.That(exception!.ParamName).IsEqualTo("value");
@@ -159,8 +159,8 @@ public class EntityTest
     [Test]
     public async Task TestSet_WhenNullIdGiven_ThenArgumentNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new StringEntityStub("AAA").Id = null!
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new StringEntityStub("AAA").Id = null!
         );
 
         _ = await Assert.That(exception!.ParamName).IsEqualTo("value");

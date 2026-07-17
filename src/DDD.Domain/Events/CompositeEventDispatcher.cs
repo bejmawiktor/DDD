@@ -21,31 +21,31 @@ public class CompositeEventDispatcher : ICompositeEventDispatcher
     }
 
     /// <summary>
-    /// Adds a single inner dispatcher.
+    /// Adds a single inner event dispatcher.
     /// </summary>
-    /// <param name="dispatcher">The dispatcher to add.</param>
+    /// <param name="eventDispatcher">The event dispatcher to add.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="dispatcher"/> is <see langword="null"/>.
+    /// Thrown when <paramref name="eventDispatcher"/> is <see langword="null"/>.
     /// </exception>
-    public void Add(IEventDispatcher dispatcher)
+    public void Add(IEventDispatcher eventDispatcher)
     {
-        ArgumentNullException.ThrowIfNull(dispatcher);
+        ArgumentNullException.ThrowIfNull(eventDispatcher);
 
-        this.Dispatchers.Add(dispatcher);
+        this.Dispatchers.Add(eventDispatcher);
     }
 
     /// <summary>
-    /// Adds several inner dispatchers at once.
+    /// Adds several inner event dispatchers at once.
     /// </summary>
-    /// <param name="dispatchers">The dispatchers to add.</param>
+    /// <param name="eventDispatchers">The event dispatchers to add.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="dispatchers"/> is <see langword="null"/>.
+    /// Thrown when <paramref name="eventDispatchers"/> is <see langword="null"/>.
     /// </exception>
-    public void AddRange(IEnumerable<IEventDispatcher> dispatchers)
+    public void AddRange(IEnumerable<IEventDispatcher> eventDispatchers)
     {
-        ArgumentNullException.ThrowIfNull(dispatchers);
+        ArgumentNullException.ThrowIfNull(eventDispatchers);
 
-        this.Dispatchers.AddRange(dispatchers);
+        this.Dispatchers.AddRange(eventDispatchers);
     }
 
     /// <summary>

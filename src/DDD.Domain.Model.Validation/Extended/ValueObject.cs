@@ -63,9 +63,9 @@ public abstract class ValueObject<TDeriviedValueObject, TValidator, TValidationS
 /// constructor.
 /// </typeparam>
 /// <param name="value">The value to wrap.</param>
-public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TValidationSource>(TValue value)
-    : ValueObject<TValue>(value),
-        IValidationTarget<TDeriviedValueObject, TValidationSource>
+public abstract class ValueObject<TValue, TDeriviedValueObject, TValidator, TValidationSource>(
+    TValue value
+) : ValueObject<TValue>(value), IValidationTarget<TDeriviedValueObject, TValidationSource>
     where TValidator : DomainObjectValidator<TValidationSource, TDeriviedValueObject>, new()
     where TDeriviedValueObject : ValueObject<
             TValue,

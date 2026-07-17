@@ -109,7 +109,6 @@ public class ErrorExtensionsTest
                     {
                         {
                             "",
-
                             [
                                 simpleError.Message,
                                 argumentError.Message,
@@ -228,7 +227,6 @@ public class ErrorExtensionsTest
                         },
                         {
                             secondFieldValidationError.FieldName,
-
                             [
                                 secondFieldValidationError.Message,
                                 secondField2ValidationError.Message,
@@ -343,17 +341,19 @@ public class ErrorExtensionsTest
         {
             if (problemDetails is ValidationProblemDetails validationProblemDetails)
             {
-                await Assert
+                _ = await Assert
                     .That(validationProblemDetails.Errors)
                     .IsEquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors);
             }
 
-            await Assert
+            _ = await Assert
                 .That(problemDetails.Detail?.Replace("\r\n", "\n"))
                 .IsEqualTo(expectedProblemDetails.Detail?.Replace("\r\n", "\n"));
-            await Assert.That(problemDetails.Status).IsEqualTo(expectedProblemDetails.Status);
-            await Assert.That(problemDetails.Instance).IsEqualTo(expectedProblemDetails.Instance);
-            await Assert
+            _ = await Assert.That(problemDetails.Status).IsEqualTo(expectedProblemDetails.Status);
+            _ = await Assert
+                .That(problemDetails.Instance)
+                .IsEqualTo(expectedProblemDetails.Instance);
+            _ = await Assert
                 .That(problemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
@@ -388,16 +388,16 @@ public class ErrorExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert
+            _ = await Assert
                 .That(validationProblemDetails.Detail?.Replace("\r\n", "\n"))
                 .IsEqualTo(expectedProblemDetails.Detail?.Replace("\r\n", "\n"));
-            await Assert
+            _ = await Assert
                 .That(validationProblemDetails.Status)
                 .IsEqualTo((int)HttpStatusCode.BadRequest);
-            await Assert
+            _ = await Assert
                 .That(validationProblemDetails.Instance)
                 .IsEqualTo(expectedProblemDetails.Instance);
-            await Assert
+            _ = await Assert
                 .That(validationProblemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }

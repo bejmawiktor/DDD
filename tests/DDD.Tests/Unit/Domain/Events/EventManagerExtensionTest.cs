@@ -18,8 +18,10 @@ internal class EventManagerExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
-            await Assert.That(EventManager.Instance.Dispatcher).IsTypeOf<CompositeEventDispatcher>();
+            _ = await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
+            _ = await Assert
+                .That(EventManager.Instance.Dispatcher)
+                .IsTypeOf<CompositeEventDispatcher>();
         }
     }
 
@@ -31,7 +33,9 @@ internal class EventManagerExtensionTest
 
         EventManager.Instance.UseCompositeDispatcher();
 
-        await Assert.That(EventManager.Instance.Dispatcher).IsNotSameReferenceAs(eventDispatcher);
+        _ = await Assert
+            .That(EventManager.Instance.Dispatcher)
+            .IsNotSameReferenceAs(eventDispatcher);
     }
 
     [Test]
@@ -79,9 +83,9 @@ internal class EventManagerExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -144,23 +148,22 @@ internal class EventManagerExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsNull();
-            await Assert.That(secondDispatchedEvent).IsNull();
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(fourthDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsNull();
+            _ = await Assert.That(secondDispatchedEvent).IsNull();
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(fourthDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
     [Test]
     public async Task TestUseCompositeDispatcher_WhenNullDispatcherGiven_ThenNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () =>
-                EventManager.Instance.UseCompositeDispatcher(configuration =>
-                    configuration.WithDispatcher(null!)
-                )
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            EventManager.Instance.UseCompositeDispatcher(configuration =>
+                configuration.WithDispatcher(null!)
+            )
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("dispatcher");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("dispatcher");
     }
 }

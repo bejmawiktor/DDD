@@ -34,13 +34,12 @@ public static class ErrorExtensions
 
     private static ProblemDetails CreateProblemDetails(IError error, HttpContext? httpContext)
     {
-        ProblemDetails problemDetails =
-            new()
-            {
-                Instance = httpContext?.Request.Path,
-                Detail = error.Message,
-                Status = (int)HttpStatusCode.BadRequest,
-            };
+        ProblemDetails problemDetails = new()
+        {
+            Instance = httpContext?.Request.Path,
+            Detail = error.Message,
+            Status = (int)HttpStatusCode.BadRequest,
+        };
 
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
@@ -91,13 +90,12 @@ public static class ErrorExtensions
     )
         where TError : IError
     {
-        ProblemDetails problemDetails =
-            new()
-            {
-                Detail = errors.Message,
-                Status = (int)HttpStatusCode.NotFound,
-                Instance = httpContext?.Request.Path,
-            };
+        ProblemDetails problemDetails = new()
+        {
+            Detail = errors.Message,
+            Status = (int)HttpStatusCode.NotFound,
+            Instance = httpContext?.Request.Path,
+        };
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
@@ -110,13 +108,14 @@ public static class ErrorExtensions
     )
         where TError : IError
     {
-        ValidationProblemDetails validationProblemDetails =
-            new(new Dictionary<string, string[]>(validationProblemDetailsErrors))
-            {
-                Detail = errors.Message,
-                Status = (int)HttpStatusCode.BadRequest,
-                Instance = httpContext?.Request.Path,
-            };
+        ValidationProblemDetails validationProblemDetails = new(
+            new Dictionary<string, string[]>(validationProblemDetailsErrors)
+        )
+        {
+            Detail = errors.Message,
+            Status = (int)HttpStatusCode.BadRequest,
+            Instance = httpContext?.Request.Path,
+        };
         validationProblemDetails.Extensions["traceId"] =
             Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
