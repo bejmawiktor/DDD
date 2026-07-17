@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
@@ -43,5 +42,4 @@
       False
     </IncludeTestAssembly>
   </PropertyGroup>
-
 </Project>

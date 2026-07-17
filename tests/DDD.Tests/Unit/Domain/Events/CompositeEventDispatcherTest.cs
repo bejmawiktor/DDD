@@ -49,9 +49,9 @@ internal class CompositeEventDispatcherTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -95,9 +95,9 @@ internal class CompositeEventDispatcherTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsNull();
-            await Assert.That(secondDispatchedEvent).IsNull();
-            await Assert.That(thirdDispatchedEvent).IsNull();
+            _ = await Assert.That(firstDispatchedEvent).IsNull();
+            _ = await Assert.That(secondDispatchedEvent).IsNull();
+            _ = await Assert.That(thirdDispatchedEvent).IsNull();
         }
     }
 
@@ -153,9 +153,9 @@ internal class CompositeEventDispatcherTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -208,9 +208,9 @@ internal class CompositeEventDispatcherTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsNull();
-            await Assert.That(secondDispatchedEvent).IsNull();
-            await Assert.That(thirdDispatchedEvent).IsNull();
+            _ = await Assert.That(firstDispatchedEvent).IsNull();
+            _ = await Assert.That(secondDispatchedEvent).IsNull();
+            _ = await Assert.That(thirdDispatchedEvent).IsNull();
         }
     }
 
@@ -249,21 +249,19 @@ internal class CompositeEventDispatcherTest
                 }
             );
         CompositeEventDispatcher compositeDispatcher = new();
-        compositeDispatcher.AddRange(
-            [
-                firstEventDispatcherMock.Object,
-                secondEventDispatcherMock.Object,
-                thirdEventDispatcherMock.Object,
-            ]
-        );
+        compositeDispatcher.AddRange([
+            firstEventDispatcherMock.Object,
+            secondEventDispatcherMock.Object,
+            thirdEventDispatcherMock.Object,
+        ]);
 
         compositeDispatcher.Dispatch(@event);
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -311,21 +309,19 @@ internal class CompositeEventDispatcherTest
                 }
             );
         CompositeEventDispatcher compositeDispatcher = new();
-        compositeDispatcher.AddRange(
-            [
-                firstEventDispatcherMock.Object,
-                secondEventDispatcherMock.Object,
-                thirdEventDispatcherMock.Object,
-            ]
-        );
+        compositeDispatcher.AddRange([
+            firstEventDispatcherMock.Object,
+            secondEventDispatcherMock.Object,
+            thirdEventDispatcherMock.Object,
+        ]);
 
         await compositeDispatcher.DispatchAsync(@event);
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -334,11 +330,11 @@ internal class CompositeEventDispatcherTest
     {
         CompositeEventDispatcher compositeDispatcher = new();
 
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => compositeDispatcher.Add(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            compositeDispatcher.Add(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("dispatcher");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("eventDispatcher");
     }
 
     [Test]
@@ -346,10 +342,10 @@ internal class CompositeEventDispatcherTest
     {
         CompositeEventDispatcher compositeDispatcher = new();
 
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => compositeDispatcher.AddRange(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            compositeDispatcher.AddRange(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("dispatchers");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("eventDispatchers");
     }
 }

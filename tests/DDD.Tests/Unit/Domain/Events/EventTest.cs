@@ -10,7 +10,7 @@ public class EventTest
     {
         Event @event = new Mock<Event>().Object;
 
-        await Assert.That(@event.Id).IsNotEqualTo(Guid.Empty);
+        _ = await Assert.That(@event.Id).IsNotEqualTo(Guid.Empty);
     }
 
     [Test]
@@ -18,7 +18,10 @@ public class EventTest
     {
         Event @event = new Mock<Event>().Object;
 
-        await Assert.That(@event.CreatedAt).IsEqualTo(DateTime.UtcNow).Within(TimeSpan.FromMinutes(1));
+        _ = await Assert
+            .That(@event.CreatedAt)
+            .IsEqualTo(DateTime.UtcNow)
+            .Within(TimeSpan.FromMinutes(1));
     }
 
     [Test]
@@ -27,6 +30,6 @@ public class EventTest
         Event firstEvent = new Mock<Event>().Object;
         Event secondEvent = new Mock<Event>().Object;
 
-        await Assert.That(firstEvent.Id).IsNotEqualTo(secondEvent.Id);
+        _ = await Assert.That(firstEvent.Id).IsNotEqualTo(secondEvent.Id);
     }
 }

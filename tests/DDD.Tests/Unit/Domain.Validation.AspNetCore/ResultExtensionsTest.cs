@@ -31,8 +31,10 @@ public class ResultExtensionsTest
         ValidationError withFieldNameValidationError = new("fieldName", "my validation error");
         ValidationError secondWithFieldNameValidationError = new("fieldName", "validation error 2");
         ValidationError thirdWithFieldNameValidationError = new("fieldName2", "validation error 2");
-        ValidationError fourthWithFieldNameValidationError =
-            new("fieldName2", "validation exception 3");
+        ValidationError fourthWithFieldNameValidationError = new(
+            "fieldName2",
+            "validation exception 3"
+        );
         ValidationError messageOnlyValidationError = new("validation error without fieldName");
         Error argumentError = new("my argument error");
         NotFoundError notFoundError = new("not found error");
@@ -127,7 +129,6 @@ public class ResultExtensionsTest
                         {
                             {
                                 "",
-
                                 [
                                     simpleError.Message,
                                     argumentError.Message,
@@ -176,7 +177,6 @@ public class ResultExtensionsTest
                             { "", [simpleError.Message, argumentError.Message] },
                             {
                                 withFieldNameValidationError.FieldName,
-
                                 [
                                     withFieldNameValidationError.Message,
                                     secondWithFieldNameValidationError.Message,
@@ -219,7 +219,6 @@ public class ResultExtensionsTest
                             { "", [simpleError.Message, argumentError.Message] },
                             {
                                 withFieldNameValidationError.FieldName,
-
                                 [
                                     withFieldNameValidationError.Message,
                                     secondWithFieldNameValidationError.Message,
@@ -268,7 +267,6 @@ public class ResultExtensionsTest
                             { "", [simpleError.Message, argumentError.Message] },
                             {
                                 withFieldNameValidationError.FieldName,
-
                                 [
                                     withFieldNameValidationError.Message,
                                     secondWithFieldNameValidationError.Message,
@@ -276,7 +274,6 @@ public class ResultExtensionsTest
                             },
                             {
                                 thirdWithFieldNameValidationError.FieldName,
-
                                 [
                                     thirdWithFieldNameValidationError.Message,
                                     fourthWithFieldNameValidationError.Message,
@@ -395,21 +392,17 @@ public class ResultExtensionsTest
         yield return TestCase.Of<OkCase>(
             (
                 null,
-                new string[] { "application/json", "multipart/form-data" },
-                new string[] { "application/json", "multipart/form-data" }
+                ["application/json", "multipart/form-data"],
+                ["application/json", "multipart/form-data"]
             ),
             "Multiple media types without path"
         );
         yield return TestCase.Of<OkCase>(
-            (
-                "/path",
-                new string[] { "multipart/form-data" },
-                new string[] { "multipart/form-data" }
-            ),
+            ("/path", ["multipart/form-data"], ["multipart/form-data"]),
             "Single media type with path"
         );
         yield return TestCase.Of<OkCase>(
-            (null, null, new string[] { "application/json" }),
+            (null, null, ["application/json"]),
             "No media types defaults to json"
         );
     }
@@ -444,20 +437,24 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
+            _ = await Assert
+                .That(actionResult?.StatusCode)
+                .IsEqualTo(expectedActionResult.StatusCode);
             if (problemDetails is ValidationProblemDetails validationProblemDetails)
             {
-                await Assert
+                _ = await Assert
                     .That(validationProblemDetails.Errors)
                     .IsEquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors);
             }
 
-            await Assert
+            _ = await Assert
                 .That(problemDetails?.Detail?.Replace("\r\n", "\n"))
                 .IsEqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"));
-            await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
-            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
-            await Assert
+            _ = await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
+            _ = await Assert
+                .That(problemDetails?.Instance)
+                .IsEqualTo(expectedProblemDetails?.Instance);
+            _ = await Assert
                 .That(problemDetails?.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
@@ -489,8 +486,8 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult).IsNotNull();
-            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            _ = await Assert.That(actionResult).IsNotNull();
+            _ = await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
         }
     }
 
@@ -525,14 +522,20 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
-            await Assert
+            _ = await Assert
+                .That(actionResult?.StatusCode)
+                .IsEqualTo(expectedActionResult.StatusCode);
+            _ = await Assert
                 .That(actionResult?.ContentTypes)
                 .IsEquivalentTo(expectedActionResult.ContentTypes);
-            await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
-            await Assert.That(problemDetails?.Status).IsEqualTo(expectedActionResult.StatusCode);
-            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
-            await Assert
+            _ = await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
+            _ = await Assert
+                .That(problemDetails?.Status)
+                .IsEqualTo(expectedActionResult.StatusCode);
+            _ = await Assert
+                .That(problemDetails?.Instance)
+                .IsEqualTo(expectedProblemDetails?.Instance);
+            _ = await Assert
                 .That(problemDetails?.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
@@ -562,8 +565,8 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult).IsNotNull();
-            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            _ = await Assert.That(actionResult).IsNotNull();
+            _ = await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
         }
     }
 
@@ -597,20 +600,24 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
+            _ = await Assert
+                .That(actionResult?.StatusCode)
+                .IsEqualTo(expectedActionResult.StatusCode);
             if (problemDetails is ValidationProblemDetails validationProblemDetails)
             {
-                await Assert
+                _ = await Assert
                     .That(validationProblemDetails.Errors)
                     .IsEquivalentTo((expectedProblemDetails as ValidationProblemDetails)!.Errors);
             }
 
-            await Assert
+            _ = await Assert
                 .That(problemDetails?.Detail?.Replace("\r\n", "\n"))
                 .IsEqualTo(expectedProblemDetails?.Detail?.Replace("\r\n", "\n"));
-            await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
-            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
-            await Assert
+            _ = await Assert.That(problemDetails?.Status).IsEqualTo(expectedProblemDetails?.Status);
+            _ = await Assert
+                .That(problemDetails?.Instance)
+                .IsEqualTo(expectedProblemDetails?.Instance);
+            _ = await Assert
                 .That(problemDetails?.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
@@ -644,10 +651,12 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult).IsNotNull();
-            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
-            await Assert.That(actionResult?.Value).IsEqualTo("my result");
-            await Assert.That(actionResult?.ContentTypes).IsEquivalentTo(expectedMediaTypes ?? []);
+            _ = await Assert.That(actionResult).IsNotNull();
+            _ = await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            _ = await Assert.That(actionResult?.Value).IsEqualTo("my result");
+            _ = await Assert
+                .That(actionResult?.ContentTypes)
+                .IsEquivalentTo(expectedMediaTypes ?? []);
         }
     }
 
@@ -682,14 +691,18 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult?.StatusCode).IsEqualTo(expectedActionResult.StatusCode);
-            await Assert
+            _ = await Assert
+                .That(actionResult?.StatusCode)
+                .IsEqualTo(expectedActionResult.StatusCode);
+            _ = await Assert
                 .That(actionResult?.ContentTypes)
                 .IsEquivalentTo(expectedActionResult.ContentTypes);
-            await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
-            await Assert.That(problemDetails?.Status).IsEqualTo((int)HttpStatusCode.BadRequest);
-            await Assert.That(problemDetails?.Instance).IsEqualTo(expectedProblemDetails?.Instance);
-            await Assert
+            _ = await Assert.That(problemDetails?.Detail).IsEqualTo(expectedProblemDetails?.Detail);
+            _ = await Assert.That(problemDetails?.Status).IsEqualTo((int)HttpStatusCode.BadRequest);
+            _ = await Assert
+                .That(problemDetails?.Instance)
+                .IsEqualTo(expectedProblemDetails?.Instance);
+            _ = await Assert
                 .That(problemDetails?.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
@@ -723,10 +736,12 @@ public class ResultExtensionsTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(actionResult).IsNotNull();
-            await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
-            await Assert.That(actionResult?.Value).IsEqualTo("my result");
-            await Assert.That(actionResult?.ContentTypes).IsEquivalentTo(expectedMediaTypes ?? []);
+            _ = await Assert.That(actionResult).IsNotNull();
+            _ = await Assert.That(actionResult?.StatusCode).IsEqualTo((int)HttpStatusCode.OK);
+            _ = await Assert.That(actionResult?.Value).IsEqualTo("my result");
+            _ = await Assert
+                .That(actionResult?.ContentTypes)
+                .IsEquivalentTo(expectedMediaTypes ?? []);
         }
     }
 }

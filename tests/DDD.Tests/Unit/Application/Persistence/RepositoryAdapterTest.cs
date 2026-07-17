@@ -13,7 +13,7 @@ public class RepositoryAdapterTest
 
         AggregateRootStub? aggregateRootStub = repository.Get("1");
 
-        await Assert.That(aggregateRootStub).IsEqualTo(new AggregateRootStub("1"));
+        _ = await Assert.That(aggregateRootStub).IsEqualTo(new AggregateRootStub("1"));
     }
 
     [Test]
@@ -25,7 +25,7 @@ public class RepositoryAdapterTest
 
         AggregateRootStub? aggregateRootStub = repository.Get("2");
 
-        await Assert.That(aggregateRootStub).IsNull();
+        _ = await Assert.That(aggregateRootStub).IsNull();
     }
 
     [Test]
@@ -36,7 +36,9 @@ public class RepositoryAdapterTest
 
         repository.Add(new AggregateRootStub("1"));
 
-        await Assert.That(dtoRepository.Dtos![0].Id).IsEqualTo(new AggregateRootDtoStub("1").Id);
+        _ = await Assert
+            .That(dtoRepository.Dtos![0].Id)
+            .IsEqualTo(new AggregateRootDtoStub("1").Id);
     }
 
     [Test]
@@ -48,7 +50,7 @@ public class RepositoryAdapterTest
 
         repository.Remove(new AggregateRootStub("1"));
 
-        await Assert.That(dtoRepository.Dtos).IsEmpty();
+        _ = await Assert.That(dtoRepository.Dtos).IsEmpty();
     }
 
     [Test]
@@ -60,6 +62,6 @@ public class RepositoryAdapterTest
 
         repository.Update(new AggregateRootStub("1", "MyName"));
 
-        await Assert.That(dtoRepository.Dtos![0].Name).IsEqualTo("MyName");
+        _ = await Assert.That(dtoRepository.Dtos![0].Name).IsEqualTo("MyName");
     }
 }

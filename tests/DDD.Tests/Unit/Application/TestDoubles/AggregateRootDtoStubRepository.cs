@@ -2,7 +2,8 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
-public class AggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos) : IDtoRepository<AggregateRootDtoStub, string>
+public class AggregateRootDtoStubRepository(List<AggregateRootDtoStub>? dtos)
+    : IDtoRepository<AggregateRootDtoStub, string>
 {
     public List<AggregateRootDtoStub>? Dtos { get; private set; } = dtos;
 

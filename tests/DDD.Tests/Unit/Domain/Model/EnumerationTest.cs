@@ -230,7 +230,9 @@ public class EnumerationTest
             FirstStringEnumerationFake.Null,
         ];
 
-        await Assert.That(FirstStringEnumerationFake.GetValues()).IsEquivalentTo(expectedValues);
+        _ = await Assert
+            .That(FirstStringEnumerationFake.GetValues())
+            .IsEquivalentTo(expectedValues);
     }
 
     [Test]
@@ -245,7 +247,7 @@ public class EnumerationTest
             nameof(FirstStringEnumerationFake.Null),
         ];
 
-        await Assert.That(FirstStringEnumerationFake.GetNames()).IsEquivalentTo(expectedNames);
+        _ = await Assert.That(FirstStringEnumerationFake.GetNames()).IsEquivalentTo(expectedNames);
     }
 
     [Test]
@@ -283,7 +285,7 @@ public class EnumerationTest
             _ = (FirstStringEnumerationFake)"Test";
         });
 
-        await Assert
+        _ = await Assert
             .That(exception!.Message)
             .IsEqualTo($"Wrong {nameof(FirstStringEnumerationFake)} value.");
     }
@@ -298,8 +300,8 @@ public class EnumerationTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(twoValue).IsEqualTo(FirstStringEnumerationFake.Two);
-            await Assert.That(nullValue).IsEqualTo(FirstStringEnumerationFake.Zero);
+            _ = await Assert.That(twoValue).IsEqualTo(FirstStringEnumerationFake.Two);
+            _ = await Assert.That(nullValue).IsEqualTo(FirstStringEnumerationFake.Zero);
         }
     }
 
@@ -312,9 +314,9 @@ public class EnumerationTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(twoValue).IsEqualTo(nameof(FirstStringEnumerationFake.Two));
-            await Assert.That(zeroValue).IsNull();
-            await Assert.That(nullValue).IsNull();
+            _ = await Assert.That(twoValue).IsEqualTo(nameof(FirstStringEnumerationFake.Two));
+            _ = await Assert.That(zeroValue).IsNull();
+            _ = await Assert.That(nullValue).IsNull();
         }
     }
 
@@ -323,7 +325,9 @@ public class EnumerationTest
     {
         FirstStringEnumerationFake defaultValue = FirstStringEnumerationFake.Default;
 
-        await Assert.That((string?)defaultValue).IsEqualTo(nameof(FirstStringEnumerationFake.One));
+        _ = await Assert
+            .That((string?)defaultValue)
+            .IsEqualTo(nameof(FirstStringEnumerationFake.One));
     }
 
     [Test]

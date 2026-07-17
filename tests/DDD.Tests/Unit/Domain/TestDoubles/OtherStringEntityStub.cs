@@ -2,6 +2,4 @@
 
 namespace DDD.Tests.Unit.Domain.TestDoubles;
 
-public class OtherStringEntityStub(string id) : Entity<string>(id)
-{
-}
+public class OtherStringEntityStub(string id) : Entity<string>(id) { }

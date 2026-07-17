@@ -2,7 +2,8 @@
 
 namespace DDD.Tests.Unit.Application.TestDoubles;
 
-public class AggregateRootDtoStub(string id, string? name = null) : IAggregateRootDto<AggregateRootStub, string>
+public class AggregateRootDtoStub(string id, string? name = null)
+    : IAggregateRootDto<AggregateRootStub, string>
 {
     public string Id { get; } = id;
     public string? Name { get; } = name;

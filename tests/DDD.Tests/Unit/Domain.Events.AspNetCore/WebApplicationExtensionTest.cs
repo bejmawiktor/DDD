@@ -58,9 +58,9 @@ internal class WebApplicationExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 
@@ -111,9 +111,9 @@ internal class WebApplicationExtensionTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
-            await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(firstDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(secondDispatchedEvent).IsSameReferenceAs(@event);
+            _ = await Assert.That(thirdDispatchedEvent).IsSameReferenceAs(@event);
         }
     }
 }

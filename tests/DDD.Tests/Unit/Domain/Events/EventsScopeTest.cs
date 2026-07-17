@@ -19,7 +19,7 @@ public class EventsScopeTest
     {
         EventsScope eventScope = new();
 
-        await Assert.That(EventManager.CurrentScope).IsSameReferenceAs(eventScope);
+        _ = await Assert.That(EventManager.CurrentScope).IsSameReferenceAs(eventScope);
     }
 
     [Test]
@@ -27,11 +27,11 @@ public class EventsScopeTest
     {
         using EventsScope eventScope = new();
 
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => eventScope.Add(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            eventScope.Add(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("item");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("item");
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class EventsScopeTest
 
         parentEventScope.Publish();
 
-        await Assert.That(events.Count).IsEqualTo(1);
+        _ = await Assert.That(events.Count).IsEqualTo(1);
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class EventsScopeTest
             eventScope.Publish
         );
 
-        await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
     }
 
     [Test]
@@ -119,11 +119,11 @@ public class EventsScopeTest
             childEventScope.Publish();
         }
 
-        await Assert.That(events.Count).IsZero();
+        _ = await Assert.That(events.Count).IsZero();
 
         parentEventScope.Publish();
 
-        await Assert.That(events.Count).IsEqualTo(3);
+        _ = await Assert.That(events.Count).IsEqualTo(3);
     }
 
     [Test]
@@ -145,7 +145,7 @@ public class EventsScopeTest
             eventsScope.Publish();
         }
 
-        await Assert.That(dispatched).IsTrue();
+        _ = await Assert.That(dispatched).IsTrue();
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class EventsScopeTest
 
         parentEventScope.Publish();
 
-        await Assert.That(events.Count).IsEqualTo(1);
+        _ = await Assert.That(events.Count).IsEqualTo(1);
     }
 
     [Test]
@@ -191,7 +191,7 @@ public class EventsScopeTest
             eventScope.PublishAsync
         );
 
-        await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Dispatcher is uninitialized.");
     }
 
     [Test]
@@ -233,11 +233,11 @@ public class EventsScopeTest
             await childEventScope.PublishAsync();
         }
 
-        await Assert.That(events.Count).IsZero();
+        _ = await Assert.That(events.Count).IsZero();
 
         parentEventScope.Publish();
 
-        await Assert.That(events.Count).IsEqualTo(3);
+        _ = await Assert.That(events.Count).IsEqualTo(3);
     }
 
     [Test]
@@ -259,15 +259,18 @@ public class EventsScopeTest
             await eventsScope.PublishAsync();
         }
 
-        await Assert.That(dispatched).IsTrue();
+        _ = await Assert.That(dispatched).IsTrue();
     }
 
     [Test]
     public async Task TestDispose_WhenDisposingCurrentScope_ThenCurrentScopeIsNull()
     {
-        using (EventsScope eventsScope = new()) { }
+        using (EventsScope eventsScope = new())
+        {
+            //
+        }
 
-        await Assert.That(EventManager.CurrentScope).IsNull();
+        _ = await Assert.That(EventManager.CurrentScope).IsNull();
     }
 
     [Test]
@@ -287,6 +290,6 @@ public class EventsScopeTest
             parentEventScope.Dispose
         );
 
-        await Assert.That(exception!.Message).IsEqualTo("Scope nested incorrectly.");
+        _ = await Assert.That(exception!.Message).IsEqualTo("Scope nested incorrectly.");
     }
 }

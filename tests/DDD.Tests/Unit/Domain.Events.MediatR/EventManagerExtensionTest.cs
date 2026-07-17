@@ -19,16 +19,16 @@ internal class EventManagerExtensionTest
 
         EventManager.Instance.UseMediatREventDispatcher(mediator);
 
-        await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
+        _ = await Assert.That(EventManager.Instance.Dispatcher).IsNotNull();
     }
 
     [Test]
     public async Task TestUseMediatREventDispatcher_WhenNullMediatorGiven_ThenNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => EventManager.Instance.UseMediatREventDispatcher(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            EventManager.Instance.UseMediatREventDispatcher(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 }

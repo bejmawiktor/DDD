@@ -148,7 +148,7 @@ internal class AggregateRootTest
             (
                 "my example text",
                 5,
-                (ValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.TextField = "";
                 },
@@ -165,7 +165,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = -1;
                 },
@@ -182,7 +182,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = -5;
                 },
@@ -203,7 +203,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = 11;
                 },
@@ -226,7 +226,7 @@ internal class AggregateRootTest
             (
                 "my example text",
                 5,
-                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.TextField = "";
                 },
@@ -243,7 +243,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = -1;
                 },
@@ -260,7 +260,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = -5;
                 },
@@ -281,7 +281,7 @@ internal class AggregateRootTest
             (
                 "example text",
                 5,
-                (ExtendedValidatedAggregateRootFake aggregateRoot) =>
+                aggregateRoot =>
                 {
                     aggregateRoot.IntField = 11;
                 },
@@ -303,8 +303,8 @@ internal class AggregateRootTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
-            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+            _ = await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
+            _ = await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
         }
     }
 
@@ -315,8 +315,8 @@ internal class AggregateRootTest
 
         using (Assert.Multiple())
         {
-            await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
-            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+            _ = await Assert.That(aggregateRoot.TextField).IsEqualTo("example text");
+            _ = await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
         }
     }
 
@@ -328,14 +328,14 @@ internal class AggregateRootTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ValidatedAggregateRootFake(10, textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ValidatedAggregateRootFake(10, textField, intField)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -344,7 +344,7 @@ internal class AggregateRootTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException
@@ -362,14 +362,14 @@ internal class AggregateRootTest
         AggregateException aggregateException
     )
     {
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => new ExtendedValidatedAggregateRootFake(10, textField, intField)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            new ExtendedValidatedAggregateRootFake(10, textField, intField)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -378,7 +378,7 @@ internal class AggregateRootTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException
@@ -391,26 +391,32 @@ internal class AggregateRootTest
     [Test]
     public async Task TestValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ValidatedAggregateRootFake aggregateRoot =
-            new(10, "example text", 5) { TextField = "second text", IntField = 5 };
+        ValidatedAggregateRootFake aggregateRoot = new(10, "example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
-            await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
-            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+            _ = await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
+            _ = await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
         }
     }
 
     [Test]
     public async Task TestExtendedValidationWithOneOfValidators_WhenCorrectDataGiven_ThenNoExceptionIsThrown()
     {
-        ExtendedValidatedAggregateRootFake aggregateRoot =
-            new(10, "example text", 5) { TextField = "second text", IntField = 5 };
+        ExtendedValidatedAggregateRootFake aggregateRoot = new(10, "example text", 5)
+        {
+            TextField = "second text",
+            IntField = 5,
+        };
 
         using (Assert.Multiple())
         {
-            await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
-            await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
+            _ = await Assert.That(aggregateRoot.TextField).IsEqualTo("second text");
+            _ = await Assert.That(aggregateRoot.IntField).IsEqualTo(5);
         }
     }
 
@@ -425,14 +431,14 @@ internal class AggregateRootTest
     {
         ValidatedAggregateRootFake aggregateRoot = new(10, textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(aggregateRoot)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(aggregateRoot)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -441,7 +447,7 @@ internal class AggregateRootTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException
@@ -462,14 +468,14 @@ internal class AggregateRootTest
     {
         ExtendedValidatedAggregateRootFake aggregateRoot = new(10, textField, intField);
 
-        AggregateException? exception = Assert.Throws<AggregateException>(
-            () => updateAction(aggregateRoot)
+        AggregateException? exception = Assert.Throws<AggregateException>(() =>
+            updateAction(aggregateRoot)
         );
 
         using (Assert.Multiple())
         {
-            await Assert.That(exception).IsNotNull();
-            await Assert
+            _ = await Assert.That(exception).IsNotNull();
+            _ = await Assert
                 .That(
                     exception?.Flatten().InnerExceptions.Select(exception => exception.ToString())
                 )
@@ -478,7 +484,7 @@ internal class AggregateRootTest
                         .Flatten()
                         .InnerExceptions.Select(exception => exception.ToString())
                 );
-            await Assert
+            _ = await Assert
                 .That(exception?.InnerExceptions.Select(exception => exception.GetType()))
                 .IsEquivalentTo(
                     aggregateException

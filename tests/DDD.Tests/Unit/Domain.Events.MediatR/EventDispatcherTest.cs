@@ -24,11 +24,11 @@ internal class EventDispatcherTest
     [Test]
     public async Task TestConstructing_WhenNullMediatorGiven_ThenArgumentNullExceptionIsThrown()
     {
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(
-            () => new EventDispatcher(null!)
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new EventDispatcher(null!)
         );
 
-        await Assert.That(exception!.ParamName).IsEqualTo("mediator");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("mediator");
     }
 
     [After(Test)]
@@ -44,7 +44,7 @@ internal class EventDispatcherTest
 
         EventManager.Instance.Notify(eventStub);
 
-        await Assert.That(eventStub.WasHandled).IsTrue();
+        _ = await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
@@ -57,7 +57,7 @@ internal class EventDispatcherTest
 
         await EventManager.Instance.NotifyAsync(eventStub);
 
-        await Assert.That(eventStub.WasHandled).IsTrue();
+        _ = await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
@@ -74,7 +74,7 @@ internal class EventDispatcherTest
 
         eventsScope.Publish();
 
-        await Assert.That(eventStub.WasHandled).IsTrue();
+        _ = await Assert.That(eventStub.WasHandled).IsTrue();
     }
 
     [Test]
@@ -91,6 +91,6 @@ internal class EventDispatcherTest
 
         await eventsScope.PublishAsync();
 
-        await Assert.That(eventStub.WasHandled).IsTrue();
+        _ = await Assert.That(eventStub.WasHandled).IsTrue();
     }
 }

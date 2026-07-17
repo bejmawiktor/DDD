@@ -1,10 +1,13 @@
 ﻿<Project>
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>14.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Emit the XML documentation file so the /// comments show up in
+         IntelliSense tooltips for anyone consuming the packages. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Do not fail the build on public members that are left undocumented. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
-
 </Project>
