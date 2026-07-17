@@ -1,6 +1,6 @@
 ﻿namespace DDD.Application.Persistence;
 
-public interface IDtoRepository<TDto, TDtoIdentifier>
+public interface IDtoRepository<TDto, in TDtoIdentifier>
 {
     TDto? Get(TDtoIdentifier identifier);
 

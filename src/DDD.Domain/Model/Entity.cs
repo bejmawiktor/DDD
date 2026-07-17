@@ -1,6 +1,6 @@
 ﻿namespace DDD.Domain.Model;
 
-public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
+public abstract class Entity<TIdentifier> : IEntity<TIdentifier>, IEquatable<Entity<TIdentifier>>
     where TIdentifier : notnull, IEquatable<TIdentifier>
 {
     public TIdentifier Id
@@ -11,8 +11,6 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
 
     protected Entity(TIdentifier id)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         this.Id = id;
     }
 
@@ -26,6 +24,8 @@ public abstract class Entity<TIdentifier> : IEntity<TIdentifier>
         obj is Entity<TIdentifier> other
         && this.GetType() == other.GetType()
         && this.Id.Equals(other.Id);
+
+    public bool Equals(Entity<TIdentifier>? other) => this.Equals((object?)other);
 
     public override int GetHashCode() => HashCode.Combine(this.GetType(), this.Id);
 }

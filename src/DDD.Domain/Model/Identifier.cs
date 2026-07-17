@@ -6,14 +6,21 @@ public abstract class Identifier<TIdentifierValue, TDeriviedIdentifier>
     where TIdentifierValue : notnull, IEquatable<TIdentifierValue>
     where TDeriviedIdentifier : Identifier<TIdentifierValue, TDeriviedIdentifier>
 {
-    public TIdentifierValue Value { get; }
+    public TIdentifierValue Value
+    {
+        get;
+        private set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            this.ValidateValue(value);
+
+            field = value;
+        }
+    }
 
     protected Identifier(TIdentifierValue value)
         : base()
     {
-        ArgumentNullException.ThrowIfNull(value);
-        this.ValidateValue(value);
-
         this.Value = value;
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace DDD.Domain.Model;
 
-public abstract class ValueObject : IDomainObject
+public abstract class ValueObject : IDomainObject, IEquatable<ValueObject>
 {
     public static bool operator ==(ValueObject? lhs, ValueObject? rhs) =>
         lhs is null ? rhs is null : lhs.Equals(rhs);
@@ -13,6 +13,8 @@ public abstract class ValueObject : IDomainObject
         obj is ValueObject other
         && this.GetType() == other.GetType()
         && this.GetEqualityMembers().SequenceEqual(other.GetEqualityMembers());
+
+    public bool Equals(ValueObject? other) => this.Equals((object?)other);
 
     public override int GetHashCode()
     {
@@ -30,12 +32,19 @@ public abstract class ValueObject : IDomainObject
 
 public abstract class ValueObject<TValue> : ValueObject
 {
-    protected TValue Value { get; }
+    protected TValue Value
+    {
+        get;
+        private set
+        {
+            this.ValidateValue(value);
+
+            field = value;
+        }
+    }
 
     protected ValueObject(TValue value)
     {
-        this.ValidateValue(value);
-
         this.Value = value;
     }
 

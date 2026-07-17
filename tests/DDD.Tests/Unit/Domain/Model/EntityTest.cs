@@ -153,7 +153,7 @@ public class EntityTest
             () => new StringEntityStub(null!)
         );
 
-        _ = await Assert.That(exception!.ParamName).IsEqualTo("id");
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("value");
     }
 
     [Test]
