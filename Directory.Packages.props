@@ -1,5 +1,4 @@
 <Project>
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <!-- Allow floating ("*") versions below (TUnit, code coverage), matching
@@ -15,5 +14,4 @@
     <PackageVersion Include="TUnit" Version="*" />
     <PackageVersion Include="Utils" Version="6.2.0" />
   </ItemGroup>
-
 </Project>
