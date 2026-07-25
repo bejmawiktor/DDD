@@ -15,9 +15,13 @@ public static class ErrorExtensions
 {
     /// <summary>
     /// Converts a domain error into an RFC 7807 <see cref="ProblemDetails"/>
-    /// payload. Aggregate errors are expanded into field-keyed validation
-    /// problems, and a lone <c>NotFoundError</c> yields a 404 response; other
-    /// errors map to 400 Bad Request. A <c>traceId</c> is attached when available.
+    /// payload. Aggregate errors are flattened, including nested aggregates, and
+    /// expanded into field-keyed validation problems; a lone <c>NotFoundError</c>
+    /// yields a 404 response, other errors map to 400 Bad Request.
+    /// Every error involved, whether given directly or aggregated, contributes its
+    /// <see cref="Error.Metadata"/> as extension members; keys claimed by more than
+    /// one aggregated error end up holding an array of the values.
+    /// A <c>traceId</c> is attached when available.
     /// </summary>
     /// <typeparam name="TError">The concrete error type.</typeparam>
     /// <param name="error">The error to convert.</param>
@@ -41,6 +45,7 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.BadRequest,
         };
 
+        ErrorExtensions.AddMetadata(problemDetails, [error]);
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
@@ -52,27 +57,44 @@ public static class ErrorExtensions
     )
         where TError : IError
     {
-        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors =
-            ErrorExtensions.ConvertErrorsToKeyValuePairs(errors);
+        IReadOnlyCollection<IError> flattenedErrors =
+        [
+            .. ErrorExtensions.Flatten(errors.Errors.Cast<IError>()),
+        ];
 
-        if (errors.Errors.OfType<NotFoundError>().Count() == 1 && errors.Errors.Count() == 1)
+        if (flattenedErrors.OfType<NotFoundError>().Count() == 1 && flattenedErrors.Count == 1)
         {
-            return ErrorExtensions.CreateNotFoundProblemDetails(errors, httpContext);
+            return ErrorExtensions.CreateNotFoundProblemDetails(
+                errors.Message,
+                flattenedErrors,
+                httpContext
+            );
         }
 
         return ErrorExtensions.CreateBadRequestProblemDetails(
-            errors,
-            httpContext,
-            validationProblemDetailsErrors
+            errors.Message,
+            flattenedErrors,
+            httpContext
         );
     }
 
-    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs<TError>(
-        IAggregateError<TError> errors
-    )
-        where TError : IError =>
+    /// <summary>
+    /// Expands the errors into a flat sequence of leaf errors, descending into every
+    /// nested aggregate. Problem details are flat by definition, so an error buried in
+    /// a nested aggregate has to be lifted to the top level to be represented at all.
+    /// </summary>
+    private static IEnumerable<IError> Flatten(IEnumerable<IError> errors) =>
+        errors.SelectMany(error =>
+            error is IAggregateError<IError> nestedErrors
+                ? ErrorExtensions.Flatten(nestedErrors.Errors)
+                : [error]
+        );
+
+    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs(
+        IEnumerable<IError> errors
+    ) =>
         errors
-            .Errors.Select(error =>
+            .Select(error =>
                 error is ValidationError validationError
                     ? (new { FieldName = validationError.FieldName ?? "", validationError.Message })
                     : (new { FieldName = "", error.Message })
@@ -84,38 +106,63 @@ public static class ErrorExtensions
                     new KeyValuePair<string, string[]>(fieldName, messages.ToArray())
             );
 
-    private static ProblemDetails CreateNotFoundProblemDetails<TError>(
-        IAggregateError<TError> errors,
+    private static ProblemDetails CreateNotFoundProblemDetails(
+        string message,
+        IEnumerable<IError> errors,
         HttpContext? httpContext
     )
-        where TError : IError
     {
         ProblemDetails problemDetails = new()
         {
-            Detail = errors.Message,
+            Detail = message,
             Status = (int)HttpStatusCode.NotFound,
             Instance = httpContext?.Request.Path,
         };
+
+        ErrorExtensions.AddMetadata(problemDetails, errors);
+
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
     }
 
-    private static ValidationProblemDetails CreateBadRequestProblemDetails<TError>(
-        IAggregateError<TError> errors,
-        HttpContext? httpContext,
-        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors
+    /// <summary>
+    /// Copies the <see cref="Error.Metadata"/> of the given errors into the problem
+    /// details as extension members. When more than one error contributes the same key,
+    /// the values are collected into an array, in the order the errors appear.
+    /// </summary>
+    private static void AddMetadata(ProblemDetails problemDetails, IEnumerable<IError> errors)
+    {
+        IEnumerable<IGrouping<string, object?>> groupedMetadata = errors
+            .OfType<Error>()
+            .SelectMany(error => error.Metadata)
+            .GroupBy(entry => entry.Key, entry => entry.Value);
+
+        foreach (IGrouping<string, object?> entry in groupedMetadata)
+        {
+            object?[] values = [.. entry];
+
+            problemDetails.Extensions[entry.Key] = values.Length == 1 ? values[0] : values;
+        }
+    }
+
+    private static ValidationProblemDetails CreateBadRequestProblemDetails(
+        string message,
+        IEnumerable<IError> errors,
+        HttpContext? httpContext
     )
-        where TError : IError
     {
         ValidationProblemDetails validationProblemDetails = new(
-            new Dictionary<string, string[]>(validationProblemDetailsErrors)
+            new Dictionary<string, string[]>(ErrorExtensions.ConvertErrorsToKeyValuePairs(errors))
         )
         {
-            Detail = errors.Message,
+            Detail = message,
             Status = (int)HttpStatusCode.BadRequest,
             Instance = httpContext?.Request.Path,
         };
+
+        ErrorExtensions.AddMetadata(validationProblemDetails, errors);
+
         validationProblemDetails.Extensions["traceId"] =
             Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using DDD.Domain.Validation.AspNetCore;
+using DDD.Tests.Unit.Domain.Validation.AspNetCore.TestDoubles;
 using DDD.Tests.Unit.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -417,17 +418,7 @@ public class ResultExtensionsTest
     {
         AggregateError<IError> error = (AggregateError<IError>)errorValue;
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<AggregateError<IError>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
@@ -468,17 +459,7 @@ public class ResultExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<IError<Exception>> result = new();
 
         OkResult? actionResult =
@@ -500,17 +481,7 @@ public class ResultExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Mock<IError> errorMock = new();
         _ = errorMock.Setup(error => error.Message).Returns(error);
         Result<IError> result = new(errorMock.Object);
@@ -547,17 +518,7 @@ public class ResultExtensionsTest
     public async Task TestToActionResult_WhenValueGiven_ThenOkResultIsReturned(string? path)
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<IError> result = new();
 
         OkResult? actionResult =
@@ -580,17 +541,7 @@ public class ResultExtensionsTest
     {
         AggregateError<IError> error = (AggregateError<IError>)errorValue;
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<object, AggregateError<IError>> result = new(error);
         ProblemDetails? expectedProblemDetails = expectedActionResult.Value as ProblemDetails;
 
@@ -632,17 +583,7 @@ public class ResultExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<string, IError> result = new("my result");
 
         OkObjectResult? actionResult =
@@ -669,17 +610,7 @@ public class ResultExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Mock<IError> errorMock = new();
         _ = errorMock.Setup(error => error.Message).Returns(error);
         Result<object, IError> result = new(errorMock.Object);
@@ -717,17 +648,7 @@ public class ResultExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Result<string, IError<Exception>> result = new("my result");
 
         OkObjectResult? actionResult =
