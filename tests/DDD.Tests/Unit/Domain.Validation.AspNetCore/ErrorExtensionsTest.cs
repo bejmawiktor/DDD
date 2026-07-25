@@ -42,6 +42,40 @@ public class ErrorExtensionsTest
         Error simpleError = new("simple error");
         NotFoundError notFoundError = new("not found error");
         NotFoundError secondNotFoundError = new("not found exception 2");
+        ValidationError nestedValidationError = new("nestedFieldName", "my nested validation error");
+        ValidationError deeplyNestedValidationError = new(
+            "fieldName",
+            "my deeply nested validation error"
+        );
+        Error nestedSimpleError = new("nested simple error");
+        ExtendedError attemptsExtendedError = new(
+            "my extended error",
+            new Dictionary<string, object?>() { { "attempts", 3 } }
+        );
+        ExtendedError codeAndRetryableExtendedError = new(
+            "my extended error 2",
+            new Dictionary<string, object?>() { { "errorCode", "E-001" }, { "retryable", true } }
+        );
+        ExtendedError firstCodeExtendedError = new(
+            "my extended error 3",
+            new Dictionary<string, object?>() { { "errorCode", "E-001" } }
+        );
+        ExtendedError secondCodeExtendedError = new(
+            "my extended error 4",
+            new Dictionary<string, object?>() { { "errorCode", "E-002" }, { "attempts", 3 } }
+        );
+        ExtendedError thirdCodeExtendedError = new(
+            "my extended error 5",
+            new Dictionary<string, object?>() { { "errorCode", "E-003" } }
+        );
+        ExtendedError traceIdExtendedError = new(
+            "my extended error 6",
+            new Dictionary<string, object?>() { { "traceId", "spoofed" } }
+        );
+        ExtendedError nestedCodeExtendedError = new(
+            "my nested extended error",
+            new Dictionary<string, object?>() { { "errorCode", "E-002" } }
+        );
 
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
@@ -288,6 +322,240 @@ public class ErrorExtensionsTest
             ),
             "Multiple not found errors"
         );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    attemptsExtendedError,
+                    simpleError,
+                    codeAndRetryableExtendedError
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            "",
+                            [
+                                attemptsExtendedError.Message,
+                                simpleError.Message,
+                                codeAndRetryableExtendedError.Message,
+                            ]
+                        },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>()
+                    {
+                        { "attempts", 3 },
+                        { "errorCode", "E-001" },
+                        { "retryable", true },
+                    },
+                }
+            ),
+            "Extended errors contributing extensions"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    firstCodeExtendedError,
+                    secondCodeExtendedError,
+                    thirdCodeExtendedError
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            "",
+                            [
+                                firstCodeExtendedError.Message,
+                                secondCodeExtendedError.Message,
+                                thirdCodeExtendedError.Message,
+                            ]
+                        },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>()
+                    {
+                        { "errorCode", new object?[] { "E-001", "E-002", "E-003" } },
+                        { "attempts", 3 },
+                    },
+                }
+            ),
+            "Extended errors claiming the same extension key"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>("aggregated", traceIdExtendedError, simpleError),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { "", [traceIdExtendedError.Message, simpleError.Message] },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Extension named traceId not overwriting the trace identifier"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    withFieldValidationError,
+                    new AggregateError<IError>(nestedValidationError, nestedSimpleError)
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        { withFieldValidationError.FieldName!, [withFieldValidationError.Message] },
+                        { nestedValidationError.FieldName!, [nestedValidationError.Message] },
+                        { "", [nestedSimpleError.Message] },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Nested aggregated errors keyed by field name"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    simpleError,
+                    new AggregateError<IError>(
+                        nestedSimpleError,
+                        new AggregateError<IError>(nestedCodeExtendedError)
+                    )
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            "",
+                            [
+                                simpleError.Message,
+                                nestedSimpleError.Message,
+                                nestedCodeExtendedError.Message,
+                            ]
+                        },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-002" } },
+                }
+            ),
+            "Deeply nested extended error"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    firstCodeExtendedError,
+                    new AggregateError<IError>(nestedCodeExtendedError)
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            "",
+                            [firstCodeExtendedError.Message, nestedCodeExtendedError.Message]
+                        },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>()
+                    {
+                        { "errorCode", new object?[] { "E-001", "E-002" } },
+                    },
+                }
+            ),
+            "Extension key claimed across nesting"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "not found",
+                    new AggregateError<IError>(notFoundError)
+                ),
+                new ProblemDetails()
+                {
+                    Detail = "not found",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.NotFound,
+                }
+            ),
+            "Nested single not found error"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    withFieldValidationError,
+                    new AggregateError<IError>(
+                        withField2ValidationError,
+                        secondFieldValidationError,
+                        new AggregateError<IError>(
+                            deeplyNestedValidationError,
+                            simpleError,
+                            nestedCodeExtendedError
+                        )
+                    )
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            withFieldValidationError.FieldName!,
+                            [
+                                withFieldValidationError.Message,
+                                withField2ValidationError.Message,
+                                deeplyNestedValidationError.Message,
+                            ]
+                        },
+                        {
+                            secondFieldValidationError.FieldName!,
+                            [secondFieldValidationError.Message]
+                        },
+                        { "", [simpleError.Message, nestedCodeExtendedError.Message] },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-002" } },
+                }
+            ),
+            "Same field name across nesting levels"
+        );
     }
 
     public static IEnumerable<Func<TestDataRow<ErrorCase>>> CreateErrorTestData()
@@ -374,6 +642,20 @@ public class ErrorExtensionsTest
             ),
             "Without extensions and path"
         );
+        yield return TestCase.Of<ExtendedErrorCase>(
+            (
+                "/test",
+                "my extended error 4",
+                new Dictionary<string, object?>() { { "traceId", "spoofed" } },
+                new ProblemDetails()
+                {
+                    Detail = "my extended error 4",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Extension named traceId not overwriting the trace identifier"
+        );
     }
 
     [Test]
@@ -408,6 +690,9 @@ public class ErrorExtensionsTest
             _ = await Assert
                 .That(problemDetails.Instance)
                 .IsEqualTo(expectedProblemDetails.Instance);
+            _ = await Assert
+                .That(ErrorExtensionsTest.ExtensionsExceptTraceId(problemDetails))
+                .IsEquivalentTo(expectedProblemDetails.Extensions);
             _ = await Assert
                 .That(problemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
@@ -473,119 +758,19 @@ public class ErrorExtensionsTest
                 .That(problemDetails.Instance)
                 .IsEqualTo(expectedProblemDetails.Instance);
 
-            foreach (
-                KeyValuePair<string, object?> expectedExtension in expectedProblemDetails.Extensions
-            )
-            {
-                _ = await Assert
-                    .That(problemDetails.Extensions[expectedExtension.Key])
-                    .IsEqualTo(expectedExtension.Value);
-            }
-
+            _ = await Assert
+                .That(ErrorExtensionsTest.ExtensionsExceptTraceId(problemDetails))
+                .IsEquivalentTo(expectedProblemDetails.Extensions);
             _ = await Assert
                 .That(problemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
     }
 
-    [Test]
-    public async Task TestToProblemDetails_WhenAggregateErrorWithExtendedErrorsGiven_ThenExtensionsAreMerged()
-    {
-        Mock<HttpContext> httpContextMock = HttpContextMock.Create(
-            "/test",
-            Guid.NewGuid().ToString()
-        );
-        AggregateError<IError> error = new(
-            new ExtendedError("my error", new Dictionary<string, object?>() { { "attempts", 3 } }),
-            new Error("simple error"),
-            new ExtendedError(
-                "my error 2",
-                new Dictionary<string, object?>() { { "errorCode", "E-001" }, { "retryable", true } }
-            )
-        );
-
-        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
-
-        using (Assert.Multiple())
-        {
-            _ = await Assert.That(problemDetails.Extensions["attempts"]).IsEqualTo(3);
-            _ = await Assert.That(problemDetails.Extensions["errorCode"]).IsEqualTo("E-001");
-            _ = await Assert.That((bool?)problemDetails.Extensions["retryable"]).IsTrue();
-        }
-    }
-
-    [Test]
-    public async Task TestToProblemDetails_WhenAggregateErrorWithSameExtensionKeyGiven_ThenValuesAreCollectedIntoArray()
-    {
-        Mock<HttpContext> httpContextMock = HttpContextMock.Create(
-            "/test",
-            Guid.NewGuid().ToString()
-        );
-        AggregateError<IError> error = new(
-            new ExtendedError(
-                "my error",
-                new Dictionary<string, object?>() { { "errorCode", "E-001" } }
-            ),
-            new ExtendedError(
-                "my error 2",
-                new Dictionary<string, object?>()
-                {
-                    { "errorCode", "E-002" },
-                    { "attempts", 3 },
-                }
-            ),
-            new ExtendedError(
-                "my error 3",
-                new Dictionary<string, object?>() { { "errorCode", "E-003" } }
-            )
-        );
-
-        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
-
-        using (Assert.Multiple())
-        {
-            _ = await Assert
-                .That(problemDetails.Extensions["errorCode"] as object?[])
-                .IsEquivalentTo(new object?[] { "E-001", "E-002", "E-003" });
-            _ = await Assert.That(problemDetails.Extensions["attempts"]).IsEqualTo(3);
-        }
-    }
-
-    [Test]
-    public async Task TestToProblemDetails_WhenAggregateErrorWithTraceIdExtensionGiven_ThenTraceIdIsNotOverwritten()
-    {
-        Guid traceId = Guid.NewGuid();
-        Mock<HttpContext> httpContextMock = HttpContextMock.Create("/test", traceId.ToString());
-        AggregateError<IError> error = new(
-            new ExtendedError(
-                "my error",
-                new Dictionary<string, object?>() { { "traceId", "spoofed" } }
-            ),
-            new Error("simple error")
-        );
-
-        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
-
-        _ = await Assert
-            .That(problemDetails.Extensions["traceId"])
-            .IsEqualTo(Activity.Current?.Id ?? traceId.ToString());
-    }
-
-    [Test]
-    public async Task TestToProblemDetails_WhenExtendedErrorWithTraceIdExtensionGiven_ThenTraceIdIsNotOverwritten()
-    {
-        Guid traceId = Guid.NewGuid();
-        Mock<HttpContext> httpContextMock = HttpContextMock.Create("/test", traceId.ToString());
-        ExtendedError error = new(
-            "my extended error",
-            new Dictionary<string, object?>() { { "traceId", "spoofed" } }
-        );
-
-        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
-
-        _ = await Assert
-            .That(problemDetails.Extensions["traceId"])
-            .IsEqualTo(Activity.Current?.Id ?? traceId.ToString());
-    }
-
+    private static IDictionary<string, object?> ExtensionsExceptTraceId(
+        ProblemDetails problemDetails
+    ) =>
+        problemDetails
+            .Extensions.Where(extension => extension.Key != "traceId")
+            .ToDictionary(extension => extension.Key, extension => extension.Value);
 }

@@ -15,9 +15,10 @@ public static class ErrorExtensions
 {
     /// <summary>
     /// Converts a domain error into an RFC 7807 <see cref="ProblemDetails"/>
-    /// payload. Aggregate errors are expanded into field-keyed validation
-    /// problems, and a lone <c>NotFoundError</c> yields a 404 response; other
-    /// errors map to 400 Bad Request. Every <see cref="ExtendedError"/> involved,
+    /// payload. Aggregate errors are flattened, including nested aggregates, and
+    /// expanded into field-keyed validation problems; a lone <c>NotFoundError</c>
+    /// yields a 404 response, other errors map to 400 Bad Request.
+    /// Every <see cref="ExtendedError"/> involved,
     /// whether given directly or aggregated, contributes its
     /// <see cref="ExtendedError.Extensions"/> as extension members; keys claimed by
     /// more than one aggregated error end up holding an array of the values.
@@ -78,27 +79,44 @@ public static class ErrorExtensions
     )
         where TError : IError
     {
-        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors =
-            ErrorExtensions.ConvertErrorsToKeyValuePairs(errors);
+        IReadOnlyCollection<IError> flattenedErrors =
+        [
+            .. ErrorExtensions.Flatten(errors.Errors.Cast<IError>()),
+        ];
 
-        if (errors.Errors.OfType<NotFoundError>().Count() == 1 && errors.Errors.Count() == 1)
+        if (flattenedErrors.OfType<NotFoundError>().Count() == 1 && flattenedErrors.Count == 1)
         {
-            return ErrorExtensions.CreateNotFoundProblemDetails(errors, httpContext);
+            return ErrorExtensions.CreateNotFoundProblemDetails(
+                errors.Message,
+                flattenedErrors,
+                httpContext
+            );
         }
 
         return ErrorExtensions.CreateBadRequestProblemDetails(
-            errors,
-            httpContext,
-            validationProblemDetailsErrors
+            errors.Message,
+            flattenedErrors,
+            httpContext
         );
     }
 
-    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs<TError>(
-        IAggregateError<TError> errors
-    )
-        where TError : IError =>
+    /// <summary>
+    /// Expands the errors into a flat sequence of leaf errors, descending into every
+    /// nested aggregate. Problem details are flat by definition, so an error buried in
+    /// a nested aggregate has to be lifted to the top level to be represented at all.
+    /// </summary>
+    private static IEnumerable<IError> Flatten(IEnumerable<IError> errors) =>
+        errors.SelectMany(error =>
+            error is IAggregateError<IError> nestedErrors
+                ? ErrorExtensions.Flatten(nestedErrors.Errors)
+                : [error]
+        );
+
+    private static IEnumerable<KeyValuePair<string, string[]>> ConvertErrorsToKeyValuePairs(
+        IEnumerable<IError> errors
+    ) =>
         errors
-            .Errors.Select(error =>
+            .Select(error =>
                 error is ValidationError validationError
                     ? (new { FieldName = validationError.FieldName ?? "", validationError.Message })
                     : (new { FieldName = "", error.Message })
@@ -110,15 +128,15 @@ public static class ErrorExtensions
                     new KeyValuePair<string, string[]>(fieldName, messages.ToArray())
             );
 
-    private static ProblemDetails CreateNotFoundProblemDetails<TError>(
-        IAggregateError<TError> errors,
+    private static ProblemDetails CreateNotFoundProblemDetails(
+        string message,
+        IEnumerable<IError> errors,
         HttpContext? httpContext
     )
-        where TError : IError
     {
         ProblemDetails problemDetails = new()
         {
-            Detail = errors.Message,
+            Detail = message,
             Status = (int)HttpStatusCode.NotFound,
             Instance = httpContext?.Request.Path,
         };
@@ -134,14 +152,10 @@ public static class ErrorExtensions
     /// contributes the same key, the values are collected into an array, in the order
     /// the errors appear.
     /// </summary>
-    private static void AddExtensions<TError>(
-        ProblemDetails problemDetails,
-        IAggregateError<TError> errors
-    )
-        where TError : IError
+    private static void AddExtensions(ProblemDetails problemDetails, IEnumerable<IError> errors)
     {
         IEnumerable<IGrouping<string, object?>> groupedExtensions = errors
-            .Errors.OfType<ExtendedError>()
+            .OfType<ExtendedError>()
             .SelectMany(error => error.Extensions)
             .GroupBy(extension => extension.Key, extension => extension.Value);
 
@@ -153,18 +167,17 @@ public static class ErrorExtensions
         }
     }
 
-    private static ValidationProblemDetails CreateBadRequestProblemDetails<TError>(
-        IAggregateError<TError> errors,
-        HttpContext? httpContext,
-        IEnumerable<KeyValuePair<string, string[]>> validationProblemDetailsErrors
+    private static ValidationProblemDetails CreateBadRequestProblemDetails(
+        string message,
+        IEnumerable<IError> errors,
+        HttpContext? httpContext
     )
-        where TError : IError
     {
         ValidationProblemDetails validationProblemDetails = new(
-            new Dictionary<string, string[]>(validationProblemDetailsErrors)
+            new Dictionary<string, string[]>(ErrorExtensions.ConvertErrorsToKeyValuePairs(errors))
         )
         {
-            Detail = errors.Message,
+            Detail = message,
             Status = (int)HttpStatusCode.BadRequest,
             Instance = httpContext?.Request.Path,
         };
