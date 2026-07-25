@@ -140,7 +140,9 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.NotFound,
             Instance = httpContext?.Request.Path,
         };
+
         ErrorExtensions.AddExtensions(problemDetails, errors);
+
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
@@ -181,7 +183,9 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.BadRequest,
             Instance = httpContext?.Request.Path,
         };
+
         ErrorExtensions.AddExtensions(validationProblemDetails, errors);
+
         validationProblemDetails.Extensions["traceId"] =
             Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
