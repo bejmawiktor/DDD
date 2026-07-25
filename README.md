@@ -12,7 +12,7 @@ Example usage: https://github.com/bejmawiktor/Identity
 |---|---|
 | `DDD.Domain` | Core library: `Entity`, `AggregateRoot`, `ValueObject`, `Identifier`, `Enumeration`, the domain events mechanism (`EventManager`, `IEvent`), and repository interfaces (`IRepository`, `IAsyncRepository`). |
 | `DDD.Domain.Model.Validation` | Extends `DDD.Domain` with validation support for entities and aggregates built on `Utils.Validation` (`DomainObjectValidator`, plus `AggregateRoot`/`Entity`/`ValueObject`/`Identifier` variants with an attached validator). |
-| `DDD.Domain.Model.Validation.AspNetCore` | Integrates domain validation results with ASP.NET Core (converts validation errors/`Result` into MVC responses, with `ExtendedError` for attaching extra data to the payload). |
+| `DDD.Domain.Model.Validation.AspNetCore` | Integrates domain validation results with ASP.NET Core (converts validation errors/`Result` into MVC responses, carrying error metadata over as problem details extension members). |
 | `DDD.Domain.Events.MediatR` | MediatR-based domain event dispatcher — publishes domain events as MediatR notifications. |
 | `DDD.Domain.Events.AspNetCore` | `WebApplication` extension for configuring the `CompositeEventDispatcher` on ASP.NET Core startup. |
 | `DDD.Application` | Application layer for hexagonal architecture: domain DTOs (`IDomainObjectDto`, `IAggregateRootDto`), DTO converters, and repository adapters (`IRepositoryAdapter`, `IAsyncRepositoryAdapter`). |
@@ -234,20 +234,24 @@ public IActionResult Register(RegisterCustomerRequest request)
 
 A failed result is converted into a `ProblemDetails` response with the matching HTTP status code; a successful result becomes `200 OK` (optionally with the returned value serialized as the body).
 
-#### Attaching extra data to the response with `ExtendedError`
+#### Attaching extra data to the response with error metadata
 
-`ExtendedError` is an `Error` that carries a dictionary of extra values. They are written to the response as RFC 7807 extension members:
+Any error can carry `Metadata` (`Utils.Functional.Error`) — a dictionary of extra machine-readable values. It is written to the response as RFC 7807 extension members:
 
 ```csharp
-using DDD.Domain.Validation.AspNetCore;
+using Utils.Functional;
+using Utils.Validation;
 
-ExtendedError error = new(
+Error error = new(
     "Registration failed.",
     new Dictionary<string, object?>() { { "errorCode", "E-001" }, { "retryable", true } });
 
-// or start empty and fill the dictionary in afterwards
-ExtendedError otherError = new("Registration failed.");
-otherError.Extensions["errorCode"] = "E-001";
+// metadata is available on every error type, so a field-specific
+// validation error can carry it too
+ValidationError validationError = new(
+    "email",
+    "Email is already taken.",
+    new Dictionary<string, object?>() { { "errorCode", "E-002" } });
 ```
 
 ```json
@@ -262,9 +266,10 @@ otherError.Extensions["errorCode"] = "E-001";
 
 Rules worth knowing:
 
-- Aggregate errors are flattened before conversion, **including nested aggregates** — validation errors keep their field names in the `errors` dictionary and extended errors keep their extensions, no matter how deeply they are nested.
-- When several errors claim the same extension key, the values are collected into an **array**, in the order the errors appear.
-- `traceId` always comes from the current `Activity`/`HttpContext`; an extension with that name cannot overwrite it.
+- Aggregate errors are flattened before conversion, **including nested aggregates** — validation errors keep their field names in the `errors` dictionary and every error keeps its metadata, no matter how deeply it is nested.
+- When several errors claim the same metadata key, the values are collected into an **array**, in the order the errors appear.
+- `traceId` always comes from the current `Activity`/`HttpContext`; metadata with that name cannot overwrite it.
+- `AggregateError` is a container rather than a failure cause of its own and carries no metadata — the data lives on the aggregated errors.
 
 ### Dispatching domain events through MediatR (`DDD.Domain.Events.MediatR`)
 

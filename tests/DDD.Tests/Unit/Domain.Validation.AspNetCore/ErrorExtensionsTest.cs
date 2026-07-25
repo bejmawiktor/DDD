@@ -13,15 +13,15 @@ using ErrorCase = (
     string Error,
     Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
 );
+using ErrorWithMetadataCase = (
+    string? Path,
+    string Message,
+    System.Collections.Generic.IReadOnlyDictionary<string, object?> Metadata,
+    Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
+);
 using ErrorWithReasonsCase = (
     string? Path,
     object Error,
-    Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
-);
-using ExtendedErrorCase = (
-    string? Path,
-    string Message,
-    System.Collections.Generic.IDictionary<string, object?> Extensions,
     Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
 );
 
@@ -50,33 +50,38 @@ public class ErrorExtensionsTest
             "fieldName",
             "my deeply nested validation error"
         );
+        ValidationError fieldWithMetadataValidationError = new(
+            "fieldName",
+            "my validation error with metadata",
+            new Dictionary<string, object?>() { { "errorCode", "E-100" } }
+        );
         Error nestedSimpleError = new("nested simple error");
-        ExtendedError attemptsExtendedError = new(
-            "my extended error",
+        Error attemptsMetadataError = new(
+            "my metadata error",
             new Dictionary<string, object?>() { { "attempts", 3 } }
         );
-        ExtendedError codeAndRetryableExtendedError = new(
-            "my extended error 2",
+        Error codeAndRetryableMetadataError = new(
+            "my metadata error 2",
             new Dictionary<string, object?>() { { "errorCode", "E-001" }, { "retryable", true } }
         );
-        ExtendedError firstCodeExtendedError = new(
-            "my extended error 3",
+        Error firstCodeMetadataError = new(
+            "my metadata error 3",
             new Dictionary<string, object?>() { { "errorCode", "E-001" } }
         );
-        ExtendedError secondCodeExtendedError = new(
-            "my extended error 4",
+        Error secondCodeMetadataError = new(
+            "my metadata error 4",
             new Dictionary<string, object?>() { { "errorCode", "E-002" }, { "attempts", 3 } }
         );
-        ExtendedError thirdCodeExtendedError = new(
-            "my extended error 5",
+        Error thirdCodeMetadataError = new(
+            "my metadata error 5",
             new Dictionary<string, object?>() { { "errorCode", "E-003" } }
         );
-        ExtendedError traceIdExtendedError = new(
-            "my extended error 6",
+        Error traceIdMetadataError = new(
+            "my metadata error 6",
             new Dictionary<string, object?>() { { "traceId", "spoofed" } }
         );
-        ExtendedError nestedCodeExtendedError = new(
-            "my nested extended error",
+        Error nestedCodeMetadataError = new(
+            "my nested metadata error",
             new Dictionary<string, object?>() { { "errorCode", "E-002" } }
         );
 
@@ -330,9 +335,9 @@ public class ErrorExtensionsTest
                 "/test",
                 new AggregateError<IError>(
                     "aggregated",
-                    attemptsExtendedError,
+                    attemptsMetadataError,
                     simpleError,
-                    codeAndRetryableExtendedError
+                    codeAndRetryableMetadataError
                 ),
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
@@ -340,9 +345,9 @@ public class ErrorExtensionsTest
                         {
                             "",
                             [
-                                attemptsExtendedError.Message,
+                                attemptsMetadataError.Message,
                                 simpleError.Message,
-                                codeAndRetryableExtendedError.Message,
+                                codeAndRetryableMetadataError.Message,
                             ]
                         },
                     }
@@ -359,16 +364,16 @@ public class ErrorExtensionsTest
                     },
                 }
             ),
-            "Extended errors contributing extensions"
+            "Errors contributing metadata"
         );
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
                 "/test",
                 new AggregateError<IError>(
                     "aggregated",
-                    firstCodeExtendedError,
-                    secondCodeExtendedError,
-                    thirdCodeExtendedError
+                    firstCodeMetadataError,
+                    secondCodeMetadataError,
+                    thirdCodeMetadataError
                 ),
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
@@ -376,9 +381,9 @@ public class ErrorExtensionsTest
                         {
                             "",
                             [
-                                firstCodeExtendedError.Message,
-                                secondCodeExtendedError.Message,
-                                thirdCodeExtendedError.Message,
+                                firstCodeMetadataError.Message,
+                                secondCodeMetadataError.Message,
+                                thirdCodeMetadataError.Message,
                             ]
                         },
                     }
@@ -394,16 +399,16 @@ public class ErrorExtensionsTest
                     },
                 }
             ),
-            "Extended errors claiming the same extension key"
+            "Errors claiming the same metadata key"
         );
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
                 "/test",
-                new AggregateError<IError>("aggregated", traceIdExtendedError, simpleError),
+                new AggregateError<IError>("aggregated", traceIdMetadataError, simpleError),
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
                     {
-                        { "", [traceIdExtendedError.Message, simpleError.Message] },
+                        { "", [traceIdMetadataError.Message, simpleError.Message] },
                     }
                 )
                 {
@@ -412,7 +417,7 @@ public class ErrorExtensionsTest
                     Status = (int)HttpStatusCode.BadRequest,
                 }
             ),
-            "Extension named traceId not overwriting the trace identifier"
+            "Metadata named traceId not overwriting the trace identifier"
         );
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
@@ -446,7 +451,7 @@ public class ErrorExtensionsTest
                     simpleError,
                     new AggregateError<IError>(
                         nestedSimpleError,
-                        new AggregateError<IError>(nestedCodeExtendedError)
+                        new AggregateError<IError>(nestedCodeMetadataError)
                     )
                 ),
                 new ValidationProblemDetails(
@@ -457,7 +462,7 @@ public class ErrorExtensionsTest
                             [
                                 simpleError.Message,
                                 nestedSimpleError.Message,
-                                nestedCodeExtendedError.Message,
+                                nestedCodeMetadataError.Message,
                             ]
                         },
                     }
@@ -469,20 +474,20 @@ public class ErrorExtensionsTest
                     Extensions = new Dictionary<string, object?>() { { "errorCode", "E-002" } },
                 }
             ),
-            "Deeply nested extended error"
+            "Deeply nested error with metadata"
         );
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
                 "/test",
                 new AggregateError<IError>(
                     "aggregated",
-                    firstCodeExtendedError,
-                    new AggregateError<IError>(nestedCodeExtendedError)
+                    firstCodeMetadataError,
+                    new AggregateError<IError>(nestedCodeMetadataError)
                 ),
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
                     {
-                        { "", [firstCodeExtendedError.Message, nestedCodeExtendedError.Message] },
+                        { "", [firstCodeMetadataError.Message, nestedCodeMetadataError.Message] },
                     }
                 )
                 {
@@ -495,7 +500,7 @@ public class ErrorExtensionsTest
                     },
                 }
             ),
-            "Extension key claimed across nesting"
+            "Metadata key claimed across nesting"
         );
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
@@ -522,7 +527,7 @@ public class ErrorExtensionsTest
                         new AggregateError<IError>(
                             deeplyNestedValidationError,
                             simpleError,
-                            nestedCodeExtendedError
+                            nestedCodeMetadataError
                         )
                     )
                 ),
@@ -541,7 +546,7 @@ public class ErrorExtensionsTest
                             secondFieldValidationError.FieldName!,
                             [secondFieldValidationError.Message]
                         },
-                        { "", [simpleError.Message, nestedCodeExtendedError.Message] },
+                        { "", [simpleError.Message, nestedCodeMetadataError.Message] },
                     }
                 )
                 {
@@ -552,6 +557,33 @@ public class ErrorExtensionsTest
                 }
             ),
             "Same field name across nesting levels"
+        );
+        yield return TestCase.Of<ErrorWithReasonsCase>(
+            (
+                "/test",
+                new AggregateError<IError>(
+                    "aggregated",
+                    fieldWithMetadataValidationError,
+                    simpleError
+                ),
+                new ValidationProblemDetails(
+                    new Dictionary<string, string[]>()
+                    {
+                        {
+                            fieldWithMetadataValidationError.FieldName!,
+                            [fieldWithMetadataValidationError.Message]
+                        },
+                        { "", [simpleError.Message] },
+                    }
+                )
+                {
+                    Detail = "aggregated",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-100" } },
+                }
+            ),
+            "Validation error carrying both field name and metadata"
         );
     }
 
@@ -583,27 +615,29 @@ public class ErrorExtensionsTest
         );
     }
 
-    public static IEnumerable<Func<TestDataRow<ExtendedErrorCase>>> CreateExtendedErrorTestData()
+    public static IEnumerable<
+        Func<TestDataRow<ErrorWithMetadataCase>>
+    > CreateErrorWithMetadataTestData()
     {
-        yield return TestCase.Of<ExtendedErrorCase>(
+        yield return TestCase.Of<ErrorWithMetadataCase>(
             (
                 "/test",
-                "my extended error",
+                "my metadata error",
                 new Dictionary<string, object?>() { { "errorCode", "E-001" } },
                 new ProblemDetails()
                 {
-                    Detail = "my extended error",
+                    Detail = "my metadata error",
                     Instance = "/test",
                     Status = (int)HttpStatusCode.BadRequest,
                     Extensions = new Dictionary<string, object?>() { { "errorCode", "E-001" } },
                 }
             ),
-            "Single extension"
+            "Single metadata entry"
         );
-        yield return TestCase.Of<ExtendedErrorCase>(
+        yield return TestCase.Of<ErrorWithMetadataCase>(
             (
                 "/test2",
-                "my extended error 2",
+                "my metadata error 2",
                 new Dictionary<string, object?>()
                 {
                     { "errorCode", "E-002" },
@@ -612,7 +646,7 @@ public class ErrorExtensionsTest
                 },
                 new ProblemDetails()
                 {
-                    Detail = "my extended error 2",
+                    Detail = "my metadata error 2",
                     Instance = "/test2",
                     Status = (int)HttpStatusCode.BadRequest,
                     Extensions = new Dictionary<string, object?>()
@@ -623,35 +657,35 @@ public class ErrorExtensionsTest
                     },
                 }
             ),
-            "Multiple extensions"
+            "Multiple metadata entries"
         );
-        yield return TestCase.Of<ExtendedErrorCase>(
+        yield return TestCase.Of<ErrorWithMetadataCase>(
             (
                 null,
-                "my extended error 3",
+                "my metadata error 3",
                 new Dictionary<string, object?>(),
                 new ProblemDetails()
                 {
-                    Detail = "my extended error 3",
+                    Detail = "my metadata error 3",
                     Instance = null,
                     Status = (int)HttpStatusCode.BadRequest,
                 }
             ),
-            "Without extensions and path"
+            "Without metadata and path"
         );
-        yield return TestCase.Of<ExtendedErrorCase>(
+        yield return TestCase.Of<ErrorWithMetadataCase>(
             (
                 "/test",
-                "my extended error 4",
+                "my metadata error 4",
                 new Dictionary<string, object?>() { { "traceId", "spoofed" } },
                 new ProblemDetails()
                 {
-                    Detail = "my extended error 4",
+                    Detail = "my metadata error 4",
                     Instance = "/test",
                     Status = (int)HttpStatusCode.BadRequest,
                 }
             ),
-            "Extension named traceId not overwriting the trace identifier"
+            "Metadata named traceId not overwriting the trace identifier"
         );
     }
 
@@ -731,17 +765,17 @@ public class ErrorExtensionsTest
     }
 
     [Test]
-    [MethodDataSource(nameof(CreateExtendedErrorTestData))]
-    public async Task TestToProblemDetails_WhenExtendedErrorGiven_ThenProblemDetailsWithExtensionsIsReturned(
+    [MethodDataSource(nameof(CreateErrorWithMetadataTestData))]
+    public async Task TestToProblemDetails_WhenErrorWithMetadataGiven_ThenProblemDetailsWithExtensionsIsReturned(
         string? path,
         string message,
-        IDictionary<string, object?> extensions,
+        IReadOnlyDictionary<string, object?> metadata,
         ProblemDetails expectedProblemDetails
     )
     {
         Guid traceId = Guid.NewGuid();
         Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
-        ExtendedError error = new(message, extensions);
+        Error error = new(message, metadata);
 
         ProblemDetails problemDetails = error.ToProblemDetails(
             path is not null ? httpContextMock.Object : null

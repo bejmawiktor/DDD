@@ -18,10 +18,9 @@ public static class ErrorExtensions
     /// payload. Aggregate errors are flattened, including nested aggregates, and
     /// expanded into field-keyed validation problems; a lone <c>NotFoundError</c>
     /// yields a 404 response, other errors map to 400 Bad Request.
-    /// Every <see cref="ExtendedError"/> involved,
-    /// whether given directly or aggregated, contributes its
-    /// <see cref="ExtendedError.Extensions"/> as extension members; keys claimed by
-    /// more than one aggregated error end up holding an array of the values.
+    /// Every error involved, whether given directly or aggregated, contributes its
+    /// <see cref="Error.Metadata"/> as extension members; keys claimed by more than
+    /// one aggregated error end up holding an array of the values.
     /// A <c>traceId</c> is attached when available.
     /// </summary>
     /// <typeparam name="TError">The concrete error type.</typeparam>
@@ -46,28 +45,7 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.BadRequest,
         };
 
-        problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
-
-        return problemDetails;
-    }
-
-    private static ProblemDetails CreateProblemDetails(
-        ExtendedError error,
-        HttpContext? httpContext
-    )
-    {
-        ProblemDetails problemDetails = new()
-        {
-            Instance = httpContext?.Request.Path,
-            Detail = error.Message,
-            Status = (int)HttpStatusCode.BadRequest,
-        };
-
-        foreach (KeyValuePair<string, object?> extension in error.Extensions)
-        {
-            problemDetails.Extensions[extension.Key] = extension.Value;
-        }
-
+        ErrorExtensions.AddMetadata(problemDetails, [error]);
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
@@ -141,7 +119,7 @@ public static class ErrorExtensions
             Instance = httpContext?.Request.Path,
         };
 
-        ErrorExtensions.AddExtensions(problemDetails, errors);
+        ErrorExtensions.AddMetadata(problemDetails, errors);
 
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
@@ -149,23 +127,22 @@ public static class ErrorExtensions
     }
 
     /// <summary>
-    /// Copies the extension members of every <see cref="ExtendedError"/> found among
-    /// the aggregated errors into the problem details. When more than one error
-    /// contributes the same key, the values are collected into an array, in the order
-    /// the errors appear.
+    /// Copies the <see cref="Error.Metadata"/> of the given errors into the problem
+    /// details as extension members. When more than one error contributes the same key,
+    /// the values are collected into an array, in the order the errors appear.
     /// </summary>
-    private static void AddExtensions(ProblemDetails problemDetails, IEnumerable<IError> errors)
+    private static void AddMetadata(ProblemDetails problemDetails, IEnumerable<IError> errors)
     {
-        IEnumerable<IGrouping<string, object?>> groupedExtensions = errors
-            .OfType<ExtendedError>()
-            .SelectMany(error => error.Extensions)
-            .GroupBy(extension => extension.Key, extension => extension.Value);
+        IEnumerable<IGrouping<string, object?>> groupedMetadata = errors
+            .OfType<Error>()
+            .SelectMany(error => error.Metadata)
+            .GroupBy(entry => entry.Key, entry => entry.Value);
 
-        foreach (IGrouping<string, object?> extension in groupedExtensions)
+        foreach (IGrouping<string, object?> entry in groupedMetadata)
         {
-            object?[] values = [.. extension];
+            object?[] values = [.. entry];
 
-            problemDetails.Extensions[extension.Key] = values.Length == 1 ? values[0] : values;
+            problemDetails.Extensions[entry.Key] = values.Length == 1 ? values[0] : values;
         }
     }
 
@@ -184,7 +161,7 @@ public static class ErrorExtensions
             Instance = httpContext?.Request.Path,
         };
 
-        ErrorExtensions.AddExtensions(validationProblemDetails, errors);
+        ErrorExtensions.AddMetadata(validationProblemDetails, errors);
 
         validationProblemDetails.Extensions["traceId"] =
             Activity.Current?.Id ?? httpContext?.TraceIdentifier;
