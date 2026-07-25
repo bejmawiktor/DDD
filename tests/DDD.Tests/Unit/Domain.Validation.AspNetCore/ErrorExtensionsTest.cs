@@ -10,13 +10,7 @@ using Utils.Functional;
 using Utils.Validation;
 using ErrorCase = (
     string? Path,
-    string Error,
-    Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
-);
-using ErrorWithMetadataCase = (
-    string? Path,
-    string Message,
-    System.Collections.Generic.IReadOnlyDictionary<string, object?> Metadata,
+    Utils.Functional.IError Error,
     Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
 );
 using ErrorWithReasonsCase = (
@@ -592,41 +586,52 @@ public class ErrorExtensionsTest
         yield return TestCase.Of<ErrorCase>(
             (
                 "/test",
-                "my error test",
-                new ProblemDetails() { Detail = "my error test", Instance = "/test" }
+                ErrorExtensionsTest.CreateErrorMock("my error test"),
+                new ProblemDetails()
+                {
+                    Detail = "my error test",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
             ),
-            "Error with path"
-        );
-        yield return TestCase.Of<ErrorCase>(
-            (
-                "/test2",
-                "my error test 2",
-                new ProblemDetails() { Detail = "my error test 2", Instance = "/test2" }
-            ),
-            "Error with different path"
+            "Error without metadata support"
         );
         yield return TestCase.Of<ErrorCase>(
             (
                 null,
-                "my error test 2",
-                new ProblemDetails() { Detail = "my error test 2", Instance = null }
+                ErrorExtensionsTest.CreateErrorMock("my error test 2"),
+                new ProblemDetails()
+                {
+                    Detail = "my error test 2",
+                    Instance = null,
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
             ),
-            "Error with null path"
+            "Error without metadata support and without path"
         );
-    }
-
-    public static IEnumerable<
-        Func<TestDataRow<ErrorWithMetadataCase>>
-    > CreateErrorWithMetadataTestData()
-    {
-        yield return TestCase.Of<ErrorWithMetadataCase>(
+        yield return TestCase.Of<ErrorCase>(
             (
                 "/test",
-                "my metadata error",
-                new Dictionary<string, object?>() { { "errorCode", "E-001" } },
+                new Error("my metadata error", new Dictionary<string, object?>()),
                 new ProblemDetails()
                 {
                     Detail = "my metadata error",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Without metadata"
+        );
+        yield return TestCase.Of<ErrorCase>(
+            (
+                "/test",
+                new Error(
+                    "my metadata error 2",
+                    new Dictionary<string, object?>() { { "errorCode", "E-001" } }
+                ),
+                new ProblemDetails()
+                {
+                    Detail = "my metadata error 2",
                     Instance = "/test",
                     Status = (int)HttpStatusCode.BadRequest,
                     Extensions = new Dictionary<string, object?>() { { "errorCode", "E-001" } },
@@ -634,19 +639,21 @@ public class ErrorExtensionsTest
             ),
             "Single metadata entry"
         );
-        yield return TestCase.Of<ErrorWithMetadataCase>(
+        yield return TestCase.Of<ErrorCase>(
             (
                 "/test2",
-                "my metadata error 2",
-                new Dictionary<string, object?>()
-                {
-                    { "errorCode", "E-002" },
-                    { "attempts", 3 },
-                    { "retryable", true },
-                },
+                new Error(
+                    "my metadata error 3",
+                    new Dictionary<string, object?>()
+                    {
+                        { "errorCode", "E-002" },
+                        { "attempts", 3 },
+                        { "retryable", true },
+                    }
+                ),
                 new ProblemDetails()
                 {
-                    Detail = "my metadata error 2",
+                    Detail = "my metadata error 3",
                     Instance = "/test2",
                     Status = (int)HttpStatusCode.BadRequest,
                     Extensions = new Dictionary<string, object?>()
@@ -659,28 +666,51 @@ public class ErrorExtensionsTest
             ),
             "Multiple metadata entries"
         );
-        yield return TestCase.Of<ErrorWithMetadataCase>(
+        yield return TestCase.Of<ErrorCase>(
             (
                 null,
-                "my metadata error 3",
-                new Dictionary<string, object?>(),
-                new ProblemDetails()
-                {
-                    Detail = "my metadata error 3",
-                    Instance = null,
-                    Status = (int)HttpStatusCode.BadRequest,
-                }
-            ),
-            "Without metadata and path"
-        );
-        yield return TestCase.Of<ErrorWithMetadataCase>(
-            (
-                "/test",
-                "my metadata error 4",
-                new Dictionary<string, object?>() { { "traceId", "spoofed" } },
+                new Error(
+                    "my metadata error 4",
+                    new Dictionary<string, object?>() { { "errorCode", "E-003" } }
+                ),
                 new ProblemDetails()
                 {
                     Detail = "my metadata error 4",
+                    Instance = null,
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-003" } },
+                }
+            ),
+            "Metadata without path"
+        );
+        yield return TestCase.Of<ErrorCase>(
+            (
+                "/test",
+                new ValidationError(
+                    "fieldName",
+                    "my validation error",
+                    new Dictionary<string, object?>() { { "errorCode", "E-004" } }
+                ),
+                new ProblemDetails()
+                {
+                    Detail = "my validation error",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-004" } },
+                }
+            ),
+            "Validation error carrying metadata"
+        );
+        yield return TestCase.Of<ErrorCase>(
+            (
+                "/test",
+                new Error(
+                    "my metadata error 5",
+                    new Dictionary<string, object?>() { { "traceId", "spoofed" } }
+                ),
+                new ProblemDetails()
+                {
+                    Detail = "my metadata error 5",
                     Instance = "/test",
                     Status = (int)HttpStatusCode.BadRequest,
                 }
@@ -734,48 +764,12 @@ public class ErrorExtensionsTest
     [MethodDataSource(nameof(CreateErrorTestData))]
     public async Task TestToProblemDetails_WhenErrorGiven_ThenProblemDetailsIsReturned(
         string? path,
-        string error,
+        IError error,
         ProblemDetails expectedProblemDetails
     )
     {
         Guid traceId = Guid.NewGuid();
         Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
-        Mock<IError> errorMock = new();
-        _ = errorMock.Setup(error => error.Message).Returns(error);
-
-        ProblemDetails validationProblemDetails = errorMock.Object.ToProblemDetails(
-            path is not null ? httpContextMock.Object : null
-        );
-
-        using (Assert.Multiple())
-        {
-            _ = await Assert
-                .That(validationProblemDetails.Detail?.Replace("\r\n", "\n"))
-                .IsEqualTo(expectedProblemDetails.Detail?.Replace("\r\n", "\n"));
-            _ = await Assert
-                .That(validationProblemDetails.Status)
-                .IsEqualTo((int)HttpStatusCode.BadRequest);
-            _ = await Assert
-                .That(validationProblemDetails.Instance)
-                .IsEqualTo(expectedProblemDetails.Instance);
-            _ = await Assert
-                .That(validationProblemDetails.Extensions["traceId"])
-                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
-        }
-    }
-
-    [Test]
-    [MethodDataSource(nameof(CreateErrorWithMetadataTestData))]
-    public async Task TestToProblemDetails_WhenErrorWithMetadataGiven_ThenProblemDetailsWithExtensionsIsReturned(
-        string? path,
-        string message,
-        IReadOnlyDictionary<string, object?> metadata,
-        ProblemDetails expectedProblemDetails
-    )
-    {
-        Guid traceId = Guid.NewGuid();
-        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
-        Error error = new(message, metadata);
 
         ProblemDetails problemDetails = error.ToProblemDetails(
             path is not null ? httpContextMock.Object : null
@@ -796,6 +790,14 @@ public class ErrorExtensionsTest
                 .That(problemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
+    }
+
+    private static IError CreateErrorMock(string message)
+    {
+        Mock<IError> errorMock = new();
+        _ = errorMock.Setup(error => error.Message).Returns(message);
+
+        return errorMock.Object;
     }
 
     private static IDictionary<string, object?> ExtensionsExceptTraceId(
