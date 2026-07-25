@@ -4,7 +4,8 @@ namespace DDD.Domain.Validation.AspNetCore;
 
 /// <summary>
 /// An <see cref="Error"/> that carries additional key/value data next to its
-/// message, meant to be surfaced as extension members of the
+/// message. <see cref="ErrorExtensions.ToProblemDetails{TError}"/> copies that data
+/// into the extension members of the
 /// <see cref="Microsoft.AspNetCore.Mvc.ProblemDetails"/> returned to the client.
 /// </summary>
 /// <param name="message">The error message. Must not be <see langword="null"/> or empty.</param>

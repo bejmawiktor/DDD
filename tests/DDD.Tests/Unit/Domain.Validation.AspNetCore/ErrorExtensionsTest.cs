@@ -17,6 +17,12 @@ using ErrorWithReasonsCase = (
     object Error,
     Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
 );
+using ExtendedErrorCase = (
+    string? Path,
+    string Message,
+    System.Collections.Generic.IDictionary<string, object?> Extensions,
+    Microsoft.AspNetCore.Mvc.ProblemDetails ExpectedProblemDetails
+);
 
 namespace DDD.Tests.Unit.Domain.Validation.AspNetCore;
 
@@ -311,6 +317,64 @@ public class ErrorExtensionsTest
         );
     }
 
+    public static IEnumerable<Func<TestDataRow<ExtendedErrorCase>>> CreateExtendedErrorTestData()
+    {
+        yield return TestCase.Of<ExtendedErrorCase>(
+            (
+                "/test",
+                "my extended error",
+                new Dictionary<string, object?>() { { "errorCode", "E-001" } },
+                new ProblemDetails()
+                {
+                    Detail = "my extended error",
+                    Instance = "/test",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>() { { "errorCode", "E-001" } },
+                }
+            ),
+            "Single extension"
+        );
+        yield return TestCase.Of<ExtendedErrorCase>(
+            (
+                "/test2",
+                "my extended error 2",
+                new Dictionary<string, object?>()
+                {
+                    { "errorCode", "E-002" },
+                    { "attempts", 3 },
+                    { "retryable", true },
+                },
+                new ProblemDetails()
+                {
+                    Detail = "my extended error 2",
+                    Instance = "/test2",
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Extensions = new Dictionary<string, object?>()
+                    {
+                        { "errorCode", "E-002" },
+                        { "attempts", 3 },
+                        { "retryable", true },
+                    },
+                }
+            ),
+            "Multiple extensions"
+        );
+        yield return TestCase.Of<ExtendedErrorCase>(
+            (
+                null,
+                "my extended error 3",
+                new Dictionary<string, object?>(),
+                new ProblemDetails()
+                {
+                    Detail = "my extended error 3",
+                    Instance = null,
+                    Status = (int)HttpStatusCode.BadRequest,
+                }
+            ),
+            "Without extensions and path"
+        );
+    }
+
     [Test]
     [MethodDataSource(nameof(CreateErrorWithReasonsTestData))]
     public async Task TestToProblemDetails_WhenErrorWithReasonsGiven_ThenProblemDetailsIsReturned(
@@ -401,5 +465,82 @@ public class ErrorExtensionsTest
                 .That(validationProblemDetails.Extensions["traceId"])
                 .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
         }
+    }
+
+    [Test]
+    [MethodDataSource(nameof(CreateExtendedErrorTestData))]
+    public async Task TestToProblemDetails_WhenExtendedErrorGiven_ThenProblemDetailsWithExtensionsIsReturned(
+        string? path,
+        string message,
+        IDictionary<string, object?> extensions,
+        ProblemDetails expectedProblemDetails
+    )
+    {
+        Guid traceId = Guid.NewGuid();
+        Mock<HttpRequest> httpRequestMock = new();
+        _ = httpRequestMock
+            .Setup(request => request.Path)
+            .Returns(PathString.FromUriComponent(path ?? ""));
+        Mock<HttpContext> httpContextMock = new();
+        _ = httpContextMock
+            .Setup(httpContext => httpContext.Request)
+            .Returns(httpRequestMock.Object);
+        _ = httpContextMock
+            .Setup(httpContext => httpContext.TraceIdentifier)
+            .Returns(traceId.ToString());
+        ExtendedError error = new(message, extensions);
+
+        ProblemDetails problemDetails = error.ToProblemDetails(
+            path is not null ? httpContextMock.Object : null
+        );
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert.That(problemDetails.Detail).IsEqualTo(expectedProblemDetails.Detail);
+            _ = await Assert.That(problemDetails.Status).IsEqualTo(expectedProblemDetails.Status);
+            _ = await Assert
+                .That(problemDetails.Instance)
+                .IsEqualTo(expectedProblemDetails.Instance);
+
+            foreach (
+                KeyValuePair<string, object?> expectedExtension in expectedProblemDetails.Extensions
+            )
+            {
+                _ = await Assert
+                    .That(problemDetails.Extensions[expectedExtension.Key])
+                    .IsEqualTo(expectedExtension.Value);
+            }
+
+            _ = await Assert
+                .That(problemDetails.Extensions["traceId"])
+                .IsEqualTo(Activity.Current?.Id ?? (path is not null ? traceId.ToString() : null));
+        }
+    }
+
+    [Test]
+    public async Task TestToProblemDetails_WhenExtendedErrorWithTraceIdExtensionGiven_ThenTraceIdIsNotOverwritten()
+    {
+        Guid traceId = Guid.NewGuid();
+        Mock<HttpRequest> httpRequestMock = new();
+        _ = httpRequestMock
+            .Setup(request => request.Path)
+            .Returns(PathString.FromUriComponent("/test"));
+        Mock<HttpContext> httpContextMock = new();
+        _ = httpContextMock
+            .Setup(httpContext => httpContext.Request)
+            .Returns(httpRequestMock.Object);
+        _ = httpContextMock
+            .Setup(httpContext => httpContext.TraceIdentifier)
+            .Returns(traceId.ToString());
+        ExtendedError error = new(
+            "my extended error",
+            new Dictionary<string, object?>() { { "traceId", "spoofed" } }
+        );
+
+        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
+
+        _ = await Assert
+            .That(problemDetails.Extensions["traceId"])
+            .IsEqualTo(Activity.Current?.Id ?? traceId.ToString());
     }
 }

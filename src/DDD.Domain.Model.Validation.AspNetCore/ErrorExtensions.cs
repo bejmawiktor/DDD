@@ -17,7 +17,9 @@ public static class ErrorExtensions
     /// Converts a domain error into an RFC 7807 <see cref="ProblemDetails"/>
     /// payload. Aggregate errors are expanded into field-keyed validation
     /// problems, and a lone <c>NotFoundError</c> yields a 404 response; other
-    /// errors map to 400 Bad Request. A <c>traceId</c> is attached when available.
+    /// errors map to 400 Bad Request. An <see cref="ExtendedError"/> additionally
+    /// contributes its <see cref="ExtendedError.Extensions"/> as extension members.
+    /// A <c>traceId</c> is attached when available.
     /// </summary>
     /// <typeparam name="TError">The concrete error type.</typeparam>
     /// <param name="error">The error to convert.</param>
@@ -40,6 +42,28 @@ public static class ErrorExtensions
             Detail = error.Message,
             Status = (int)HttpStatusCode.BadRequest,
         };
+
+        problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
+
+        return problemDetails;
+    }
+
+    private static ProblemDetails CreateProblemDetails(
+        ExtendedError error,
+        HttpContext? httpContext
+    )
+    {
+        ProblemDetails problemDetails = new()
+        {
+            Instance = httpContext?.Request.Path,
+            Detail = error.Message,
+            Status = (int)HttpStatusCode.BadRequest,
+        };
+
+        foreach (KeyValuePair<string, object?> extension in error.Extensions)
+        {
+            problemDetails.Extensions[extension.Key] = extension.Value;
+        }
 
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
