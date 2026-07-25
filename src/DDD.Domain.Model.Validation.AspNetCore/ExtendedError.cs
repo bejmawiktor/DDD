@@ -17,8 +17,7 @@ namespace DDD.Domain.Validation.AspNetCore;
 /// <paramref name="message"/> or <paramref name="extensions"/> is <see langword="null"/>.
 /// </exception>
 /// <exception cref="ArgumentException"><paramref name="message"/> is empty.</exception>
-public class ExtendedError(string message, IDictionary<string, object?> extensions)
-    : Error(message)
+public class ExtendedError(string message, IDictionary<string, object?> extensions) : Error(message)
 {
     /// <summary>
     /// Initializes a new error with the given message and no extensions.

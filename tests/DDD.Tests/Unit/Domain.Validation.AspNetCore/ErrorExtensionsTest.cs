@@ -42,7 +42,10 @@ public class ErrorExtensionsTest
         Error simpleError = new("simple error");
         NotFoundError notFoundError = new("not found error");
         NotFoundError secondNotFoundError = new("not found exception 2");
-        ValidationError nestedValidationError = new("nestedFieldName", "my nested validation error");
+        ValidationError nestedValidationError = new(
+            "nestedFieldName",
+            "my nested validation error"
+        );
         ValidationError deeplyNestedValidationError = new(
             "fieldName",
             "my deeply nested validation error"
@@ -479,10 +482,7 @@ public class ErrorExtensionsTest
                 new ValidationProblemDetails(
                     new Dictionary<string, string[]>()
                     {
-                        {
-                            "",
-                            [firstCodeExtendedError.Message, nestedCodeExtendedError.Message]
-                        },
+                        { "", [firstCodeExtendedError.Message, nestedCodeExtendedError.Message] },
                     }
                 )
                 {
@@ -500,10 +500,7 @@ public class ErrorExtensionsTest
         yield return TestCase.Of<ErrorWithReasonsCase>(
             (
                 "/test",
-                new AggregateError<IError>(
-                    "not found",
-                    new AggregateError<IError>(notFoundError)
-                ),
+                new AggregateError<IError>("not found", new AggregateError<IError>(notFoundError)),
                 new ProblemDetails()
                 {
                     Detail = "not found",
