@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using DDD.Domain.Validation.AspNetCore;
+using DDD.Tests.Unit.Domain.Validation.AspNetCore.TestDoubles;
 using DDD.Tests.Unit.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -385,17 +386,7 @@ public class ErrorExtensionsTest
     {
         AggregateError<IError> error = (AggregateError<IError>)errorValue;
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
 
         ProblemDetails problemDetails = error.ToProblemDetails(
             path is not null ? httpContextMock.Object : null
@@ -432,17 +423,7 @@ public class ErrorExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         Mock<IError> errorMock = new();
         _ = errorMock.Setup(error => error.Message).Returns(error);
 
@@ -477,17 +458,7 @@ public class ErrorExtensionsTest
     )
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent(path ?? ""));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(path, traceId.ToString());
         ExtendedError error = new(message, extensions);
 
         ProblemDetails problemDetails = error.ToProblemDetails(
@@ -518,20 +489,93 @@ public class ErrorExtensionsTest
     }
 
     [Test]
+    public async Task TestToProblemDetails_WhenAggregateErrorWithExtendedErrorsGiven_ThenExtensionsAreMerged()
+    {
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(
+            "/test",
+            Guid.NewGuid().ToString()
+        );
+        AggregateError<IError> error = new(
+            new ExtendedError("my error", new Dictionary<string, object?>() { { "attempts", 3 } }),
+            new Error("simple error"),
+            new ExtendedError(
+                "my error 2",
+                new Dictionary<string, object?>() { { "errorCode", "E-001" }, { "retryable", true } }
+            )
+        );
+
+        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert.That(problemDetails.Extensions["attempts"]).IsEqualTo(3);
+            _ = await Assert.That(problemDetails.Extensions["errorCode"]).IsEqualTo("E-001");
+            _ = await Assert.That((bool?)problemDetails.Extensions["retryable"]).IsTrue();
+        }
+    }
+
+    [Test]
+    public async Task TestToProblemDetails_WhenAggregateErrorWithSameExtensionKeyGiven_ThenValuesAreCollectedIntoArray()
+    {
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create(
+            "/test",
+            Guid.NewGuid().ToString()
+        );
+        AggregateError<IError> error = new(
+            new ExtendedError(
+                "my error",
+                new Dictionary<string, object?>() { { "errorCode", "E-001" } }
+            ),
+            new ExtendedError(
+                "my error 2",
+                new Dictionary<string, object?>()
+                {
+                    { "errorCode", "E-002" },
+                    { "attempts", 3 },
+                }
+            ),
+            new ExtendedError(
+                "my error 3",
+                new Dictionary<string, object?>() { { "errorCode", "E-003" } }
+            )
+        );
+
+        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert
+                .That(problemDetails.Extensions["errorCode"] as object?[])
+                .IsEquivalentTo(new object?[] { "E-001", "E-002", "E-003" });
+            _ = await Assert.That(problemDetails.Extensions["attempts"]).IsEqualTo(3);
+        }
+    }
+
+    [Test]
+    public async Task TestToProblemDetails_WhenAggregateErrorWithTraceIdExtensionGiven_ThenTraceIdIsNotOverwritten()
+    {
+        Guid traceId = Guid.NewGuid();
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create("/test", traceId.ToString());
+        AggregateError<IError> error = new(
+            new ExtendedError(
+                "my error",
+                new Dictionary<string, object?>() { { "traceId", "spoofed" } }
+            ),
+            new Error("simple error")
+        );
+
+        ProblemDetails problemDetails = error.ToProblemDetails(httpContextMock.Object);
+
+        _ = await Assert
+            .That(problemDetails.Extensions["traceId"])
+            .IsEqualTo(Activity.Current?.Id ?? traceId.ToString());
+    }
+
+    [Test]
     public async Task TestToProblemDetails_WhenExtendedErrorWithTraceIdExtensionGiven_ThenTraceIdIsNotOverwritten()
     {
         Guid traceId = Guid.NewGuid();
-        Mock<HttpRequest> httpRequestMock = new();
-        _ = httpRequestMock
-            .Setup(request => request.Path)
-            .Returns(PathString.FromUriComponent("/test"));
-        Mock<HttpContext> httpContextMock = new();
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.Request)
-            .Returns(httpRequestMock.Object);
-        _ = httpContextMock
-            .Setup(httpContext => httpContext.TraceIdentifier)
-            .Returns(traceId.ToString());
+        Mock<HttpContext> httpContextMock = HttpContextMock.Create("/test", traceId.ToString());
         ExtendedError error = new(
             "my extended error",
             new Dictionary<string, object?>() { { "traceId", "spoofed" } }
@@ -543,4 +587,5 @@ public class ErrorExtensionsTest
             .That(problemDetails.Extensions["traceId"])
             .IsEqualTo(Activity.Current?.Id ?? traceId.ToString());
     }
+
 }

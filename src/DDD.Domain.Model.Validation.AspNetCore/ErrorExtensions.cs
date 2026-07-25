@@ -17,8 +17,10 @@ public static class ErrorExtensions
     /// Converts a domain error into an RFC 7807 <see cref="ProblemDetails"/>
     /// payload. Aggregate errors are expanded into field-keyed validation
     /// problems, and a lone <c>NotFoundError</c> yields a 404 response; other
-    /// errors map to 400 Bad Request. An <see cref="ExtendedError"/> additionally
-    /// contributes its <see cref="ExtendedError.Extensions"/> as extension members.
+    /// errors map to 400 Bad Request. Every <see cref="ExtendedError"/> involved,
+    /// whether given directly or aggregated, contributes its
+    /// <see cref="ExtendedError.Extensions"/> as extension members; keys claimed by
+    /// more than one aggregated error end up holding an array of the values.
     /// A <c>traceId</c> is attached when available.
     /// </summary>
     /// <typeparam name="TError">The concrete error type.</typeparam>
@@ -120,9 +122,35 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.NotFound,
             Instance = httpContext?.Request.Path,
         };
+        ErrorExtensions.AddExtensions(problemDetails, errors);
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
         return problemDetails;
+    }
+
+    /// <summary>
+    /// Copies the extension members of every <see cref="ExtendedError"/> found among
+    /// the aggregated errors into the problem details. When more than one error
+    /// contributes the same key, the values are collected into an array, in the order
+    /// the errors appear.
+    /// </summary>
+    private static void AddExtensions<TError>(
+        ProblemDetails problemDetails,
+        IAggregateError<TError> errors
+    )
+        where TError : IError
+    {
+        IEnumerable<IGrouping<string, object?>> groupedExtensions = errors
+            .Errors.OfType<ExtendedError>()
+            .SelectMany(error => error.Extensions)
+            .GroupBy(extension => extension.Key, extension => extension.Value);
+
+        foreach (IGrouping<string, object?> extension in groupedExtensions)
+        {
+            object?[] values = [.. extension];
+
+            problemDetails.Extensions[extension.Key] = values.Length == 1 ? values[0] : values;
+        }
     }
 
     private static ValidationProblemDetails CreateBadRequestProblemDetails<TError>(
@@ -140,6 +168,7 @@ public static class ErrorExtensions
             Status = (int)HttpStatusCode.BadRequest,
             Instance = httpContext?.Request.Path,
         };
+        ErrorExtensions.AddExtensions(validationProblemDetails, errors);
         validationProblemDetails.Extensions["traceId"] =
             Activity.Current?.Id ?? httpContext?.TraceIdentifier;
 
