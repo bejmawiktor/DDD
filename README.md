@@ -164,11 +164,11 @@ Without an active `EventsScope`, `Notify`/`NotifyAsync` dispatch events immediat
 `EventsScope.PublishAsync()` hands events to the global dispatcher, so publishing
 them after a commit can still lose them if the process stops in between. A
 `TransactionalEventsScope` closes that gap: it buffers events the same way, but
-releases them only to an `IAsyncTransactionalEventDispatcher` — one bound to an open
-transaction, which stores each event in that transaction and delivers it after the
-commit. Hand the scope to a unit of work implementing `IAsyncEventsUnitOfWork`
-(`DDD.Application.Persistence`); completing the transaction publishes the events,
-commits, and delivers them:
+releases them only to the dispatcher of the transaction it is attached to — an
+`IAsyncTransactionalEventDispatcher`, which stores each event in that transaction and
+delivers it after the commit. Hand the scope to a unit of work implementing
+`IAsyncEventsUnitOfWork` (`DDD.Application.Persistence`), which attaches its
+dispatcher; publishing is then the caller's decision, and the scope does it:
 
 ```csharp
 using TransactionalEventsScope eventsScope = new();
@@ -179,18 +179,25 @@ await using IAsyncTransactionScope transactionScope =
 order.AddLine(line);
 await unitOfWork.OrdersRepository.UpdateAsync(order);
 
+await eventsScope.PublishAsync();
 await transactionScope.CompleteAsync();
 ```
 
+- Events published before `CompleteAsync` are committed with the data and delivered
+  after the commit; a scope disposed without publishing drops them.
+- Publishing after the transaction completed throws `InvalidOperationException`, and
+  so does publishing a scope no transaction attached a dispatcher to.
 - The scope must be the outermost events scope; creating it inside another one
   throws `InvalidOperationException`.
 - Disposing the transaction without completing it rolls back the data and the
-  events together.
+  published events together.
 - Delivery is at least once, so event handlers have to be idempotent.
 - For a store that writes synchronously there are synchronous counterparts:
-  `IEventsUnitOfWork.BeginTransaction(eventsScope)`, `TransactionalEventsScope.Publish(...)`
+  `IEventsUnitOfWork.BeginTransaction(eventsScope)`, `TransactionalEventsScope.Publish()`
   and `ISyncTransactionalEventDispatcher`. Don't implement them by blocking on an
   asynchronous store.
+- `TransactionalEventsScope.AttachDispatcher(...)` is for unit of work
+  implementations; code raising events never calls it.
 
 ### Repositories
 

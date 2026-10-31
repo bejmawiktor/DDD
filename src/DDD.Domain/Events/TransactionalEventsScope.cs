@@ -3,12 +3,13 @@ namespace DDD.Domain.Events;
 /// <summary>
 /// An events scope whose events belong to a transaction. Like <see cref="EventsScope"/>
 /// it buffers the events raised through the <see cref="EventManager"/>, but it releases
-/// them only to an <see cref="IAsyncTransactionalEventDispatcher"/> or an
-/// <see cref="ISyncTransactionalEventDispatcher"/>, never to the
+/// them only to the dispatcher of the transaction it is attached to, never to the
 /// <see cref="EventManager"/>'s global dispatcher. Hand it to the unit of work that
-/// begins the transaction; the transaction publishes the events before it commits, so
-/// they are stored atomically with the data. The scope neither begins nor commits a
-/// transaction itself.
+/// begins the transaction, which attaches its dispatcher; then decide whether to
+/// publish: <see cref="PublishAsync"/> or <see cref="Publish"/> before the transaction
+/// completes stores the events atomically with the data, while a scope disposed
+/// without publishing drops them. The scope neither begins nor commits a transaction
+/// itself.
 /// </summary>
 /// <remarks>
 /// It must be the outermost events scope: a nested scope forwards its events to the
@@ -19,6 +20,8 @@ namespace DDD.Domain.Events;
 public sealed class TransactionalEventsScope : IDisposable
 {
     private EventsScope EventsScope { get; }
+    private IAsyncTransactionalEventDispatcher? AsyncDispatcher { get; set; }
+    private ISyncTransactionalEventDispatcher? SyncDispatcher { get; set; }
 
     /// <summary>
     /// Initializes a new transactional events scope and makes it the ambient events
@@ -38,24 +41,82 @@ public sealed class TransactionalEventsScope : IDisposable
     }
 
     /// <summary>
-    /// Publishes every buffered event synchronously to the transaction's dispatcher.
+    /// Attaches the scope to an asynchronous transaction. Called by the unit of work that
+    /// begins the transaction, not by the code raising the events.
     /// </summary>
-    /// <param name="dispatcher">The dispatcher storing the events in the transaction.</param>
+    /// <param name="dispatcher">The dispatcher storing events in the transaction.</param>
     /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
-    public void Publish(ISyncTransactionalEventDispatcher dispatcher) =>
-        this.EventsScope.Publish(dispatcher);
+    /// <exception cref="InvalidOperationException">The scope is already attached to a transaction.</exception>
+    public void AttachDispatcher(IAsyncTransactionalEventDispatcher dispatcher)
+    {
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        this.ThrowIfAttached();
+
+        this.AsyncDispatcher = dispatcher;
+    }
 
     /// <summary>
-    /// Publishes every buffered event asynchronously to the transaction's dispatcher.
+    /// Attaches the scope to a synchronous transaction. Called by the unit of work that
+    /// begins the transaction, not by the code raising the events.
     /// </summary>
-    /// <param name="dispatcher">The dispatcher storing the events in the transaction.</param>
-    /// <returns>A task that completes once all buffered events have been dispatched.</returns>
+    /// <param name="dispatcher">The dispatcher storing events in the transaction.</param>
     /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
-    public Task PublishAsync(IAsyncTransactionalEventDispatcher dispatcher) =>
-        this.EventsScope.PublishAsync(dispatcher);
+    /// <exception cref="InvalidOperationException">The scope is already attached to a transaction.</exception>
+    public void AttachDispatcher(ISyncTransactionalEventDispatcher dispatcher)
+    {
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        this.ThrowIfAttached();
+
+        this.SyncDispatcher = dispatcher;
+    }
+
+    /// <summary>
+    /// Publishes every buffered event synchronously into the attached transaction.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The scope is not attached to a synchronous transaction.</exception>
+    public void Publish()
+    {
+        if (this.SyncDispatcher is null)
+        {
+            throw new InvalidOperationException(
+                "Transactional events scope is not attached to a synchronous transaction."
+            );
+        }
+
+        this.EventsScope.Publish(this.SyncDispatcher);
+    }
+
+    /// <summary>
+    /// Publishes every buffered event asynchronously into the attached transaction.
+    /// </summary>
+    /// <returns>A task that completes once all buffered events have been dispatched.</returns>
+    /// <exception cref="InvalidOperationException">The scope is not attached to an asynchronous transaction.</exception>
+    public Task PublishAsync()
+    {
+        if (this.AsyncDispatcher is null)
+        {
+            throw new InvalidOperationException(
+                "Transactional events scope is not attached to an asynchronous transaction."
+            );
+        }
+
+        return this.EventsScope.PublishAsync(this.AsyncDispatcher);
+    }
 
     /// <summary>
     /// Disposes the scope, dropping any events that were not published.
     /// </summary>
     public void Dispose() => this.EventsScope.Dispose();
+
+    private void ThrowIfAttached()
+    {
+        if (this.AsyncDispatcher is not null || this.SyncDispatcher is not null)
+        {
+            throw new InvalidOperationException(
+                "Transactional events scope is already attached to a transaction."
+            );
+        }
+    }
 }

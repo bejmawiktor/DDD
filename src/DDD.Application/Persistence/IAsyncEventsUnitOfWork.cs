@@ -11,12 +11,16 @@ namespace DDD.Application.Persistence;
 public interface IAsyncEventsUnitOfWork : IAsyncUnitOfWork
 {
     /// <summary>
-    /// Asynchronously begins a new transaction that owns the events buffered in
-    /// <paramref name="eventsScope"/>. Completing the returned scope publishes those
-    /// events to the transaction's <see cref="IAsyncTransactionalEventDispatcher"/>, commits,
-    /// and only then delivers them. Disposing it without calling
-    /// <see cref="IAsyncTransactionScope.CompleteAsync"/> rolls back both the data and the
-    /// events.
+    /// Asynchronously begins a new transaction and attaches its
+    /// <see cref="IAsyncTransactionalEventDispatcher"/> to <paramref name="eventsScope"/>
+    /// with <see cref="TransactionalEventsScope.AttachDispatcher(IAsyncTransactionalEventDispatcher)"/>.
+    /// Whether the events are stored is the caller's decision: those published with
+    /// <see cref="TransactionalEventsScope.PublishAsync"/> before
+    /// <see cref="IAsyncTransactionScope.CompleteAsync"/> are stored in the transaction,
+    /// committed with the data and delivered only after the commit; unpublished ones are
+    /// dropped. Publishing after the transaction completed throws
+    /// <see cref="InvalidOperationException"/>. Disposing the returned scope without
+    /// completing it rolls back both the data and the published events.
     /// </summary>
     /// <param name="eventsScope">The scope whose events belong to the transaction.</param>
     /// <returns>A task producing the transaction scope controlling commit and rollback.</returns>
