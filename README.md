@@ -45,7 +45,7 @@ app.UseCompositeEventDispatcher((config, services) =>
 
 ### Application layer (`DDD.Application`)
 
-Supports mapping domain aggregates/entities to DTOs (`IDomainObjectDto`, `IAggregateRootDto`, converters) and repository adapters that bridge domain repositories with DTO-based repositories — in line with hexagonal architecture. `IAsyncEventsUnitOfWork` is the unit of work whose transactions take ownership of a `TransactionalEventsScope`.
+Supports mapping domain aggregates/entities to DTOs (`IDomainObjectDto`, `IAggregateRootDto`, converters) and repository adapters that bridge domain repositories with DTO-based repositories — in line with hexagonal architecture. `IAsyncEventsUnitOfWork` (and its synchronous twin `IEventsUnitOfWork`) is the unit of work whose transactions take ownership of a `TransactionalEventsScope`.
 
 ## Usage examples
 
@@ -164,7 +164,7 @@ Without an active `EventsScope`, `Notify`/`NotifyAsync` dispatch events immediat
 `EventsScope.PublishAsync()` hands events to the global dispatcher, so publishing
 them after a commit can still lose them if the process stops in between. A
 `TransactionalEventsScope` closes that gap: it buffers events the same way, but
-releases them only to an `ITransactionalEventDispatcher` — one bound to an open
+releases them only to an `IAsyncTransactionalEventDispatcher` — one bound to an open
 transaction, which stores each event in that transaction and delivers it after the
 commit. Hand the scope to a unit of work implementing `IAsyncEventsUnitOfWork`
 (`DDD.Application.Persistence`); completing the transaction publishes the events,
@@ -187,6 +187,10 @@ await transactionScope.CompleteAsync();
 - Disposing the transaction without completing it rolls back the data and the
   events together.
 - Delivery is at least once, so event handlers have to be idempotent.
+- For a store that writes synchronously there are synchronous counterparts:
+  `IEventsUnitOfWork.BeginTransaction(eventsScope)`, `TransactionalEventsScope.Publish(...)`
+  and `ISyncTransactionalEventDispatcher`. Don't implement them by blocking on an
+  asynchronous store.
 
 ### Repositories
 

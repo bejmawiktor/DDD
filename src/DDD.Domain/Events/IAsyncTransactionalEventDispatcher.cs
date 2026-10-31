@@ -10,4 +10,4 @@ namespace DDD.Domain.Events;
 /// commits, and must still be delivered if the process stops between the commit and the
 /// delivery. Delivery is at least once, so event handlers have to be idempotent.
 /// </summary>
-public interface ITransactionalEventDispatcher : IAsyncDispatcher<IEvent> { }
+public interface IAsyncTransactionalEventDispatcher : IAsyncDispatcher<IEvent> { }
