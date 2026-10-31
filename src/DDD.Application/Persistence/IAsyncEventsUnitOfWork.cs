@@ -13,7 +13,7 @@ public interface IAsyncEventsUnitOfWork : IAsyncUnitOfWork
     /// <summary>
     /// Asynchronously begins a new transaction that owns the events buffered in
     /// <paramref name="eventsScope"/>. Completing the returned scope publishes those
-    /// events to the transaction's <see cref="ITransactionalEventDispatcher"/>, commits,
+    /// events to the transaction's <see cref="IAsyncTransactionalEventDispatcher"/>, commits,
     /// and only then delivers them. Disposing it without calling
     /// <see cref="IAsyncTransactionScope.CompleteAsync"/> rolls back both the data and the
     /// events.

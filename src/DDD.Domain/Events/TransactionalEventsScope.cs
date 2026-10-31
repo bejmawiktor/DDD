@@ -3,7 +3,8 @@ namespace DDD.Domain.Events;
 /// <summary>
 /// An events scope whose events belong to a transaction. Like <see cref="EventsScope"/>
 /// it buffers the events raised through the <see cref="EventManager"/>, but it releases
-/// them only to an <see cref="ITransactionalEventDispatcher"/>, never to the
+/// them only to an <see cref="IAsyncTransactionalEventDispatcher"/> or an
+/// <see cref="ISyncTransactionalEventDispatcher"/>, never to the
 /// <see cref="EventManager"/>'s global dispatcher. Hand it to the unit of work that
 /// begins the transaction; the transaction publishes the events before it commits, so
 /// they are stored atomically with the data. The scope neither begins nor commits a
@@ -37,12 +38,20 @@ public sealed class TransactionalEventsScope : IDisposable
     }
 
     /// <summary>
-    /// Publishes every buffered event to the transaction's dispatcher.
+    /// Publishes every buffered event synchronously to the transaction's dispatcher.
+    /// </summary>
+    /// <param name="dispatcher">The dispatcher storing the events in the transaction.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
+    public void Publish(ISyncTransactionalEventDispatcher dispatcher) =>
+        this.EventsScope.Publish(dispatcher);
+
+    /// <summary>
+    /// Publishes every buffered event asynchronously to the transaction's dispatcher.
     /// </summary>
     /// <param name="dispatcher">The dispatcher storing the events in the transaction.</param>
     /// <returns>A task that completes once all buffered events have been dispatched.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
-    public Task PublishAsync(ITransactionalEventDispatcher dispatcher) =>
+    public Task PublishAsync(IAsyncTransactionalEventDispatcher dispatcher) =>
         this.EventsScope.PublishAsync(dispatcher);
 
     /// <summary>
