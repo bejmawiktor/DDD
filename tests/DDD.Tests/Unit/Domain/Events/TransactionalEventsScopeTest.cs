@@ -1,4 +1,5 @@
 using DDD.Domain.Events;
+using DDD.Domain.Persistence;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
 
@@ -15,20 +16,61 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestConstructor_WhenCreating_ThenEventsScopeIsSetAsCurrentScope()
+    public async Task TestConstructor_WhenNullAsyncTransactionGiven_ThenArgumentNullExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new TransactionalEventsScope((IAsyncEventsTransactionScope)null!)
+        );
 
-        _ = await Assert.That(EventManager.CurrentScope).IsNotNull();
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("transactionScope");
+    }
+
+    [Test]
+    public async Task TestConstructor_WhenNullSyncTransactionGiven_ThenArgumentNullExceptionIsThrown()
+    {
+        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
+            new TransactionalEventsScope((IEventsTransactionScope)null!)
+        );
+
+        _ = await Assert.That(exception!.ParamName).IsEqualTo("transactionScope");
+    }
+
+    [Test]
+    public async Task TestConstructor_WhenAsyncTransactionGiven_ThenScopeIsAttachedToTransaction()
+    {
+        AsyncEventsTransactionScopeFake transactionScope = new();
+
+        using TransactionalEventsScope transactionalEventsScope = new(transactionScope);
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert
+                .That(transactionScope.AttachedEventsScope)
+                .IsSameReferenceAs(transactionalEventsScope);
+            _ = await Assert.That(EventManager.CurrentScope).IsNotNull();
+        }
+    }
+
+    [Test]
+    public async Task TestConstructor_WhenSyncTransactionGiven_ThenScopeIsAttachedToTransaction()
+    {
+        EventsTransactionScopeFake transactionScope = new();
+
+        using TransactionalEventsScope transactionalEventsScope = new(transactionScope);
+
+        _ = await Assert
+            .That(transactionScope.AttachedEventsScope)
+            .IsSameReferenceAs(transactionalEventsScope);
     }
 
     [Test]
     public async Task TestConstructor_WhenOtherEventsScopeIsActive_ThenInvalidOperationExceptionIsThrown()
     {
+        AsyncEventsTransactionScopeFake transactionScope = new();
         using EventsScope eventsScope = new();
 
         InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(() =>
-            new TransactionalEventsScope()
+            new TransactionalEventsScope(transactionScope)
         );
 
         using (Assert.Multiple())
@@ -36,8 +78,24 @@ public class TransactionalEventsScopeTest
             _ = await Assert
                 .That(exception!.Message)
                 .IsEqualTo("Transactional events scope must be the outermost events scope.");
+            _ = await Assert.That(transactionScope.AttachedEventsScope).IsNull();
             _ = await Assert.That(EventManager.CurrentScope).IsSameReferenceAs(eventsScope);
         }
+    }
+
+    [Test]
+    public async Task TestConstructor_WhenTransactionRefusesAttachment_ThenNoScopeIsLeftActive()
+    {
+        Mock<IAsyncEventsTransactionScope> transactionScopeMock = new();
+        _ = transactionScopeMock
+            .Setup(t => t.Attach(It.IsAny<TransactionalEventsScope>()))
+            .Throws(new InvalidOperationException("Transaction refused the events scope."));
+
+        _ = Assert.Throws<InvalidOperationException>(() =>
+            new TransactionalEventsScope(transactionScopeMock.Object)
+        );
+
+        _ = await Assert.That(EventManager.CurrentScope).IsNull();
     }
 
     [Test]
@@ -55,10 +113,12 @@ public class TransactionalEventsScopeTest
             .Callback(() => dispatched = true)
             .Returns(Task.CompletedTask);
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake(transactionalEventDispatcherMock.Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(transactionalEventDispatcherMock.Object);
-
             EventManager.Instance.Notify(new EventStub());
         }
 
@@ -66,9 +126,26 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
+    public async Task TestDispose_WhenDisposing_ThenCurrentScopeIsNull()
+    {
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake()
+            )
+        )
+        {
+            //
+        }
+
+        _ = await Assert.That(EventManager.CurrentScope).IsNull();
+    }
+
+    [Test]
     public async Task TestAttachDispatcher_WhenNullAsyncDispatcherGiven_ThenArgumentNullExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new AsyncEventsTransactionScopeFake()
+        );
 
         ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
             transactionalEventsScope.AttachDispatcher((IAsyncTransactionalEventDispatcher)null!)
@@ -80,7 +157,9 @@ public class TransactionalEventsScopeTest
     [Test]
     public async Task TestAttachDispatcher_WhenNullSyncDispatcherGiven_ThenArgumentNullExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new EventsTransactionScopeFake()
+        );
 
         ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() =>
             transactionalEventsScope.AttachDispatcher((ISyncTransactionalEventDispatcher)null!)
@@ -92,9 +171,10 @@ public class TransactionalEventsScopeTest
     [Test]
     public async Task TestAttachDispatcher_WhenDispatcherAlreadyAttached_ThenInvalidOperationExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
-        transactionalEventsScope.AttachDispatcher(
-            new Mock<IAsyncTransactionalEventDispatcher>().Object
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new AsyncEventsTransactionScopeFake(
+                new Mock<IAsyncTransactionalEventDispatcher>().Object
+            )
         );
 
         InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(() =>
@@ -109,27 +189,10 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenNoDispatcherAttached_ThenInvalidOperationExceptionIsThrown()
+    public async Task TestPublishAsync_WhenTransactionAttachedNoDispatcher_ThenInvalidOperationExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
-
-        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            transactionalEventsScope.PublishAsync
-        );
-
-        _ = await Assert
-            .That(exception!.Message)
-            .IsEqualTo(
-                "Transactional events scope is not attached to an asynchronous transaction."
-            );
-    }
-
-    [Test]
-    public async Task TestPublishAsync_WhenSyncDispatcherAttached_ThenInvalidOperationExceptionIsThrown()
-    {
-        using TransactionalEventsScope transactionalEventsScope = new();
-        transactionalEventsScope.AttachDispatcher(
-            new Mock<ISyncTransactionalEventDispatcher>().Object
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new AsyncEventsTransactionScopeFake()
         );
 
         InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -144,7 +207,25 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenEventsNotified_ThenEventsAreDispatchedToAttachedDispatcher()
+    public async Task TestPublishAsync_WhenSyncTransactionGiven_ThenInvalidOperationExceptionIsThrown()
+    {
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new EventsTransactionScopeFake(new Mock<ISyncTransactionalEventDispatcher>().Object)
+        );
+
+        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            transactionalEventsScope.PublishAsync
+        );
+
+        _ = await Assert
+            .That(exception!.Message)
+            .IsEqualTo(
+                "Transactional events scope is not attached to an asynchronous transaction."
+            );
+    }
+
+    [Test]
+    public async Task TestPublishAsync_WhenEventsNotified_ThenEventsAreDispatchedToTransactionDispatcher()
     {
         List<EventStub> events = [];
         Mock<IAsyncTransactionalEventDispatcher> transactionalEventDispatcherMock = new();
@@ -155,9 +236,12 @@ public class TransactionalEventsScopeTest
         EventStub firstEvent = new();
         EventStub secondEvent = new();
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake(transactionalEventDispatcherMock.Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(transactionalEventDispatcherMock.Object);
             EventManager.Instance.Notify(firstEvent);
             EventManager.Instance.Notify(secondEvent);
 
@@ -182,9 +266,12 @@ public class TransactionalEventsScopeTest
             .Setup(e => e.DispatchAsync(It.IsAny<EventStub>()))
             .Returns(Task.CompletedTask);
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake(transactionalEventDispatcherMock.Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(transactionalEventDispatcherMock.Object);
             EventManager.Instance.Notify(new EventStub());
 
             await transactionalEventsScope.PublishAsync();
@@ -194,7 +281,7 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestPublishAsync_WhenNestedEventsScopePublished_ThenEventsAreDispatchedToAttachedDispatcher()
+    public async Task TestPublishAsync_WhenNestedEventsScopePublished_ThenEventsAreDispatchedToTransactionDispatcher()
     {
         List<EventStub> events = [];
         Mock<IAsyncTransactionalEventDispatcher> transactionalEventDispatcherMock = new();
@@ -204,10 +291,12 @@ public class TransactionalEventsScopeTest
             .Returns(Task.CompletedTask);
         EventStub @event = new();
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake(transactionalEventDispatcherMock.Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(transactionalEventDispatcherMock.Object);
-
             using (EventsScope nestedEventsScope = new())
             {
                 EventManager.Instance.Notify(@event);
@@ -222,25 +311,12 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestPublish_WhenNoDispatcherAttached_ThenInvalidOperationExceptionIsThrown()
+    public async Task TestPublish_WhenAsyncTransactionGiven_ThenInvalidOperationExceptionIsThrown()
     {
-        using TransactionalEventsScope transactionalEventsScope = new();
-
-        InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(
-            transactionalEventsScope.Publish
-        );
-
-        _ = await Assert
-            .That(exception!.Message)
-            .IsEqualTo("Transactional events scope is not attached to a synchronous transaction.");
-    }
-
-    [Test]
-    public async Task TestPublish_WhenAsyncDispatcherAttached_ThenInvalidOperationExceptionIsThrown()
-    {
-        using TransactionalEventsScope transactionalEventsScope = new();
-        transactionalEventsScope.AttachDispatcher(
-            new Mock<IAsyncTransactionalEventDispatcher>().Object
+        using TransactionalEventsScope transactionalEventsScope = new(
+            new AsyncEventsTransactionScopeFake(
+                new Mock<IAsyncTransactionalEventDispatcher>().Object
+            )
         );
 
         InvalidOperationException? exception = Assert.Throws<InvalidOperationException>(
@@ -253,7 +329,7 @@ public class TransactionalEventsScopeTest
     }
 
     [Test]
-    public async Task TestPublish_WhenEventsNotified_ThenEventsAreDispatchedToAttachedDispatcher()
+    public async Task TestPublish_WhenEventsNotified_ThenEventsAreDispatchedToTransactionDispatcher()
     {
         List<EventStub> events = [];
         Mock<ISyncTransactionalEventDispatcher> transactionalEventDispatcherMock = new();
@@ -263,9 +339,12 @@ public class TransactionalEventsScopeTest
         EventStub firstEvent = new();
         EventStub secondEvent = new();
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new EventsTransactionScopeFake(transactionalEventDispatcherMock.Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(transactionalEventDispatcherMock.Object);
             EventManager.Instance.Notify(firstEvent);
             EventManager.Instance.Notify(secondEvent);
 
@@ -285,27 +364,17 @@ public class TransactionalEventsScopeTest
             .Callback(() => dispatchedByGlobalDispatcher = true);
         EventManager.Instance.Dispatcher = eventDispatcherMock.Object;
 
-        using (TransactionalEventsScope transactionalEventsScope = new())
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new EventsTransactionScopeFake(new Mock<ISyncTransactionalEventDispatcher>().Object)
+            )
+        )
         {
-            transactionalEventsScope.AttachDispatcher(
-                new Mock<ISyncTransactionalEventDispatcher>().Object
-            );
             EventManager.Instance.Notify(new EventStub());
 
             transactionalEventsScope.Publish();
         }
 
         _ = await Assert.That(dispatchedByGlobalDispatcher).IsFalse();
-    }
-
-    [Test]
-    public async Task TestDispose_WhenDisposing_ThenCurrentScopeIsNull()
-    {
-        using (TransactionalEventsScope transactionalEventsScope = new())
-        {
-            //
-        }
-
-        _ = await Assert.That(EventManager.CurrentScope).IsNull();
     }
 }

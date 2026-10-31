@@ -164,17 +164,17 @@ Without an active `EventsScope`, `Notify`/`NotifyAsync` dispatch events immediat
 `EventsScope.PublishAsync()` hands events to the global dispatcher, so publishing
 them after a commit can still lose them if the process stops in between. A
 `TransactionalEventsScope` closes that gap: it buffers events the same way, but
-releases them only to the dispatcher of the transaction it is attached to — an
+releases them only to the dispatcher of the transaction it was created for — an
 `IAsyncTransactionalEventDispatcher`, which stores each event in that transaction and
-delivers it after the commit. Hand the scope to a unit of work implementing
-`IAsyncEventsUnitOfWork` (`DDD.Application.Persistence`), which attaches its
-dispatcher; publishing is then the caller's decision, and the scope does it:
+delivers it after the commit. Begin the transaction on a unit of work implementing
+`IAsyncEventsUnitOfWork` (`DDD.Application.Persistence`), create the scope for that
+transaction, and decide whether to publish — the scope does it:
 
 ```csharp
-using TransactionalEventsScope eventsScope = new();
+await using IAsyncEventsTransactionScope transactionScope =
+    await unitOfWork.BeginTransactionAsync();
 
-await using IAsyncTransactionScope transactionScope =
-    await unitOfWork.BeginTransactionAsync(eventsScope);
+using TransactionalEventsScope eventsScope = new(transactionScope);
 
 order.AddLine(line);
 await unitOfWork.OrdersRepository.UpdateAsync(order);
@@ -185,19 +185,26 @@ await transactionScope.CompleteAsync();
 
 - Events published before `CompleteAsync` are committed with the data and delivered
   after the commit; a scope disposed without publishing drops them.
-- Publishing after the transaction completed throws `InvalidOperationException`, and
-  so does publishing a scope no transaction attached a dispatcher to.
+- Publishing after the transaction completed or rolled back throws
+  `InvalidOperationException`.
+- The scope can't exist without a transaction: its constructor takes one and binds to
+  it through `IAsyncEventsTransactionScope.Attach`. Declared after the transaction, it
+  is also disposed before it, so the two always nest correctly.
 - The scope must be the outermost events scope; creating it inside another one
   throws `InvalidOperationException`.
 - Disposing the transaction without completing it rolls back the data and the
   published events together.
 - Delivery is at least once, so event handlers have to be idempotent.
 - For a store that writes synchronously there are synchronous counterparts:
-  `IEventsUnitOfWork.BeginTransaction(eventsScope)`, `TransactionalEventsScope.Publish()`
-  and `ISyncTransactionalEventDispatcher`. Don't implement them by blocking on an
-  asynchronous store.
-- `TransactionalEventsScope.AttachDispatcher(...)` is for unit of work
-  implementations; code raising events never calls it.
+  `IEventsUnitOfWork.BeginTransaction()`, `IEventsTransactionScope`,
+  `TransactionalEventsScope.Publish()` and `ISyncTransactionalEventDispatcher`. Don't
+  implement them by blocking on an asynchronous store.
+- `IAsyncEventsTransactionScope.Attach(...)` and
+  `TransactionalEventsScope.AttachDispatcher(...)` are the handshake between the scope
+  and a transaction implementation; code raising events never calls them.
+- An implementation of `IAsyncEventsUnitOfWork` writes one `BeginTransactionAsync()`
+  returning `IAsyncEventsTransactionScope`; the interface bridges the inherited
+  `IAsyncUnitOfWork.BeginTransactionAsync()` to it.
 
 ### Repositories
 
