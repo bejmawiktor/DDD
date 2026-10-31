@@ -20,4 +20,6 @@ public sealed class EventsScope : Scope<IEvent, EventsScope, EventManager>
     /// </summary>
     /// <returns>A task that completes once all buffered events have been dispatched.</returns>
     public Task PublishAsync() => base.ApplyAsync();
+
+    internal Task PublishAsync(IAsyncDispatcher<IEvent> dispatcher) => base.ApplyAsync(dispatcher);
 }
