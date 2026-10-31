@@ -1,15 +1,16 @@
+using DDD.Domain.Persistence;
+
 namespace DDD.Domain.Events;
 
 /// <summary>
 /// An events scope whose events belong to a transaction. Like <see cref="EventsScope"/>
 /// it buffers the events raised through the <see cref="EventManager"/>, but it releases
-/// them only to the dispatcher of the transaction it is attached to, never to the
-/// <see cref="EventManager"/>'s global dispatcher. Hand it to the unit of work that
-/// begins the transaction, which attaches its dispatcher; then decide whether to
-/// publish: <see cref="PublishAsync"/> or <see cref="Publish"/> before the transaction
-/// completes stores the events atomically with the data, while a scope disposed
-/// without publishing drops them. The scope neither begins nor commits a transaction
-/// itself.
+/// them only to the dispatcher of the transaction it was created for, never to the
+/// <see cref="EventManager"/>'s global dispatcher. Create it for an open transaction;
+/// then decide whether to publish: <see cref="PublishAsync"/> or <see cref="Publish"/>
+/// before the transaction completes stores the events atomically with the data, while a
+/// scope disposed without publishing drops them. The scope neither begins nor commits a
+/// transaction itself.
 /// </summary>
 /// <remarks>
 /// It must be the outermost events scope: a nested scope forwards its events to the
@@ -24,25 +25,44 @@ public sealed class TransactionalEventsScope : IDisposable
     private ISyncTransactionalEventDispatcher? SyncDispatcher { get; set; }
 
     /// <summary>
-    /// Initializes a new transactional events scope and makes it the ambient events
-    /// scope.
+    /// Initializes a transactional events scope for an asynchronous transaction, attaches
+    /// it to the transaction and makes it the ambient events scope.
     /// </summary>
+    /// <param name="transactionScope">The open transaction the events belong to.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="transactionScope"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Another events scope is already active.</exception>
-    public TransactionalEventsScope()
+    public TransactionalEventsScope(IAsyncEventsTransactionScope transactionScope)
     {
-        if (EventManager.CurrentScope is not null)
-        {
-            throw new InvalidOperationException(
-                "Transactional events scope must be the outermost events scope."
-            );
-        }
+        ArgumentNullException.ThrowIfNull(transactionScope);
+
+        TransactionalEventsScope.ThrowIfNotOutermost();
+
+        transactionScope.Attach(this);
 
         this.EventsScope = new EventsScope();
     }
 
     /// <summary>
-    /// Attaches the scope to an asynchronous transaction. Called by the unit of work that
-    /// begins the transaction, not by the code raising the events.
+    /// Initializes a transactional events scope for a synchronous transaction, attaches it
+    /// to the transaction and makes it the ambient events scope.
+    /// </summary>
+    /// <param name="transactionScope">The open transaction the events belong to.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="transactionScope"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Another events scope is already active.</exception>
+    public TransactionalEventsScope(IEventsTransactionScope transactionScope)
+    {
+        ArgumentNullException.ThrowIfNull(transactionScope);
+
+        TransactionalEventsScope.ThrowIfNotOutermost();
+
+        transactionScope.Attach(this);
+
+        this.EventsScope = new EventsScope();
+    }
+
+    /// <summary>
+    /// Attaches the scope to an asynchronous transaction. Called by the transaction's
+    /// <see cref="IAsyncEventsTransactionScope.Attach"/>, not by the code raising the events.
     /// </summary>
     /// <param name="dispatcher">The dispatcher storing events in the transaction.</param>
     /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
@@ -57,8 +77,8 @@ public sealed class TransactionalEventsScope : IDisposable
     }
 
     /// <summary>
-    /// Attaches the scope to a synchronous transaction. Called by the unit of work that
-    /// begins the transaction, not by the code raising the events.
+    /// Attaches the scope to a synchronous transaction. Called by the transaction's
+    /// <see cref="IEventsTransactionScope.Attach"/>, not by the code raising the events.
     /// </summary>
     /// <param name="dispatcher">The dispatcher storing events in the transaction.</param>
     /// <exception cref="ArgumentNullException"><paramref name="dispatcher"/> is <see langword="null"/>.</exception>
@@ -109,6 +129,16 @@ public sealed class TransactionalEventsScope : IDisposable
     /// Disposes the scope, dropping any events that were not published.
     /// </summary>
     public void Dispose() => this.EventsScope.Dispose();
+
+    private static void ThrowIfNotOutermost()
+    {
+        if (EventManager.CurrentScope is not null)
+        {
+            throw new InvalidOperationException(
+                "Transactional events scope must be the outermost events scope."
+            );
+        }
+    }
 
     private void ThrowIfAttached()
     {
