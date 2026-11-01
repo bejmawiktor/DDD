@@ -2,6 +2,7 @@ using DDD.Domain.Events;
 using DDD.Domain.Persistence;
 using DDD.Tests.Unit.Domain.TestDoubles;
 using Moq;
+using TUnit.Assertions.Enums;
 
 namespace DDD.Tests.Unit.Domain.Events;
 
@@ -249,6 +250,39 @@ public class TransactionalEventsScopeTest
         }
 
         _ = await Assert.That(events).IsEquivalentTo([firstEvent, secondEvent]);
+    }
+
+    [Test]
+    public async Task TestPublishAsync_WhenManyEventsNotified_ThenEventsAreDispatchedInOrderOneAtATime()
+    {
+        RecordingTransactionalEventDispatcherFake transactionalEventDispatcher = new();
+        EventStub firstEvent = new();
+        EventStub secondEvent = new();
+        EventStub thirdEvent = new();
+
+        using (
+            TransactionalEventsScope transactionalEventsScope = new(
+                new AsyncEventsTransactionScopeFake(transactionalEventDispatcher)
+            )
+        )
+        {
+            EventManager.Instance.Notify(firstEvent);
+            EventManager.Instance.Notify(secondEvent);
+            EventManager.Instance.Notify(thirdEvent);
+
+            await transactionalEventsScope.PublishAsync();
+        }
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert
+                .That(transactionalEventDispatcher.DispatchedEvents)
+                .IsEquivalentTo(
+                    new IEvent[] { firstEvent, secondEvent, thirdEvent },
+                    CollectionOrdering.Matching
+                );
+            _ = await Assert.That(transactionalEventDispatcher.MaxInProgressCount).IsEqualTo(1);
+        }
     }
 
     [Test]
