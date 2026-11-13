@@ -5,8 +5,8 @@ namespace DDD.Domain.Model;
 /// <summary>
 /// Base class for type-safe enumerations: richer, object-oriented alternatives
 /// to <see langword="enum"/> that can carry behaviour and are declared as
-/// <see langword="public static"/> fields on the derived type. Instances are
-/// compared by their wrapped <see cref="Value"/>.
+/// <see langword="public static"/> fields or properties on the derived type.
+/// Instances are compared by their wrapped <see cref="Value"/>.
 /// </summary>
 /// <typeparam name="TValue">Type of the underlying value each member wraps.</typeparam>
 /// <typeparam name="TEnumeration">
@@ -62,26 +62,47 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
         enumeration ?? Enumeration<TValue, TEnumeration>.Default;
 
     /// <summary>
-    /// Enumerates all members declared as public static fields on the derived
-    /// enumeration type.
+    /// Enumerates all members declared as public static fields or properties on
+    /// the derived enumeration type.
     /// </summary>
     /// <returns>The declared enumeration members.</returns>
     public static IEnumerable<TEnumeration?> GetValues() =>
-        typeof(TEnumeration)
-            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
-            .Where(v => v.FieldType == typeof(TEnumeration))
-            .Select(v => (TEnumeration?)v.GetValue(null));
+        GetMembers().Select(member => member.GetValue());
 
     /// <summary>
-    /// Enumerates the names of all members declared as public static fields on
-    /// the derived enumeration type.
+    /// Enumerates the names of all members declared as public static fields or
+    /// properties on the derived enumeration type.
     /// </summary>
     /// <returns>The declared member names.</returns>
-    public static IEnumerable<string> GetNames() =>
-        typeof(TEnumeration)
-            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
-            .Where(v => v.FieldType == typeof(TEnumeration))
-            .Select(v => v.Name);
+    public static IEnumerable<string> GetNames() => GetMembers().Select(member => member.Name);
+
+    private static IEnumerable<(string Name, Func<TEnumeration?> GetValue)> GetMembers()
+    {
+        const BindingFlags bindingFlags =
+            BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
+        IEnumerable<(string, Func<TEnumeration?>)> fields = typeof(TEnumeration)
+            .GetFields(bindingFlags)
+            .Where(field => field.FieldType == typeof(TEnumeration))
+            .Select(field =>
+                (field.Name, (Func<TEnumeration?>)(() => (TEnumeration?)field.GetValue(null)))
+            );
+        IEnumerable<(string, Func<TEnumeration?>)> properties = typeof(TEnumeration)
+            .GetProperties(bindingFlags)
+            .Where(property =>
+                property.PropertyType == typeof(TEnumeration)
+                && property.GetMethod is { IsPublic: true }
+                && property.GetIndexParameters().Length == 0
+            )
+            .Select(property =>
+                (
+                    property.Name,
+                    (Func<TEnumeration?>)(() => (TEnumeration?)property.GetValue(null))
+                )
+            );
+
+        return fields.Concat(properties);
+    }
 
     /// <summary>
     /// Returns a hash code derived from the runtime type and the wrapped value.

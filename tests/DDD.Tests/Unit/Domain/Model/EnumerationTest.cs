@@ -251,6 +251,91 @@ public class EnumerationTest
     }
 
     [Test]
+    public async Task TestGetValues_WhenMembersDeclaredAsProperties_ThenValuesAreReturned()
+    {
+        IEnumerable<PropertyStringEnumerationFake?> expectedValues =
+        [
+            PropertyStringEnumerationFake.One,
+            PropertyStringEnumerationFake.Two,
+            PropertyStringEnumerationFake.Three,
+        ];
+
+        _ = await Assert
+            .That(PropertyStringEnumerationFake.GetValues())
+            .IsEquivalentTo(expectedValues);
+    }
+
+    [Test]
+    public async Task TestGetNames_WhenMembersDeclaredAsProperties_ThenNamesAreReturned()
+    {
+        IEnumerable<string> expectedNames =
+        [
+            nameof(PropertyStringEnumerationFake.One),
+            nameof(PropertyStringEnumerationFake.Two),
+            nameof(PropertyStringEnumerationFake.Three),
+        ];
+
+        _ = await Assert
+            .That(PropertyStringEnumerationFake.GetNames())
+            .IsEquivalentTo(expectedNames);
+    }
+
+    [Test]
+    public async Task TestCastingFromValueToEnumeration_WhenMembersDeclaredAsProperties_ThenEnumerationIsReturned()
+    {
+        PropertyStringEnumerationFake twoValue = (PropertyStringEnumerationFake)nameof(
+            PropertyStringEnumerationFake.Two
+        );
+
+        _ = await Assert.That(twoValue).IsEqualTo(PropertyStringEnumerationFake.Two);
+    }
+
+    [Test]
+    public async Task TestGetValues_WhenMembersDeclaredAsFieldsAndProperties_ThenAllValuesAreReturned()
+    {
+        IEnumerable<MixedStringEnumerationFake?> expectedValues =
+        [
+            MixedStringEnumerationFake.One,
+            MixedStringEnumerationFake.Two,
+            MixedStringEnumerationFake.Three,
+            MixedStringEnumerationFake.Four,
+        ];
+
+        _ = await Assert.That(MixedStringEnumerationFake.GetValues()).IsEquivalentTo(expectedValues);
+    }
+
+    [Test]
+    public async Task TestGetNames_WhenMembersDeclaredAsFieldsAndProperties_ThenAllNamesAreReturned()
+    {
+        IEnumerable<string> expectedNames =
+        [
+            nameof(MixedStringEnumerationFake.One),
+            nameof(MixedStringEnumerationFake.Two),
+            nameof(MixedStringEnumerationFake.Three),
+            nameof(MixedStringEnumerationFake.Four),
+        ];
+
+        _ = await Assert.That(MixedStringEnumerationFake.GetNames()).IsEquivalentTo(expectedNames);
+    }
+
+    [Test]
+    public async Task TestCastingFromValueToEnumeration_WhenMembersDeclaredAsFieldsAndProperties_ThenEnumerationIsReturned()
+    {
+        MixedStringEnumerationFake fieldValue = (MixedStringEnumerationFake)nameof(
+            MixedStringEnumerationFake.Two
+        );
+        MixedStringEnumerationFake propertyValue = (MixedStringEnumerationFake)nameof(
+            MixedStringEnumerationFake.Four
+        );
+
+        using (Assert.Multiple())
+        {
+            _ = await Assert.That(fieldValue).IsEqualTo(MixedStringEnumerationFake.Two);
+            _ = await Assert.That(propertyValue).IsEqualTo(MixedStringEnumerationFake.Four);
+        }
+    }
+
+    [Test]
     [MethodDataSource(nameof(EqualsOperatorTestData))]
     public async Task TestEqualsOperator_WhenEnumerationsGiven_ThenValuesAreCompared(
         FirstStringEnumerationFake? lhsEnumeration,
