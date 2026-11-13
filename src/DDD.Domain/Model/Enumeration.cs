@@ -95,10 +95,7 @@ public abstract class Enumeration<TValue, TEnumeration> : IEquatable<TEnumeratio
                 && property.GetIndexParameters().Length == 0
             )
             .Select(property =>
-                (
-                    property.Name,
-                    (Func<TEnumeration?>)(() => (TEnumeration?)property.GetValue(null))
-                )
+                (property.Name, (Func<TEnumeration?>)(() => (TEnumeration?)property.GetValue(null)))
             );
 
         return fields.Concat(properties);

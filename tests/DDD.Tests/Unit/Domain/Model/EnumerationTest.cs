@@ -301,7 +301,9 @@ public class EnumerationTest
             MixedStringEnumerationFake.Four,
         ];
 
-        _ = await Assert.That(MixedStringEnumerationFake.GetValues()).IsEquivalentTo(expectedValues);
+        _ = await Assert
+            .That(MixedStringEnumerationFake.GetValues())
+            .IsEquivalentTo(expectedValues);
     }
 
     [Test]

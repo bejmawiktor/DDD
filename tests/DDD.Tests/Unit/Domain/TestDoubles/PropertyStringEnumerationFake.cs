@@ -9,7 +9,7 @@ public class PropertyStringEnumerationFake : Enumeration<string, PropertyStringE
     public static PropertyStringEnumerationFake Three { get; } = new(nameof(Three));
 
     public static IReadOnlyCollection<PropertyStringEnumerationFake> Favourites { get; } =
-        [One, Three];
+    [One, Three];
 
     protected override string DefaultValue => nameof(One);
 
